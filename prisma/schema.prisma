@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Postcard {
+  id           String    @id
+  userId       String?   @map("user_id")
+  mediaUrl     String    @map("media_url")
+  mediaType    String    @map("media_type")
+  title        String
+  message      String
+  toName       String    @map("to_name")
+  fromName     String    @map("from_name")
+  theme        String    @default("minimal-light")
+  expiryAt     DateTime? @map("expiry_at")
+  passwordHash String?   @map("password_hash")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("postcards")
+}
