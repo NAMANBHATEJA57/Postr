@@ -29,6 +29,15 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# firebase
+firebase-service-account.json
+*-service-account*.json
+
+# server
+server/dist
+server/prisma/dev.db
+server/prisma/dev.db-journal
+
 # vercel
 .vercel
 

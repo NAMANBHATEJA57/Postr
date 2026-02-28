@@ -9,7 +9,7 @@ test.describe("postr: create → share → reveal flow", () => {
     test("create page loads and shows required fields", async ({ page }) => {
         await page.goto(`${BASE_URL}/create`);
 
-        await expect(page.locator("h1")).toContainText("Create a postcard");
+        await expect(page.locator("h1")).toContainText("Create a postcard.");
         await expect(page.locator("#title-input")).toBeVisible();
         await expect(page.locator("#message-input")).toBeVisible();
         await expect(page.locator("#to-input")).toBeVisible();

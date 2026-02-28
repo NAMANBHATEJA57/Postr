@@ -1,36 +1,133 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# postr
 
-## Getting Started
+A calm, minimal digital postcard. Send a moment to someone you care about.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## What is postr?
+
+**postr** lets you create and share digital postcards as a link. No accounts, no sign-up—just compose a moment (photo or video + message), add optional password protection and expiry, and share the link.
+
+**Flow:**
+1. **Create** — Upload a photo/video, write a title and message, choose a theme (Minimal, Framed, Full Bleed), set optional expiry and password
+2. **Share** — Copy the link and send it to the recipient
+3. **Reveal** — Recipient opens the link, optionally enters the password, taps the envelope animation, and sees the postcard
+
+---
+
+## How it works
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  CLIENT (Next.js)                    SERVER (Express)             │
+│  localhost:3000                      localhost:4000               │
+│                                                                  │
+│  • Landing, Create, View pages      • POST /api/upload           │
+│  • No secrets, no DB access          → Signed Firebase Storage   │
+│  • Calls server API only            • POST /api/postcards        │
+│                                      → Create postcard (Prisma)  │
+│                                     • GET  /api/postcards/:id    │
+│                                      → Fetch postcard (auth)     │
+│                                     • POST /api/postcards/:id/unlock
+│                                      → Verify password, JWT      │
+└─────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+                    Firebase Storage (images) + SQLite (postcards)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Client** — Pure frontend. Only env: `NEXT_PUBLIC_API_URL`. No secrets.
+- **Server** — All business logic: validation, password hashing (bcrypt), JWT, rate limiting, Firebase Storage signed URLs, Prisma DB.
+- **Storage** — Firebase Cloud Storage for media (free tier). SQLite for postcard metadata.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Quick start
 
-## Learn More
+### 1. Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js 18+
+- Firebase project ([console.firebase.google.com](https://console.firebase.google.com))
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Firebase setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Create a Firebase project
+2. Enable **Storage** (Production mode)
+3. Go to **Project Settings → Service accounts → Generate new private key**
+4. Save the JSON as `server/firebase-service-account.json`
 
-## Deploy on Vercel
+### 3. Environment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**client/.env**
+```
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**server/.env**
+```
+PORT=4000
+DATABASE_URL="file:./prisma/dev.db"
+JWT_SECRET="your-super-secret-jwt-key-min-32-chars"
+FIREBASE_SERVICE_ACCOUNT_PATH="./firebase-service-account.json"
+FIREBASE_STORAGE_BUCKET="your-project.appspot.com"
+CLIENT_ORIGIN="http://localhost:3000"
+```
+
+### 4. Install and run
+
+```bash
+npm install
+cd server && npx prisma migrate dev && cd ..
+npm run dev
+```
+
+- **Client:** http://localhost:3000  
+- **Server:** http://localhost:4000  
+
+---
+
+## Project structure
+
+```
+postr/
+├── client/                 # Next.js frontend
+│   ├── app/                # Pages (/, /create, /p/[id])
+│   ├── components/         # UI, create form, postcard, envelope
+│   ├── themes/             # Minimal, Framed, Full Bleed
+│   ├── types/              # TypeScript types
+│   └── lib/api.ts          # API URL helper (no secrets)
+│
+├── server/                 # Express backend
+│   ├── src/
+│   │   ├── index.ts        # Express app, CORS, routes
+│   │   ├── lib/            # Firebase, Prisma, JWT, bcrypt, schemas
+│   │   └── routes/         # upload, postcards, unlock
+│   └── prisma/             # Schema + migrations
+│
+├── storage.rules          # Firebase Storage rules
+└── package.json            # Monorepo scripts
+```
+
+---
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Run client + server together |
+| `npm run dev:client` | Run client only (port 3000) |
+| `npm run dev:server` | Run server only (port 4000) |
+| `npm run build` | Build client and server |
+| `npm run db:migrate` | Run Prisma migrations |
+
+---
+
+## Firebase Storage rules
+
+Deploy rules:
+
+```bash
+firebase deploy --only storage
+```
+
+Rules file: `storage.rules` — allows public read of `uploads/*`, no direct client writes (uploads use signed URLs from the server).
