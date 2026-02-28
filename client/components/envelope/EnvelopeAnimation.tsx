@@ -10,97 +10,119 @@ interface EnvelopeAnimationProps {
 }
 
 const EASE = [0.33, 1, 0.68, 1] as const;
+const DURATION = 0.34;
 
 export default function EnvelopeAnimation({
     toName,
     fromName,
     onOpen,
 }: EnvelopeAnimationProps) {
-    const [phase, setPhase] = useState<"closed" | "opening" | "open">("closed");
+    const [phase, setPhase] = useState<"idle" | "leaving">("idle");
     const prefersReducedMotion = useReducedMotion();
 
     const handleTap = () => {
-        if (phase !== "closed") return;
-        setPhase("opening");
-
-        if (prefersReducedMotion) {
-            setTimeout(() => {
-                setPhase("open");
-                onOpen();
-            }, 200);
-        } else {
-            setTimeout(() => {
-                setPhase("open");
-                onOpen();
-            }, 380);
-        }
+        if (phase !== "idle") return;
+        setPhase("leaving");
+        const delay = prefersReducedMotion ? 160 : DURATION * 1000 + 40;
+        setTimeout(() => { onOpen(); }, delay);
     };
 
     return (
         <div
-            className="flex flex-col items-center justify-center min-h-dvh px-6"
+            className="flex flex-col items-center justify-center min-h-dvh px-6 text-center"
             aria-label="Tap the envelope to open your postcard"
         >
             <AnimatePresence>
-                {phase !== "open" && (
+                {phase === "idle" && (
                     <motion.div
                         key="envelope"
-                        initial={{ opacity: 1, scale: 1 }}
-                        animate={
-                            phase === "opening"
-                                ? prefersReducedMotion
-                                    ? { opacity: 0 }
-                                    : { opacity: 0, scale: 0.98, transition: { delay: 0.18, duration: 0.2, ease: EASE } }
-                                : { opacity: 1, scale: 1 }
-                        }
-                        exit={{ opacity: 0 }}
-                        className="w-full max-w-[min(340px,80vw)] cursor-pointer select-none"
-                        onClick={handleTap}
-                        onKeyDown={(e) => e.key === "Enter" && handleTap()}
-                        tabIndex={0}
-                        role="button"
-                        aria-label="Open envelope"
-                    >
-                        <svg
-                            viewBox="0 0 340 230"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-full h-auto"
-                            aria-hidden="true"
-                        >
-                            <rect x="0" y="40" width="340" height="190" fill="#EDE9E4" />
-                            <polygon points="0,40 0,230 140,140" fill="#DDD8D2" />
-                            <polygon points="340,40 340,230 200,140" fill="#DDD8D2" />
-                            <polygon points="0,230 340,230 170,130" fill="#E8E3DD" />
-
-                            <motion.g
-                                style={{ transformOrigin: "170px 40px", transformBox: "fill-box" }}
-                                animate={
-                                    phase === "opening" && !prefersReducedMotion
-                                        ? { rotateX: -110, transition: { duration: 0.18, ease: EASE } }
-                                        : { rotateX: 0 }
+                        initial={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={
+                            prefersReducedMotion
+                                ? { opacity: 0 }
+                                : {
+                                    opacity: 0,
+                                    scale: 0.98,
+                                    y: -8,
+                                    transition: { duration: DURATION, ease: EASE },
                                 }
+                        }
+                        className="flex flex-col items-center w-full max-w-[min(340px,80vw)]"
+                    >
+                        {/* ── Message above envelope ── */}
+                        <div className="mb-8 flex flex-col gap-1.5">
+                            <p
+                                className="text-ink-secondary"
+                                style={{
+                                    fontFamily: "Inter, sans-serif",
+                                    fontSize: "1rem",
+                                    lineHeight: 1.6,
+                                }}
                             >
-                                <polygon points="0,40 340,40 170,155" fill="#E8E3DD" />
-                                <polygon points="0,40 340,40 170,155" fill="none" stroke="#C7C0B8" strokeWidth="0.5" />
-                            </motion.g>
-
-                            <rect x="0.5" y="40.5" width="339" height="189" stroke="#C7C0B8" strokeWidth="1" />
-                        </svg>
-
-                        <div className="mt-6 text-center space-y-1">
-                            <p className="text-body-sm text-ink-secondary tracking-ui">
-                                to{" "}
-                                <span className="text-ink">{toName.toLowerCase()}</span>
+                                {fromName.toLowerCase()} has sent you a postcard.
                             </p>
-                            <p className="text-body-sm text-accent-muted tracking-ui">
-                                from {fromName.toLowerCase()}
+                            <p
+                                className="text-accent-muted tracking-ui"
+                                style={{
+                                    fontFamily: "Inter, sans-serif",
+                                    fontSize: "0.875rem",
+                                    letterSpacing: "0.04em",
+                                }}
+                            >
+                                to {toName.toLowerCase()}
                             </p>
                         </div>
 
-                        <p className="mt-8 text-center text-body-sm text-accent-muted tracking-ui">
-                            tap to open
-                        </p>
+                        {/* ── Envelope SVG — static, no flap animation ── */}
+                        <div
+                            className="w-full cursor-pointer select-none"
+                            onClick={handleTap}
+                            onKeyDown={(e) => e.key === "Enter" && handleTap()}
+                            tabIndex={0}
+                            role="button"
+                            aria-label="Open envelope"
+                            data-testid="envelope"
+                        >
+                            <svg
+                                viewBox="0 0 340 230"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="w-full h-auto"
+                                aria-hidden="true"
+                            >
+                                <rect x="0" y="40" width="340" height="190" fill="#EDE9E4" />
+                                <polygon points="0,40 0,230 140,140" fill="#DDD8D2" />
+                                <polygon points="340,40 340,230 200,140" fill="#DDD8D2" />
+                                <polygon points="0,230 340,230 170,130" fill="#E8E3DD" />
+                                <polygon points="0,40 340,40 170,155" fill="#E8E3DD" />
+                                <polygon
+                                    points="0,40 340,40 170,155"
+                                    fill="none"
+                                    stroke="#C7C0B8"
+                                    strokeWidth="0.5"
+                                />
+                                <rect
+                                    x="0.5"
+                                    y="40.5"
+                                    width="339"
+                                    height="189"
+                                    stroke="#C7C0B8"
+                                    strokeWidth="1"
+                                />
+                            </svg>
+
+                            {/* Tap hint */}
+                            <p
+                                className="mt-6 text-accent-muted tracking-ui"
+                                style={{
+                                    fontFamily: "Inter, sans-serif",
+                                    fontSize: "0.875rem",
+                                    letterSpacing: "0.04em",
+                                }}
+                            >
+                                tap to open
+                            </p>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

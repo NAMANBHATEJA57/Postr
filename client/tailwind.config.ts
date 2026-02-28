@@ -20,6 +20,7 @@ const config: Config = {
       fontFamily: {
         serif: ["Playfair Display", "Georgia", "serif"],
         sans: ["Inter", "system-ui", "sans-serif"],
+        handwritten: ["var(--font-caveat)", "cursive"],
       },
       fontSize: {
         "h1": ["3rem", { lineHeight: "1.4", fontWeight: "600" }],

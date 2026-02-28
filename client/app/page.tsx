@@ -2,54 +2,58 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "postr — send a moment",
-  description: "A calm, minimal digital postcard sent via link. Send something intentional.",
+  title: "postr — send it beautifully",
+  description: "A simple way to send a moment as a digital postcard.",
 };
 
 export default function LandingPage() {
   return (
-    <main className="min-h-dvh flex flex-col items-center justify-center px-6 py-16">
-      <div className="w-full max-w-postcard mx-auto flex flex-col gap-10">
-        <header>
-          <span className="font-serif text-ink text-2xl font-semibold tracking-tight">
-            postr
-          </span>
-        </header>
+    <main className="min-h-dvh flex flex-col items-center justify-center px-6 py-20">
+      <div className="w-full max-w-postcard mx-auto flex flex-col items-center gap-10 text-center">
 
-        <section aria-labelledby="hero-heading">
-          <h1
-            id="hero-heading"
-            className="font-serif text-h1 text-ink leading-tight"
-            style={{ maxWidth: "520px" }}
-          >
-            Send a moment.
-          </h1>
-          <p className="mt-6 text-body-lg text-ink-secondary" style={{ maxWidth: "400px" }}>
-            A quiet digital postcard, delivered as a link. No accounts. No noise.
-            Just a moment, composed.
-          </p>
-        </section>
-
-        <div>
-          <Link
-            href="/create"
-            className="inline-flex items-center justify-center bg-ink text-linen font-sans text-body-sm tracking-ui px-8 py-4 min-h-[48px] transition-opacity hover:opacity-80"
-            aria-label="Create a postcard"
-          >
-            Create a postcard
-          </Link>
-        </div>
-
-        <p className="text-body-sm text-accent-muted tracking-ui">
-          Private by default &nbsp;·&nbsp; Expires when you choose
-        </p>
-      </div>
-
-      <footer className="fixed bottom-6 left-0 right-0 text-center">
-        <span className="text-body-sm text-accent-muted tracking-ui opacity-60">
+        {/* Logo */}
+        <span className="font-serif text-ink text-2xl font-semibold tracking-tight">
           postr
         </span>
-      </footer>
+
+        {/* Headline + Subtext */}
+        <div className="flex flex-col items-center gap-5">
+          <h1
+            className="font-serif text-ink leading-tight"
+            style={{ fontSize: "clamp(2.25rem, 7vw, 2.75rem)" }}
+          >
+            send it beautifully.
+          </h1>
+          <p
+            className="font-sans text-ink-secondary leading-relaxed"
+            style={{
+              fontSize: "clamp(1rem, 3vw, 1.125rem)",
+              maxWidth: "420px",
+            }}
+          >
+            a simple way to send a moment as a digital postcard.
+          </p>
+        </div>
+
+        {/* Primary CTA */}
+        <Link
+          href="/create"
+          className="inline-flex items-center justify-center
+            bg-accent text-white font-sans text-body-sm tracking-ui
+            px-8 rounded-sm min-h-[44px]
+            hover:bg-[#958879] active:bg-[#877A6E]
+            transition-colors duration-150"
+          aria-label="Create a postcard"
+        >
+          Create a postcard
+        </Link>
+
+        {/* Footer note */}
+        <p className="font-sans text-body-sm text-accent-muted tracking-ui">
+          no account required.
+        </p>
+
+      </div>
     </main>
   );
 }

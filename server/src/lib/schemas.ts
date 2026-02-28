@@ -7,9 +7,10 @@ export const createPostcardSchema = z.object({
   message: z.string().min(1, "Message is required").max(120, "Message max 120 characters"),
   toName: z.string().min(1, "To name is required").max(60, "To name max 60 characters"),
   fromName: z.string().min(1, "From name is required").max(60, "From name max 60 characters"),
-  theme: z.enum(["minimal-light", "framed", "full-bleed"]).default("minimal-light"),
+  theme: z.enum(["framed"]).default("framed"),
   expiryAt: z.string().datetime().nullable().optional(),
   password: z.string().min(4).max(100).optional(),
+  stampId: z.string().nullable().optional(),
 });
 
 export const unlockPostcardSchema = z.object({

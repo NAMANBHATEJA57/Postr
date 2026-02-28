@@ -34,9 +34,9 @@ export default function ExpirySelector({
         <div className="flex flex-col gap-2 w-full">
             <label
                 htmlFor="expiry-select"
-                className="text-body-sm text-ink-secondary tracking-ui uppercase"
+                className="text-body-sm text-ink-secondary"
             >
-                Expires
+                Expiry
             </label>
             <select
                 id="expiry-select"

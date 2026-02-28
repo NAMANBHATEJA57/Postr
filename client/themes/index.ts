@@ -1,18 +1,15 @@
-import { PostcardTheme } from "@/types/postcard";
-import minimalLight from "./minimal-light";
+import type { PostcardTheme } from "@/types/postcard";
 import framed from "./framed";
-import fullBleed from "./full-bleed";
 
-const themes: Record<string, PostcardTheme> = {
-    "minimal-light": minimalLight,
-    framed,
-    "full-bleed": fullBleed,
-};
+export { framed as FRAMED_THEME };
 
-export function resolveTheme(themeId: string): PostcardTheme {
-    return themes[themeId] ?? minimalLight;
+// All postcards use the single framed theme.
+// resolveTheme is kept as a shim for any existing callers during migration.
+export function resolveTheme(_themeId?: string): PostcardTheme {
+    return framed;
 }
 
-export const themeIds = Object.keys(themes) as Array<"minimal-light" | "framed" | "full-bleed">;
+export const themeIds = ["framed"] as const;
+export type ThemeId = "framed";
 
-export default themes;
+export default { framed };

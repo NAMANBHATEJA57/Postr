@@ -3,13 +3,13 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import MediaUpload from "@/components/create/MediaUpload";
-import ThemeSelector from "@/components/create/ThemeSelector";
 import ExpirySelector from "@/components/create/ExpirySelector";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import CharacterCounter from "@/components/ui/CharacterCounter";
 import { apiUrl } from "@/lib/api";
 import { ExpiryOption } from "@/types/postcard";
+import { STAMPS, StampId } from "@/components/stamps/StampRegistry";
 
 function computeExpiryAt(option: ExpiryOption, customDate?: string): string | null {
     const now = new Date();
@@ -35,7 +35,7 @@ export default function CreatePage() {
     const [message, setMessage] = useState("");
     const [toName, setToName] = useState("");
     const [fromName, setFromName] = useState("");
-    const [theme, setTheme] = useState<"minimal-light" | "framed" | "full-bleed">("minimal-light");
+    const [stampId, setStampId] = useState<StampId | null>(null);
     const [expiry, setExpiry] = useState<ExpiryOption>("never");
     const [customDate, setCustomDate] = useState("");
     const [passwordEnabled, setPasswordEnabled] = useState(false);
@@ -99,7 +99,8 @@ export default function CreatePage() {
                     message: message.trim(),
                     toName: toName.trim(),
                     fromName: fromName.trim(),
-                    theme,
+                    theme: "framed",
+                    stampId,
                     expiryAt,
                     password: passwordEnabled && password ? password : undefined,
                 }),
@@ -120,7 +121,7 @@ export default function CreatePage() {
             setSubmitting(false);
             setUploading(false);
         }
-    }, [mediaFile, submitting, title, message, toName, fromName, theme, expiry, customDate, passwordEnabled, password, router]);
+    }, [mediaFile, submitting, title, message, toName, fromName, stampId, expiry, customDate, passwordEnabled, password, router]);
 
     return (
         <main className="min-h-dvh px-5 py-12 md:py-16">
@@ -131,11 +132,13 @@ export default function CreatePage() {
                     </a>
                 </header>
 
-                <h1 className="font-serif text-h2 text-ink">Create a postcard.</h1>
-
+                <h1 className="font-serif text-h2 text-ink">write your postcard.</h1>
+                <p className="text-body-sm text-ink-secondary" style={{ marginTop: "-1.5rem" }}>
+                    keep it short. make it meaningful.
+                </p>
                 <div className="flex flex-col gap-8">
                     <section aria-labelledby="media-section">
-                        <h2 id="media-section" className="text-body-sm text-ink-secondary tracking-ui uppercase mb-3">
+                        <h2 id="media-section" className="text-body-sm text-ink-secondary mb-3">
                             Media
                         </h2>
                         <MediaUpload
@@ -147,7 +150,7 @@ export default function CreatePage() {
 
                     <div className="flex flex-col gap-1">
                         <div className="flex justify-between items-end">
-                            <label htmlFor="title-input" className="text-body-sm text-ink-secondary tracking-ui uppercase">
+                            <label htmlFor="title-input" className="text-body-sm text-ink-secondary">
                                 Title
                             </label>
                             <CharacterCounter current={title.length} max={40} warnAt={30} />
@@ -157,7 +160,7 @@ export default function CreatePage() {
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value.slice(0, 40))}
-                            placeholder="A title for your moment"
+                            placeholder="Title of your postcard"
                             maxLength={40}
                             required
                             className="w-full bg-transparent text-ink font-serif text-xl border-b border-divider pb-2 outline-none focus:border-ink transition-colors duration-150 placeholder:text-accent-muted"
@@ -167,7 +170,7 @@ export default function CreatePage() {
 
                     <div className="flex flex-col gap-1">
                         <div className="flex justify-between items-end">
-                            <label htmlFor="message-input" className="text-body-sm text-ink-secondary tracking-ui uppercase">
+                            <label htmlFor="message-input" className="text-body-sm text-ink-secondary">
                                 Message
                             </label>
                             <CharacterCounter current={message.length} max={120} warnAt={90} />
@@ -176,13 +179,42 @@ export default function CreatePage() {
                             id="message-input"
                             value={message}
                             onChange={(e) => setMessage(e.target.value.slice(0, 120))}
-                            placeholder="Write something quiet and true."
+                            placeholder="Write your message here..."
                             maxLength={120}
                             required
                             rows={3}
                             className="w-full bg-transparent text-ink text-body-lg font-sans border-b border-divider pb-2 outline-none focus:border-ink transition-colors duration-150 placeholder:text-accent-muted resize-none overflow-hidden"
                             style={{ lineHeight: "1.6" }}
                         />
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                        <h2 className="text-body-sm text-ink-secondary">
+                            add a stamp (optional)
+                        </h2>
+                        <div
+                            className="flex items-center gap-3 overflow-x-auto pb-4 snap-x"
+                            style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
+                        >
+                            {(Object.entries(STAMPS) as [StampId, typeof STAMPS[StampId]][]).map(([id, Stamp]) => {
+                                const isSelected = stampId === id;
+                                return (
+                                    <button
+                                        key={id}
+                                        type="button"
+                                        onClick={() => setStampId(isSelected ? null : id)}
+                                        className={`flex-shrink-0 w-16 h-16 snap-start flex items-center justify-center bg-white transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ink rounded-sm ${isSelected
+                                            ? "border-2 border-accent shadow-sm bg-accent/5 scale-105"
+                                            : "border border-divider hover:border-ink/20 hover:scale-[1.02]"
+                                            }`}
+                                        aria-pressed={isSelected}
+                                        aria-label={`Select ${id} stamp`}
+                                    >
+                                        <Stamp />
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-6">
@@ -207,9 +239,6 @@ export default function CreatePage() {
                     </div>
 
                     <hr className="border-divider" />
-
-                    <ThemeSelector value={theme} onChange={setTheme} />
-
                     <ExpirySelector
                         value={expiry}
                         customDate={customDate}
@@ -232,8 +261,8 @@ export default function CreatePage() {
                                         }`}
                                 />
                             </span>
-                            <span className="text-body-sm text-ink-secondary tracking-ui uppercase">
-                                Password protect
+                            <span className="text-body-sm text-ink-secondary">
+                                Protect with password
                             </span>
                         </label>
                         {passwordEnabled && (
@@ -262,9 +291,9 @@ export default function CreatePage() {
                             loading={submitting || uploading}
                             size="lg"
                             className="w-full"
-                            aria-label="Publish postcard"
+                            aria-label="Create postcard"
                         >
-                            {uploading ? "Uploading…" : submitting ? "Publishing…" : "Publish postcard"}
+                            {uploading ? "uploading…" : submitting ? "creating…" : "create postcard"}
                         </Button>
                     </div>
                 </div>

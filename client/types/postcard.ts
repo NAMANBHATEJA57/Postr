@@ -1,6 +1,6 @@
 export type MediaType = "image" | "video";
 
-export type ThemeLayout = "centered" | "framed" | "full-bleed";
+export type ThemeLayout = "framed";
 
 export interface ThemeColors {
   background: string;
@@ -9,7 +9,6 @@ export interface ThemeColors {
   textSecondary: string;
   accent: string;
   divider: string;
-  border?: string;
 }
 
 export interface ThemeTypography {
@@ -22,7 +21,6 @@ export interface ThemeTypography {
 
 export interface ThemeSpacing {
   cardPadding: string;
-  mediaPadding: string;
   contentGap: string;
 }
 
@@ -49,5 +47,6 @@ export interface ApiPostcardResponse {
   theme: string;
   expiryAt: string | null;
   isPasswordProtected: boolean;
+  stampId: string | null;
   createdAt: string;
 }
