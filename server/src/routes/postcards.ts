@@ -26,7 +26,7 @@ router.post("/", async (req: Request, res: Response) => {
     });
   }
 
-  const { password, expiryAt, ...data } = parsed.data;
+  const { password, expiryAt, stampId, ...data } = parsed.data;
 
   const id = generateId();
   const passwordHash = password ? await hashPassword(password) : null;
@@ -44,6 +44,7 @@ router.post("/", async (req: Request, res: Response) => {
         theme: data.theme,
         expiryAt: expiryAt ? new Date(expiryAt) : null,
         passwordHash,
+        stampId: stampId ?? null,
       },
     });
   } catch (err) {

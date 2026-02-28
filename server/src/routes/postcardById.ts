@@ -60,6 +60,7 @@ async function getPostcardHandler(req: Request, res: Response) {
     theme: postcard.theme,
     expiryAt: postcard.expiryAt?.toISOString() ?? null,
     isPasswordProtected: Boolean(postcard.passwordHash),
+    stampId: postcard.stampId ?? null,
     createdAt: postcard.createdAt.toISOString(),
   };
 
