@@ -23,7 +23,7 @@ A calm, minimal digital postcard. Send a moment to someone you care about.
 │  localhost:3000                      localhost:4000               │
 │                                                                  │
 │  • Landing, Create, View pages      • POST /api/upload           │
-│  • No secrets, no DB access          → Signed Firebase Storage   │
+│  • No secrets, no DB access          → Signed R2 presigned URLs  │
 │  • Calls server API only            • POST /api/postcards        │
 │                                      → Create postcard (Prisma)  │
 │                                     • GET  /api/postcards/:id    │
@@ -33,12 +33,12 @@ A calm, minimal digital postcard. Send a moment to someone you care about.
 └─────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
-                    Firebase Storage (images) + SQLite (postcards)
+                    Cloudflare R2 (images) + SQLite (postcards)
 ```
 
 - **Client** — Pure frontend. Only env: `NEXT_PUBLIC_API_URL`. No secrets.
-- **Server** — All business logic: validation, password hashing (bcrypt), JWT, rate limiting, Firebase Storage signed URLs, Prisma DB.
-- **Storage** — Firebase Cloud Storage for media (free tier). SQLite for postcard metadata.
+- **Server** — All business logic: validation, password hashing (bcrypt), JWT, rate limiting, R2 presigned URLs, Prisma DB.
+- **Storage** — Cloudflare R2 for media (10GB free, unlimited egress). SQLite for postcard metadata.
 
 ---
 
@@ -47,14 +47,28 @@ A calm, minimal digital postcard. Send a moment to someone you care about.
 ### 1. Prerequisites
 
 - Node.js 18+
-- Firebase project ([console.firebase.google.com](https://console.firebase.google.com))
+- Cloudflare account ([dash.cloudflare.com](https://dash.cloudflare.com))
 
-### 2. Firebase setup
+### 2. Cloudflare R2 setup
 
-1. Create a Firebase project
-2. Enable **Storage** (Production mode)
-3. Go to **Project Settings → Service accounts → Generate new private key**
-4. Save the JSON as `server/firebase-service-account.json`
+1. In Cloudflare Dashboard, go to **R2 Object Storage** → **Create bucket** (e.g. `postr-uploads`)
+2. Enable **Allow public access** on the bucket → copy the public URL (e.g. `https://pub-xxxxxxxxxx.r2.dev`)
+3. Go to **R2 → Manage R2 API Tokens** → **Create API token** with Object Read & Write
+4. Copy **Account ID**, **Access Key ID**, and **Secret Access Key**
+5. Configure **CORS** on the bucket. Either:
+   - **Dashboard:** Bucket → Settings → CORS policy → Add policy, paste:
+   ```json
+   [
+     {
+       "AllowedOrigins": ["http://localhost:3000", "https://your-domain.com"],
+       "AllowedMethods": ["GET", "PUT", "HEAD"],
+       "AllowedHeaders": ["Content-Type"],
+       "ExposeHeaders": ["ETag"],
+       "MaxAgeSeconds": 3600
+     }
+   ]
+   ```
+   - **CLI:** `cd server && npx tsx scripts/set-r2-cors.ts` (uses your `.env`)
 
 ### 3. Environment
 
@@ -68,8 +82,11 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 PORT=4000
 DATABASE_URL="file:./prisma/dev.db"
 JWT_SECRET="your-super-secret-jwt-key-min-32-chars"
-FIREBASE_SERVICE_ACCOUNT_PATH="./firebase-service-account.json"
-FIREBASE_STORAGE_BUCKET="your-project.appspot.com"
+R2_ACCOUNT_ID="your-cloudflare-account-id"
+R2_ACCESS_KEY_ID="your-r2-access-key-id"
+R2_SECRET_ACCESS_KEY="your-r2-secret-access-key"
+R2_BUCKET_NAME="postr-uploads"
+R2_PUBLIC_URL="https://pub-xxxxxxxxxx.r2.dev"
 CLIENT_ORIGIN="http://localhost:3000"
 ```
 
@@ -100,11 +117,11 @@ postr/
 ├── server/                 # Express backend
 │   ├── src/
 │   │   ├── index.ts        # Express app, CORS, routes
-│   │   ├── lib/            # Firebase, Prisma, JWT, bcrypt, schemas
+│   │   ├── lib/            # R2, Prisma, JWT, bcrypt, schemas
 │   │   └── routes/         # upload, postcards, unlock
 │   └── prisma/             # Schema + migrations
 │
-├── storage.rules          # Firebase Storage rules
+├── storage.rules          # (legacy; R2 uses CORS instead)
 └── package.json            # Monorepo scripts
 ```
 
@@ -122,12 +139,8 @@ postr/
 
 ---
 
-## Firebase Storage rules
+## Cloudflare R2
 
-Deploy rules:
-
-```bash
-firebase deploy --only storage
-```
-
-Rules file: `storage.rules` — allows public read of `uploads/*`, no direct client writes (uploads use signed URLs from the server).
+- **Free tier:** 10 GB storage, 1M writes, 10M reads/month, unlimited egress
+- Uploads use presigned PUT URLs (client uploads directly to R2)
+- Public read via `R2_PUBLIC_URL` (r2.dev subdomain or custom domain)

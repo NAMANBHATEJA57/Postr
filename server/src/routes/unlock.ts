@@ -58,13 +58,8 @@ router.post("/:id/unlock", async (req: Request, res: Response) => {
   const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:3000";
   const isSameOrigin = req.headers.origin === clientOrigin;
 
-  const response = res.status(200).json({
-    ok: true,
-    accessToken: token,
-  });
-
   if (isSameOrigin) {
-    response.cookie(`access_${id}`, token, {
+    res.cookie(`access_${id}`, token, {
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
@@ -73,7 +68,10 @@ router.post("/:id/unlock", async (req: Request, res: Response) => {
     });
   }
 
-  return response;
+  return res.status(200).json({
+    ok: true,
+    accessToken: token,
+  });
 });
 
 export default router;

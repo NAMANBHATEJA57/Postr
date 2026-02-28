@@ -5,7 +5,7 @@ import {
   validateFileSize,
   generateSignedUploadUrl,
   buildPublicDownloadUrl,
-} from "../lib/firebase-storage.js";
+} from "../lib/r2-storage.js";
 
 const ALLOWED_TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -47,7 +47,7 @@ router.post("/", async (req: Request, res: Response) => {
     const publicUrl = buildPublicDownloadUrl(storagePath);
     return res.json({ uploadUrl, publicUrl });
   } catch (err) {
-    console.error("Firebase Storage presign error:", err);
+    console.error("R2 Storage presign error:", err);
     return res.status(503).json({ error: "Storage unavailable" });
   }
 });
