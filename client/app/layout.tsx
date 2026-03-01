@@ -32,6 +32,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { AuthProvider } from "@/components/auth/AuthProvider";
+
 export default function RootLayout({
   children,
 }: {
@@ -41,7 +43,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable} ${caveat.variable}`}>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <body className="bg-linen text-ink font-sans antialiased">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

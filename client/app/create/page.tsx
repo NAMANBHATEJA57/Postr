@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import MediaUpload from "@/components/create/MediaUpload";
 import ExpirySelector from "@/components/create/ExpirySelector";
@@ -11,6 +11,8 @@ import CharacterCounter from "@/components/ui/CharacterCounter";
 import { apiUrl } from "@/lib/api";
 import { ExpiryOption } from "@/types/postcard";
 import { STAMPS, StampId } from "@/components/stamps/StampRegistry";
+import { useAuth } from "@/components/auth/AuthProvider";
+import Link from "next/link";
 
 function computeExpiryAt(option: ExpiryOption, customDate?: string): string | null {
     const now = new Date();
@@ -30,6 +32,12 @@ function computeExpiryAt(option: ExpiryOption, customDate?: string): string | nu
 
 export default function CreatePage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const conversationId = searchParams.get("conversationId");
+    const { user, loading: authLoading } = useAuth();
+
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
 
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [title, setTitle] = useState("");
@@ -52,7 +60,7 @@ export default function CreatePage() {
     };
 
     const isPublishable =
-        mediaFile && title.trim() && message.trim() && toName.trim() && fromName.trim();
+        mediaFile && title.trim() && message.trim() && (conversationId || (toName.trim() && fromName.trim()));
 
     const handlePublish = useCallback(async () => {
         if (!mediaFile || submitting) return;
@@ -93,17 +101,19 @@ export default function CreatePage() {
             const createRes = await fetch(apiUrl("/api/postcards"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({
                     mediaUrl: publicUrl,
                     mediaType,
                     title: title.trim(),
                     message: message.trim(),
-                    toName: toName.trim(),
-                    fromName: fromName.trim(),
+                    toName: conversationId ? "Recipient" : toName.trim(),
+                    fromName: conversationId ? "Sender" : fromName.trim(),
                     theme: "framed",
-                    stampId,
+                    stampId: stampId || undefined,
                     expiryAt,
                     password: passwordEnabled && password ? password : undefined,
+                    conversationId: conversationId || undefined,
                 }),
             });
 
@@ -116,13 +126,17 @@ export default function CreatePage() {
             }
 
             const { id } = await createRes.json();
-            router.push(`/p/${id}?created=true`);
+            if (conversationId) {
+                router.push(`/conversation/${conversationId}`);
+            } else {
+                router.push(`/p/${id}?created=true`);
+            }
         } catch (err) {
             setSubmitError(err instanceof Error ? err.message : "Something went wrong");
             setSubmitting(false);
             setUploading(false);
         }
-    }, [mediaFile, submitting, title, message, toName, fromName, stampId, expiry, customDate, passwordEnabled, password, router]);
+    }, [mediaFile, submitting, title, message, toName, fromName, stampId, expiry, customDate, passwordEnabled, password, router, conversationId]);
 
     return (
         <main className="min-h-dvh px-5 py-12 md:py-16">
@@ -143,9 +157,31 @@ export default function CreatePage() {
                 </header>
 
                 <h1 className="font-serif text-h2 text-ink">write your postcard.</h1>
-                <p className="text-body-sm text-ink-secondary" style={{ marginTop: "-1.5rem" }}>
-                    keep it short. make it meaningful.
-                </p>
+                <div className="flex flex-col gap-1 -mt-6">
+                    <p className="text-body-sm text-ink-secondary">
+                        keep it short. make it meaningful.
+                    </p>
+                    {/* UI Mode Indicator */}
+                    {!authLoading && (
+                        <div className="mt-2 flex flex-col gap-1">
+                            {!user ? (
+                                <>
+                                    <p className="text-xs text-ink-secondary opacity-70">
+                                        You&apos;re sending as a guest.
+                                    </p>
+                                    <Link href="/register" className="text-xs text-accent hover:text-ink transition-colors">
+                                        Create an account to save your postcards.
+                                    </Link>
+                                </>
+                            ) : (
+                                <p className="text-xs text-ink-secondary opacity-70">
+                                    Sending from your account.
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </div>
+
                 <div className="flex flex-col gap-8">
                     <section aria-labelledby="media-section">
                         <h2 id="media-section" className="text-body-sm text-ink-secondary mb-3">
@@ -188,7 +224,7 @@ export default function CreatePage() {
                         <textarea
                             id="message-input"
                             value={message}
-                            onChange={(e) => setMessage(e.target.value.slice(0, 120))}
+                            onChange={(e) => setMessage(e.target.value)}
                             placeholder="Write your message here..."
                             maxLength={120}
                             required
@@ -213,9 +249,9 @@ export default function CreatePage() {
                                         key={id}
                                         type="button"
                                         onClick={() => setStampId(isSelected ? null : id)}
-                                        className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 snap-start flex items-center justify-center bg-white transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ink rounded-md [&>svg]:max-w-[80%] [&>svg]:max-h-[80%] [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain ${isSelected
-                                            ? "border-2 border-black shadow-md scale-105"
-                                            : "border border-neutral-200 hover:scale-105 hover:shadow-sm"
+                                        className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 snap-start flex items-center justify-center bg-white transition-all duration-150 ease-subtle cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ink rounded-md [&>svg]:max-w-[80%] [&>svg]:max-h-[80%] [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain ${isSelected
+                                            ? "border-2 border-black shadow-md scale-[1.02]"
+                                            : "border border-neutral-200 hover:scale-[1.02] hover:shadow-sm"
                                             }`}
                                         aria-pressed={isSelected}
                                         aria-label={`Select ${id} stamp`}
@@ -230,26 +266,28 @@ export default function CreatePage() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-6">
-                        <Input
-                            id="to-input"
-                            label="To"
-                            value={toName}
-                            onChange={(e) => setToName(e.target.value.slice(0, 60))}
-                            placeholder="their name"
-                            maxLength={60}
-                            required
-                        />
-                        <Input
-                            id="from-input"
-                            label="From"
-                            value={fromName}
-                            onChange={(e) => setFromName(e.target.value.slice(0, 60))}
-                            placeholder="your name"
-                            maxLength={60}
-                            required
-                        />
-                    </div>
+                    {!conversationId && (
+                        <div className="flex flex-col gap-6">
+                            <Input
+                                id="to-input"
+                                label="To"
+                                value={toName}
+                                onChange={(e) => setToName(e.target.value.slice(0, 60))}
+                                placeholder="their name"
+                                maxLength={60}
+                                required
+                            />
+                            <Input
+                                id="from-input"
+                                label="From"
+                                value={fromName}
+                                onChange={(e) => setFromName(e.target.value.slice(0, 60))}
+                                placeholder="your name"
+                                maxLength={60}
+                                required
+                            />
+                        </div>
+                    )}
 
                     <hr className="border-divider" />
                     <ExpirySelector

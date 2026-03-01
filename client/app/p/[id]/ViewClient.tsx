@@ -7,6 +7,8 @@ import PostcardRenderer from "@/components/postcard/PostcardRenderer";
 import PasswordGate from "@/components/postcard/PasswordGate";
 import { apiUrl } from "@/lib/api";
 import { ApiPostcardResponse } from "@/types/postcard";
+import { useAuth } from "@/components/auth/AuthProvider";
+import Link from "next/link";
 
 interface ViewClientProps {
     postcardId: string;
@@ -17,6 +19,7 @@ interface ViewClientProps {
 export default function ViewClient({ postcardId, initialData, status }: ViewClientProps) {
     const searchParams = useSearchParams();
     const isCreator = searchParams.get("created") === "true";
+    const { user, loading: authLoading } = useAuth();
 
     const [phase, setPhase] = useState<"loading" | "password" | "envelope" | "reveal">(
         () => {
@@ -176,12 +179,29 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                 >
                                     {copied ? "copied!" : "copy link"}
                                 </button>
-                                <a
+                                <Link
                                     href="/create"
                                     className="font-sans text-body-sm text-accent-muted hover:text-ink-secondary transition-colors duration-150"
                                 >
                                     create another
-                                </a>
+                                </Link>
+
+                                {!authLoading && !user && (
+                                    <div className="flex flex-col items-center mt-12 pt-12 border-t border-divider w-full max-w-[400px]">
+                                        <h2 className="font-serif text-center text-ink text-xl mb-2">
+                                            Keep this postcard safe.
+                                        </h2>
+                                        <p className="font-sans text-center text-ink-secondary text-sm mb-6 leading-relaxed">
+                                            Create an account to save your postcards and continue the conversation later.
+                                        </p>
+                                        <Link
+                                            href={`/register?claimPostcardId=${postcard.id}`}
+                                            className="inline-flex items-center justify-center bg-transparent border border-neutral-300 text-ink font-sans text-body-sm tracking-ui px-8 py-2 rounded-sm min-h-[44px] hover:bg-black/5 active:bg-black/10 transition-colors duration-150"
+                                        >
+                                            Create an account
+                                        </Link>
+                                    </div>
+                                )}
                             </>
                         ) : (
                             <>

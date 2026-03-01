@@ -21,7 +21,9 @@ export default function FrontSide({ postcard }: FrontSideProps) {
             className="relative w-full h-full bg-white overflow-hidden flex items-center justify-center"
         >
             {/* Loading Indicator */}
-            {!isLoaded && <PostcardLoader />}
+            <div className={`absolute inset-0 transition-opacity duration-200 ease-subtle ${isLoaded ? "opacity-0 pointer-events-none" : "opacity-100 z-20"}`}>
+                <PostcardLoader />
+            </div>
 
             {postcard.mediaType === "image" ? (
                 <Image
@@ -29,7 +31,7 @@ export default function FrontSide({ postcard }: FrontSideProps) {
                     alt={postcard.title}
                     fill
                     sizes="(max-width: 640px) 100vw, 640px"
-                    className={`object-cover object-center z-10 transition-opacity duration-200 ease-in-out ${isLoaded ? "opacity-100" : "opacity-0"
+                    className={`object-cover object-center z-10 transition-opacity duration-200 ease-subtle ${isLoaded ? "opacity-100" : "opacity-0"
                         }`}
                     priority
                     draggable={false}
@@ -43,7 +45,7 @@ export default function FrontSide({ postcard }: FrontSideProps) {
                     loop
                     autoPlay
                     preload="none"
-                    className={`absolute inset-0 w-full h-full object-cover object-center z-10 transition-opacity duration-200 ease-in-out ${isLoaded ? "opacity-100" : "opacity-0"
+                    className={`absolute inset-0 w-full h-full object-cover object-center z-10 transition-opacity duration-200 ease-subtle ${isLoaded ? "opacity-100" : "opacity-0"
                         }`}
                     aria-label={postcard.title}
                     onLoadedData={() => setIsLoaded(true)}

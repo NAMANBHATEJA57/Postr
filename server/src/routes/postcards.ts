@@ -4,10 +4,11 @@ import { generateId } from "../lib/nanoid.js";
 import { hashPassword } from "../lib/password.js";
 import { checkCreateLimit } from "../lib/ratelimit.js";
 import { prisma } from "../lib/prisma.js";
+import { requireAuth, optionalAuth } from "../middleware/auth.js";
 
 const router = Router();
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", optionalAuth, async (req: Request, res: Response) => {
   const ip = req.headers["x-forwarded-for"]?.toString().split(",")[0].trim() ?? "unknown";
   const { allowed, retryAfter } = checkCreateLimit(ip);
 
@@ -26,7 +27,18 @@ router.post("/", async (req: Request, res: Response) => {
     });
   }
 
-  const { password, expiryAt, stampId, ...data } = parsed.data;
+  const { password, expiryAt, stampId, conversationId, ...data } = parsed.data;
+  const userId = req.user?.id;
+
+  if (conversationId) {
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized for this conversation" });
+    }
+    const conv = await prisma.conversation.findUnique({ where: { id: conversationId } });
+    if (!conv || (conv.userOneId !== userId && conv.userTwoId !== userId)) {
+      return res.status(403).json({ error: "Unauthorized for this conversation" });
+    }
+  }
 
   const id = generateId();
   const passwordHash = password ? await hashPassword(password) : null;
@@ -39,12 +51,14 @@ router.post("/", async (req: Request, res: Response) => {
         mediaType: data.mediaType,
         title: data.title,
         message: data.message,
-        toName: data.toName,
-        fromName: data.fromName,
+        toName: data.toName ?? "",
+        fromName: data.fromName ?? "",
         theme: data.theme,
         expiryAt: expiryAt ? new Date(expiryAt) : null,
         passwordHash,
         stampId: stampId ?? null,
+        conversationId: conversationId ?? null,
+        senderId: userId ?? null,
       },
     });
   } catch (err) {

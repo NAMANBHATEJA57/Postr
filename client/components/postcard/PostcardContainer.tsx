@@ -24,8 +24,8 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
     const [flipped, setFlipped] = useState(false);
     const prefersReducedMotion = useReducedMotion();
 
-    const DURATION = "360ms";
-    const EASE = "cubic-bezier(0.33, 1, 0.68, 1)";
+    const DURATION = "500ms";
+    const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 
     return (
         <div

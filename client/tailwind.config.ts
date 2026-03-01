@@ -44,13 +44,33 @@ const config: Config = {
         ui: "0.04em",
       },
       animation: {
-        "fade-in": "fadeIn 200ms ease-out forwards",
+        "fade-in": "fadeIn 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "fade-in-up": "fadeInUp 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "fade-in-up-card": "fadeInUpCard 250ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
         "shimmer": "shimmer 1.5s infinite linear",
+      },
+      transitionTimingFunction: {
+        "subtle": "cubic-bezier(0.4, 0, 0.2, 1)",
+      },
+      transitionDuration: {
+        "150": "150ms",
+        "200": "200ms",
+        "250": "250ms",
+        "400": "400ms",
+        "500": "500ms",
       },
       keyframes: {
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
+        },
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(6px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeInUpCard: {
+          "0%": { opacity: "0", transform: "translateY(8px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
         shimmer: {
           "0%": { transform: "translateX(-100%)" },

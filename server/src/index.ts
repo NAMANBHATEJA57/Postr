@@ -11,6 +11,8 @@ import uploadRouter from "./routes/upload.js";
 import postcardsRouter from "./routes/postcards.js";
 import postcardByIdRouter from "./routes/postcardById.js";
 import unlockRouter from "./routes/unlock.js";
+import authRouter from "./routes/auth.js";
+import conversationsRouter from "./routes/conversations.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -27,6 +29,8 @@ app.use(cookieParser());
 app.use(express.json({ limit: "10kb" }));
 
 app.use("/api/upload", uploadRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/conversations", conversationsRouter);
 app.use("/api/postcards", unlockRouter);
 app.use("/api/postcards", postcardByIdRouter);
 app.use("/api/postcards", postcardsRouter);

@@ -1,16 +1,17 @@
 import { z } from "zod";
 
 export const createPostcardSchema = z.object({
-  mediaUrl: z.string().url("Invalid media URL"),
+  mediaUrl: z.string().url("Valid media URL is required"),
   mediaType: z.enum(["image", "video"]),
-  title: z.string().min(1, "Title is required").max(40, "Title max 40 characters"),
-  message: z.string().min(1, "Message is required").max(120, "Message max 120 characters"),
-  toName: z.string().min(1, "To name is required").max(60, "To name max 60 characters"),
-  fromName: z.string().min(1, "From name is required").max(60, "From name max 60 characters"),
-  theme: z.enum(["framed"]).default("framed"),
-  expiryAt: z.string().datetime().nullable().optional(),
-  password: z.string().min(4).max(100).optional(),
-  stampId: z.string().nullable().optional(),
+  title: z.string().min(1, "Title is required").max(60, "Title is too long"),
+  message: z.string().min(1, "Message is required").max(500, "Message is too long"),
+  toName: z.string().optional(),
+  fromName: z.string().optional(),
+  theme: z.string().default("minimal-light"),
+  expiryAt: z.string().optional(),
+  password: z.string().optional(),
+  stampId: z.string().optional(),
+  conversationId: z.string().optional(),
 });
 
 export const unlockPostcardSchema = z.object({

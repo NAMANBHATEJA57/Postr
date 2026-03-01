@@ -1,6 +1,4 @@
 {
   "/page": "app/page.js",
-  "/create/page": "app/create/page.js",
-  "/p/[id]/page": "app/p/[id]/page.js",
-  "/_not-found/page": "app/_not-found/page.js"
+  "/create/page": "app/create/page.js"
 }
