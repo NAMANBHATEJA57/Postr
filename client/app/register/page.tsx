@@ -36,7 +36,12 @@ export default function RegisterPage() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify({ name, email, password, claimPostcardId }),
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    ...(claimPostcardId ? { claimPostcardId } : {})
+                }),
             });
 
             const data = await res.json();
