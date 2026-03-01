@@ -1,8 +1,9 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
-const MAX_VIDEO_SIZE = 25 * 1024 * 1024; // 25MB
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;  // 5 MB
+const MAX_GIF_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_VIDEO_SIZE = 25 * 1024 * 1024; // 25 MB
 
 function getR2Client(): S3Client {
   const accountId = process.env.R2_ACCOUNT_ID;
@@ -33,6 +34,10 @@ export function validateFileSize(
   if (fileType.startsWith("video/")) {
     if (fileSize > MAX_VIDEO_SIZE) {
       return { valid: false, error: "Video must be under 25MB" };
+    }
+  } else if (fileType === "image/gif") {
+    if (fileSize > MAX_GIF_SIZE) {
+      return { valid: false, error: "GIF must be under 10MB" };
     }
   } else {
     if (fileSize > MAX_IMAGE_SIZE) {

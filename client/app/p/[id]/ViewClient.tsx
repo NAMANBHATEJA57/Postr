@@ -10,6 +10,11 @@ import { ApiPostcardResponse } from "@/types/postcard";
 import { useAuth } from "@/components/auth/AuthProvider";
 import Link from "next/link";
 
+function daysUntil(isoDate: string): number {
+    const diff = new Date(isoDate).getTime() - Date.now();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
 interface ViewClientProps {
     postcardId: string;
     initialData: ApiPostcardResponse | null;
@@ -131,18 +136,29 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                         {copied ? "copied" : "copy"}
                                     </button>
                                 </div>
+
+                                {/* Creator expiry notice for guest */}
+                                {!authLoading && !user && postcard.expiryAt && (
+                                    <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8125rem", color: "#C7C0B8", marginTop: "0.75rem", textAlign: "center" }}>
+                                        This postcard will be available for 7 days.{" "}
+                                        <Link href={`/register?claimPostcardId=${postcard.id}`} style={{ color: "#A6998D", textDecoration: "underline" }}>
+                                            Create an account
+                                        </Link>{" "}to keep it forever.
+                                    </p>
+                                )}
                             </>
                         ) : (
                             <>
                                 <p
                                     style={{
-                                        fontFamily: "Inter, system-ui, sans-serif",
-                                        fontSize: "1rem",
-                                        color: "#555555",
-                                        lineHeight: 1.6,
+                                        fontFamily: "var(--font-playfair), Georgia, serif",
+                                        fontSize: "clamp(1.25rem, 4vw, 1.75rem)",
+                                        color: "#1A1A1A",
+                                        lineHeight: 1.3,
+                                        fontStyle: "italic",
                                     }}
                                 >
-                                    {postcard.fromName.toLowerCase()} sent you a postcard.
+                                    a postcard from {postcard.fromName.toLowerCase()}.
                                 </p>
                                 <p
                                     style={{
@@ -154,6 +170,12 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                 >
                                     to {postcard.toName.toLowerCase()}
                                 </p>
+                                {/* Receiver expiry notice — muted, no alarm */}
+                                {postcard.expiryAt && (
+                                    <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8125rem", color: "#C7C0B8", marginTop: "0.5rem" }}>
+                                        This postcard expires in {daysUntil(postcard.expiryAt)} day{daysUntil(postcard.expiryAt) !== 1 ? "s" : ""}.
+                                    </p>
+                                )}
                             </>
                         )}
                     </div>
@@ -192,31 +214,60 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                             Keep this postcard safe.
                                         </h2>
                                         <p className="font-sans text-center text-ink-secondary text-sm mb-6 leading-relaxed">
-                                            Create an account to save your postcards and continue the conversation later.
+                                            Create an account to save it and continue the conversation.
                                         </p>
                                         <Link
                                             href={`/register?claimPostcardId=${postcard.id}`}
                                             className="inline-flex items-center justify-center bg-transparent border border-neutral-300 text-ink font-sans text-body-sm tracking-ui px-8 py-2 rounded-sm min-h-[44px] hover:bg-black/5 active:bg-black/10 transition-colors duration-150"
                                         >
-                                            Create an account
+                                            Sign up
                                         </Link>
                                     </div>
                                 )}
                             </>
                         ) : (
+                            /* Receiver view: auth-aware CTA */
                             <>
-                                <a
-                                    href="/create"
-                                    className="inline-flex items-center justify-center bg-accent text-white font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:bg-[#958879] active:bg-[#877A6E] transition-colors duration-150 select-none"
-                                >
-                                    create yours
-                                </a>
-                                <a
-                                    href="/create"
-                                    className="font-sans text-body-sm text-accent-muted hover:text-ink-secondary transition-colors duration-150"
-                                >
-                                    send one back
-                                </a>
+                                {!authLoading && user ? (
+                                    /* Logged in: reply to this postcard */
+                                    <>
+                                        <a
+                                            href={postcard.conversationId
+                                                ? `/create?conversationId=${postcard.conversationId}`
+                                                : "/create"}
+                                            className="inline-flex items-center justify-center bg-accent text-white font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:bg-[#958879] active:bg-[#877A6E] transition-colors duration-150 select-none"
+                                        >
+                                            Reply with a postcard
+                                        </a>
+                                    </>
+                                ) : (
+                                    /* Not logged in: generic create + signup nudge */
+                                    <>
+                                        <a
+                                            href="/create"
+                                            className="inline-flex items-center justify-center bg-accent text-white font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:bg-[#958879] active:bg-[#877A6E] transition-colors duration-150 select-none"
+                                        >
+                                            create yours
+                                        </a>
+
+                                        {!authLoading && (
+                                            <div className="flex flex-col items-center mt-12 pt-12 border-t border-divider w-full max-w-[400px]">
+                                                <h2 className="font-serif text-center text-ink text-xl mb-2">
+                                                    Want to keep this conversation?
+                                                </h2>
+                                                <p className="font-sans text-center text-ink-secondary text-sm mb-6 leading-relaxed">
+                                                    Create an account to save your postcards and reply later.
+                                                </p>
+                                                <Link
+                                                    href="/register"
+                                                    className="inline-flex items-center justify-center bg-transparent border border-neutral-300 text-ink font-sans text-body-sm tracking-ui px-8 py-2 rounded-sm min-h-[44px] hover:bg-black/5 active:bg-black/10 transition-colors duration-150"
+                                                >
+                                                    Sign up
+                                                </Link>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                             </>
                         )}
                     </div>

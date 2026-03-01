@@ -3,9 +3,11 @@
 import { useRef, useState, useCallback } from "react";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const ACCEPTED_GIF_TYPES = ["image/gif"];
 const ACCEPTED_VIDEO_TYPES = ["video/mp4"];
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-const MAX_VIDEO_SIZE = 25 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;   // 5 MB
+const MAX_GIF_SIZE = 10 * 1024 * 1024;  // 10 MB
+const MAX_VIDEO_SIZE = 25 * 1024 * 1024;  // 25 MB
 
 interface MediaUploadProps {
     onFile: (file: File | null) => void;
@@ -13,27 +15,30 @@ interface MediaUploadProps {
 }
 
 type UploadState = "idle" | "invalid-type" | "too-large";
+type FileCategory = "image" | "gif" | "video" | null;
 
 export default function MediaUpload({ onFile, error }: MediaUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [preview, setPreview] = useState<string | null>(null);
-    const [fileType, setFileType] = useState<"image" | "video" | null>(null);
+    const [fileCategory, setFileCategory] = useState<FileCategory>(null);
     const [uploadState, setUploadState] = useState<UploadState>("idle");
     const [isDragging, setIsDragging] = useState(false);
 
     const validateAndSet = useCallback(
         (file: File) => {
             const isImage = ACCEPTED_IMAGE_TYPES.includes(file.type);
+            const isGif = ACCEPTED_GIF_TYPES.includes(file.type);
             const isVideo = ACCEPTED_VIDEO_TYPES.includes(file.type);
 
-            if (!isImage && !isVideo) {
+            if (!isImage && !isGif && !isVideo) {
                 setUploadState("invalid-type");
                 return;
             }
 
-            setFileType(isVideo ? "video" : "image");
+            const category: FileCategory = isVideo ? "video" : isGif ? "gif" : "image";
+            setFileCategory(category);
 
-            const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
+            const maxSize = isVideo ? MAX_VIDEO_SIZE : isGif ? MAX_GIF_SIZE : MAX_IMAGE_SIZE;
             if (file.size > maxSize) {
                 setUploadState("too-large");
                 return;
@@ -61,7 +66,7 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
 
     const handleRemove = () => {
         setPreview(null);
-        setFileType(null);
+        setFileCategory(null);
         setUploadState("idle");
         onFile(null);
         if (inputRef.current) inputRef.current.value = "";
@@ -70,11 +75,13 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
     const errorMessage =
         error ??
         (uploadState === "invalid-type"
-            ? "Only JPG, PNG, WebP, or MP4 files are allowed."
+            ? "Only JPG, PNG, WebP, GIF, or MP4 files are allowed."
             : uploadState === "too-large"
-                ? fileType === "video"
+                ? fileCategory === "video"
                     ? "Video must be under 25MB."
-                    : "Image must be under 5MB."
+                    : fileCategory === "gif"
+                        ? "GIF must be under 10MB."
+                        : "Image must be under 5MB."
                 : null);
 
     return (
@@ -116,13 +123,14 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
                         <span className="text-body-sm text-ink-secondary">
                             Tap to upload a photo or video
                         </span>
-                        <span className="text-body-sm text-accent-muted">
-                            JPG, PNG, WebP · max 5MB &nbsp;·&nbsp; MP4 · max 25MB
+                        <span className="text-body-sm text-accent-muted text-center leading-relaxed">
+                            JPG, PNG, WebP up to 5MB<br />
+                            GIF up to 10MB · MP4 up to 25MB
                         </span>
                         <input
                             ref={inputRef}
                             type="file"
-                            accept=".jpg,.jpeg,.png,.webp,.mp4"
+                            accept=".jpg,.jpeg,.png,.webp,.gif,.mp4"
                             className="sr-only"
                             tabIndex={-1}
                             onChange={handleInputChange}
@@ -132,18 +140,21 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
                 ) : (
                     /* Preview — fills the 16:9 container with object-cover */
                     <>
-                        {fileType === "image" ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                                src={preview}
-                                alt="Selected media preview"
-                                className="absolute inset-0 w-full h-full object-cover object-center"
-                            />
-                        ) : (
+                        {fileCategory === "video" ? (
                             <video
                                 src={preview}
                                 muted
                                 playsInline
+                                loop
+                                autoPlay
+                                preload="metadata"
+                                className="absolute inset-0 w-full h-full object-cover object-center"
+                            />
+                        ) : (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                                src={preview}
+                                alt="Selected media preview"
                                 className="absolute inset-0 w-full h-full object-cover object-center"
                             />
                         )}

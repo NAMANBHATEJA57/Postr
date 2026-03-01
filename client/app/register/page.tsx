@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Input from "@/components/ui/Input";
@@ -12,12 +12,18 @@ export default function RegisterPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const claimPostcardId = searchParams.get("claimPostcardId");
-    const { setUser } = useAuth();
+    const { user, setUser } = useAuth();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (user) {
+            router.push("/dashboard");
+        }
+    }, [user, router]);
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();

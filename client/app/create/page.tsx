@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import MediaUpload from "@/components/create/MediaUpload";
@@ -36,9 +36,6 @@ export default function CreatePage() {
     const conversationId = searchParams.get("conversationId");
     const { user, loading: authLoading } = useAuth();
 
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => { setMounted(true); }, []);
-
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [title, setTitle] = useState("");
     const [message, setMessage] = useState("");
@@ -49,7 +46,6 @@ export default function CreatePage() {
     const [customDate, setCustomDate] = useState("");
     const [passwordEnabled, setPasswordEnabled] = useState(false);
     const [password, setPassword] = useState("");
-
     const [uploading, setUploading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
@@ -110,18 +106,16 @@ export default function CreatePage() {
                     toName: conversationId ? "Recipient" : toName.trim(),
                     fromName: conversationId ? "Sender" : fromName.trim(),
                     theme: "framed",
-                    stampId: stampId || undefined,
-                    expiryAt,
-                    password: passwordEnabled && password ? password : undefined,
-                    conversationId: conversationId || undefined,
+                    ...(stampId ? { stampId } : {}),
+                    ...(expiryAt ? { expiryAt } : {}),
+                    ...(passwordEnabled && password ? { password } : {}),
+                    ...(conversationId ? { conversationId } : {}),
                 }),
             });
 
             if (!createRes.ok) {
                 const err = await createRes.json();
-                if (createRes.status === 429) {
-                    throw new Error("Too many postcards. Try again later.");
-                }
+                if (createRes.status === 429) throw new Error("Too many postcards. Try again later.");
                 throw new Error(err.error ?? "Failed to create postcard");
             }
 
@@ -138,217 +132,308 @@ export default function CreatePage() {
         }
     }, [mediaFile, submitting, title, message, toName, fromName, stampId, expiry, customDate, passwordEnabled, password, router, conversationId]);
 
+    const buttonLabel = uploading ? "uploading…" : submitting ? "creating…" : "create postcard";
+
     return (
-        <main className="min-h-dvh px-5 py-12 md:py-16">
-            <div className="w-full max-w-postcard mx-auto flex flex-col gap-10">
-                <header className="flex flex-row items-center gap-3 mb-6">
-                    <Image
-                        src="/Logo.png"
-                        alt="postr logo"
-                        width={32}
-                        height={32}
-                        className="w-[32px] h-[32px] object-contain"
-                        priority
-                        draggable={false}
-                    />
-                    <a href="/" className="font-serif text-ink text-2xl font-semibold tracking-tight">
-                        postr
-                    </a>
-                </header>
+        <>
+            <main className="min-h-dvh px-5 pb-28 md:pb-16">
+                <div className="w-full max-w-[720px] mx-auto flex flex-col">
 
-                <h1 className="font-serif text-h2 text-ink">write your postcard.</h1>
-                <div className="flex flex-col gap-1 -mt-6">
-                    <p className="text-body-sm text-ink-secondary">
-                        keep it short. make it meaningful.
-                    </p>
-                    {/* UI Mode Indicator */}
-                    {!authLoading && (
-                        <div className="mt-2 flex flex-col gap-1">
-                            {!user ? (
-                                <>
-                                    <p className="text-xs text-ink-secondary opacity-70">
-                                        You&apos;re sending as a guest.
-                                    </p>
-                                    <Link href="/register" className="text-xs text-accent hover:text-ink transition-colors">
-                                        Create an account to save your postcards.
-                                    </Link>
-                                </>
-                            ) : (
-                                <p className="text-xs text-ink-secondary opacity-70">
-                                    Sending from your account.
-                                </p>
-                            )}
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex flex-col gap-8">
-                    <section aria-labelledby="media-section">
-                        <h2 id="media-section" className="text-body-sm text-ink-secondary mb-3">
-                            Media
-                        </h2>
-                        <MediaUpload
-                            onFile={setMediaFile}
-                        />
-                    </section>
-
-                    <hr className="border-divider" />
-
-                    <div className="flex flex-col gap-1">
-                        <div className="flex justify-between items-end">
-                            <label htmlFor="title-input" className="text-body-sm text-ink-secondary">
-                                Title
-                            </label>
-                            <CharacterCounter current={title.length} max={40} warnAt={30} />
-                        </div>
-                        <input
-                            id="title-input"
-                            type="text"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value.slice(0, 40))}
-                            placeholder="Title of your postcard"
-                            maxLength={40}
-                            required
-                            className="w-full bg-transparent text-ink font-serif text-xl border-b border-divider pb-2 outline-none focus:border-ink transition-colors duration-150 placeholder:text-accent-muted"
-                            aria-describedby="title-counter"
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                        <div className="flex justify-between items-end">
-                            <label htmlFor="message-input" className="text-body-sm text-ink-secondary">
-                                Message
-                            </label>
-                            <CharacterCounter current={message.length} max={120} warnAt={90} />
-                        </div>
-                        <textarea
-                            id="message-input"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            placeholder="Write your message here..."
-                            maxLength={120}
-                            required
-                            rows={3}
-                            className="w-full bg-transparent text-ink text-body-lg font-sans border-b border-divider pb-2 outline-none focus:border-ink transition-colors duration-150 placeholder:text-accent-muted resize-none overflow-hidden"
-                            style={{ lineHeight: "1.6" }}
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-3">
-                        <h2 className="text-body-sm text-ink-secondary">
-                            add a stamp (optional)
-                        </h2>
-                        <div
-                            className="flex items-center gap-3 overflow-x-auto pb-2 snap-x"
-                            style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
+                    {/* ── Back link ── */}
+                    <div style={{ paddingTop: "28px", paddingBottom: "32px" }}>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (window.history.length > 1) router.back();
+                                else router.push("/");
+                            }}
+                            style={{
+                                fontFamily: "Inter, sans-serif",
+                                fontSize: "0.875rem",
+                                fontWeight: 400,
+                                color: "#6B635A",
+                                opacity: 0.7,
+                                background: "none",
+                                border: "none",
+                                cursor: "pointer",
+                                padding: 0,
+                                textDecoration: "none",
+                                transition: "opacity 150ms ease",
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.opacity = "1";
+                                e.currentTarget.style.textDecoration = "underline";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.opacity = "0.7";
+                                e.currentTarget.style.textDecoration = "none";
+                            }}
+                            aria-label="Go back"
                         >
-                            {(Object.entries(STAMPS) as [StampId, typeof STAMPS[StampId]][]).map(([id, Stamp]) => {
-                                const isSelected = stampId === id;
-                                return (
-                                    <button
-                                        key={id}
-                                        type="button"
-                                        onClick={() => setStampId(isSelected ? null : id)}
-                                        className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 snap-start flex items-center justify-center bg-white transition-all duration-150 ease-subtle cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ink rounded-md [&>svg]:max-w-[80%] [&>svg]:max-h-[80%] [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain ${isSelected
-                                            ? "border-2 border-black shadow-md scale-[1.02]"
-                                            : "border border-neutral-200 hover:scale-[1.02] hover:shadow-sm"
-                                            }`}
-                                        aria-pressed={isSelected}
-                                        aria-label={`Select ${id} stamp`}
-                                    >
-                                        <Stamp />
-                                        {isSelected && (
-                                            <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-black rounded-full" />
-                                        )}
-                                    </button>
-                                );
-                            })}
-                        </div>
+                            ← back
+                        </button>
                     </div>
 
-                    {!conversationId && (
-                        <div className="flex flex-col gap-6">
-                            <Input
-                                id="to-input"
-                                label="To"
-                                value={toName}
-                                onChange={(e) => setToName(e.target.value.slice(0, 60))}
-                                placeholder="their name"
-                                maxLength={60}
-                                required
-                            />
-                            <Input
-                                id="from-input"
-                                label="From"
-                                value={fromName}
-                                onChange={(e) => setFromName(e.target.value.slice(0, 60))}
-                                placeholder="your name"
-                                maxLength={60}
-                                required
-                            />
-                        </div>
-                    )}
+                    {/* ── Editorial hero ── */}
+                    <div
+                        className="flex flex-col items-center text-center"
+                        style={{ marginBottom: "48px", gap: 0 }}
+                    >
+                        {/* Postcard icon */}
+                        <Image
+                            src="/Logo.png"
+                            alt="postr logo"
+                            width={32}
+                            height={32}
+                            className="object-contain"
+                            priority
+                            draggable={false}
+                        />
 
-                    <hr className="border-divider" />
-                    <ExpirySelector
-                        value={expiry}
-                        customDate={customDate}
-                        onChange={handleExpiryChange}
-                    />
+                        {/* Wordmark */}
+                        <a
+                            href="/"
+                            className="font-serif text-ink tracking-tight"
+                            style={{ fontSize: "1.375rem", fontWeight: 600, marginTop: "12px", lineHeight: 1 }}
+                        >
+                            postr
+                        </a>
 
-                    <div className="flex flex-col gap-3">
-                        <label className="flex items-center gap-3 cursor-pointer select-none min-h-[44px]">
-                            <span
-                                role="checkbox"
-                                aria-checked={passwordEnabled}
-                                tabIndex={0}
-                                onClick={() => setPasswordEnabled((p) => !p)}
-                                onKeyDown={(e) => e.key === "Enter" && setPasswordEnabled((p) => !p)}
-                                className={`w-10 h-6 flex-shrink-0 relative transition-colors duration-150 cursor-pointer ${passwordEnabled ? "bg-ink" : "bg-divider"
-                                    }`}
+                        {/* Heading */}
+                        <h1
+                            className="font-serif text-ink"
+                            style={{
+                                fontSize: "clamp(2rem, 6vw, 3rem)",
+                                lineHeight: 1.15,
+                                marginTop: "24px",
+                                marginBottom: 0,
+                                letterSpacing: "-0.01em",
+                            }}
+                        >
+                            write your postcard.
+                        </h1>
+
+                        {/* Subtext */}
+                        <p
+                            style={{
+                                fontFamily: "Inter, sans-serif",
+                                fontSize: "1rem",
+                                color: "#6B635A",
+                                marginTop: "12px",
+                                opacity: 0.85,
+                            }}
+                        >
+                            keep it short. make it meaningful.
+                        </p>
+
+                        {/* Guest notice — quiet, not a UI element */}
+                        {!authLoading && !user && (
+                            <p
+                                style={{
+                                    fontFamily: "Inter, sans-serif",
+                                    fontSize: "0.8125rem",
+                                    color: "#C7C0B8",
+                                    marginTop: "10px",
+                                }}
                             >
-                                <span
-                                    className={`absolute top-1 h-4 w-4 bg-linen transition-all duration-150 ${passwordEnabled ? "left-5" : "left-1"
-                                        }`}
-                                />
-                            </span>
-                            <span className="text-body-sm text-ink-secondary">
-                                Protect with password
-                            </span>
-                        </label>
-                        {passwordEnabled && (
-                            <Input
-                                id="password-input"
-                                type="password"
-                                label="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value.slice(0, 100))}
-                                placeholder="Enter a password"
-                                autoComplete="new-password"
-                            />
+                                You&apos;re sending as a guest.{" "}
+                                <Link
+                                    href="/register"
+                                    style={{ color: "#A6998D", textDecoration: "underline", textUnderlineOffset: "2px" }}
+                                >
+                                    Create an account
+                                </Link>{" "}
+                                to save your postcards.
+                            </p>
                         )}
                     </div>
 
-                    {submitError && (
-                        <p role="alert" className="text-body-sm text-red-500">
-                            {submitError}
-                        </p>
-                    )}
+                    {/* ── Form sections ── */}
+                    <div className="flex flex-col" style={{ gap: "40px" }}>
 
-                    <div className="pt-4 pb-12">
-                        <Button
-                            onClick={handlePublish}
-                            disabled={!isPublishable}
-                            loading={submitting || uploading}
-                            size="lg"
-                            className="w-full"
-                            aria-label="Create postcard"
-                        >
-                            {uploading ? "uploading…" : submitting ? "creating…" : "create postcard"}
-                        </Button>
+                        {/* Media */}
+                        <section>
+                            <MediaUpload onFile={setMediaFile} />
+                        </section>
+
+                        <div className="h-px bg-black/8" />
+
+                        {/* Title */}
+                        <div className="flex flex-col gap-1">
+                            <div className="flex justify-between items-end">
+                                <label htmlFor="title-input" className="text-body-sm text-ink-secondary">title</label>
+                                <CharacterCounter current={title.length} max={40} warnAt={30} />
+                            </div>
+                            <input
+                                id="title-input"
+                                type="text"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value.slice(0, 40))}
+                                placeholder="Title of your postcard"
+                                maxLength={40}
+                                required
+                                className="w-full bg-transparent text-ink font-serif text-xl border-b border-divider pb-2 outline-none focus:border-ink transition-colors duration-150 placeholder:text-accent-muted"
+                            />
+                        </div>
+
+                        {/* Message */}
+                        <div className="flex flex-col gap-1">
+                            <div className="flex justify-between items-end">
+                                <label htmlFor="message-input" className="text-body-sm text-ink-secondary">message</label>
+                                <CharacterCounter current={message.length} max={120} warnAt={90} />
+                            </div>
+                            <textarea
+                                id="message-input"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                placeholder="Write your message here..."
+                                maxLength={120}
+                                required
+                                rows={3}
+                                className="w-full bg-transparent text-ink text-body-lg font-sans border-b border-divider pb-2 outline-none focus:border-ink transition-colors duration-150 placeholder:text-accent-muted resize-none"
+                                style={{ lineHeight: "1.6" }}
+                            />
+                        </div>
+
+                        {/* Stamps */}
+                        <div className="flex flex-col gap-3">
+                            <p className="text-body-sm text-ink-secondary">add a stamp (optional)</p>
+                            <div
+                                className="flex items-center gap-3 overflow-x-auto pb-2 snap-x"
+                                style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
+                            >
+                                {(Object.entries(STAMPS) as [StampId, typeof STAMPS[StampId]][]).map(([id, Stamp]) => {
+                                    const isSelected = stampId === id;
+                                    return (
+                                        <button
+                                            key={id}
+                                            type="button"
+                                            onClick={() => setStampId(isSelected ? null : id)}
+                                            className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 snap-start flex items-center justify-center bg-white transition-all duration-150 ease-subtle cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ink rounded-md [&>svg]:max-w-[80%] [&>svg]:max-h-[80%] [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain ${isSelected
+                                                ? "border-2 border-black shadow-md scale-[1.02]"
+                                                : "border border-neutral-200 hover:scale-[1.02] hover:shadow-sm"
+                                                }`}
+                                            aria-pressed={isSelected}
+                                            aria-label={`Select ${id} stamp`}
+                                        >
+                                            <Stamp />
+                                            {isSelected && (
+                                                <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-black rounded-full" />
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* To / From */}
+                        {!conversationId && (
+                            <>
+                                <div className="h-px bg-black/8" />
+                                <div className="flex flex-col gap-6">
+                                    <Input
+                                        id="to-input"
+                                        label="To"
+                                        value={toName}
+                                        onChange={(e) => setToName(e.target.value.slice(0, 60))}
+                                        placeholder="their name"
+                                        maxLength={60}
+                                        required
+                                    />
+                                    <Input
+                                        id="from-input"
+                                        label="From"
+                                        value={fromName}
+                                        onChange={(e) => setFromName(e.target.value.slice(0, 60))}
+                                        placeholder="your name"
+                                        maxLength={60}
+                                        required
+                                    />
+                                </div>
+                            </>
+                        )}
+
+                        <div className="h-px bg-black/8" />
+
+                        {/* Expiry — available for everyone */}
+                        <ExpirySelector
+                            value={expiry}
+                            customDate={customDate}
+                            onChange={handleExpiryChange}
+                        />
+
+                        {/* Password */}
+                        <div className="flex flex-col gap-3">
+                            <label className="flex items-center gap-3 cursor-pointer select-none min-h-[44px]">
+                                <span
+                                    role="checkbox"
+                                    aria-checked={passwordEnabled}
+                                    tabIndex={0}
+                                    onClick={() => setPasswordEnabled((p) => !p)}
+                                    onKeyDown={(e) => e.key === "Enter" && setPasswordEnabled((p) => !p)}
+                                    className={`w-10 h-6 flex-shrink-0 relative transition-colors duration-150 cursor-pointer ${passwordEnabled ? "bg-ink" : "bg-divider"}`}
+                                >
+                                    <span
+                                        className={`absolute top-1 h-4 w-4 bg-linen transition-all duration-150 ${passwordEnabled ? "left-5" : "left-1"}`}
+                                    />
+                                </span>
+                                <span className="text-body-sm text-ink-secondary">Protect with password</span>
+                            </label>
+                            {passwordEnabled && (
+                                <Input
+                                    id="password-input"
+                                    type="password"
+                                    label="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value.slice(0, 100))}
+                                    placeholder="Enter a password"
+                                    autoComplete="new-password"
+                                />
+                            )}
+                        </div>
+
+                        {submitError && (
+                            <p role="alert" className="text-body-sm text-red-500">{submitError}</p>
+                        )}
+
+                        {/* Desktop submit */}
+                        <div className="hidden md:block pt-2 pb-16">
+                            <Button
+                                onClick={handlePublish}
+                                disabled={!isPublishable}
+                                loading={submitting || uploading}
+                                size="lg"
+                                className="w-full"
+                                aria-label="Create postcard"
+                            >
+                                {buttonLabel}
+                            </Button>
+                        </div>
                     </div>
                 </div>
+            </main>
+
+            {/* ── Sticky bottom CTA — mobile only ── */}
+            <div
+                className="md:hidden fixed bottom-0 inset-x-0 z-20 px-4 py-3"
+                style={{
+                    background: "rgba(248,244,239,0.97)",
+                    backdropFilter: "blur(8px)",
+                    borderTop: "1px solid rgba(0,0,0,0.07)",
+                }}
+            >
+                <Button
+                    onClick={handlePublish}
+                    disabled={!isPublishable}
+                    loading={submitting || uploading}
+                    size="lg"
+                    className="w-full"
+                    style={{ height: "48px" }}
+                    aria-label="Create postcard"
+                >
+                    {buttonLabel}
+                </Button>
             </div>
-        </main>
+        </>
     );
 }

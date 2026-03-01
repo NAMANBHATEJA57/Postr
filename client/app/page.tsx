@@ -7,10 +7,26 @@ export const metadata: Metadata = {
   description: "A simple way to send a moment as a digital postcard.",
 };
 
+const steps: { heading: string; body: string; large?: boolean }[] = [
+  {
+    heading: "write something real.",
+    body: "keep it short. add a photo or video if it helps.",
+  },
+  {
+    heading: "share the link.",
+    body: "no account required to receive.",
+  },
+  {
+    heading: "start something slow.",
+    body: "conversations grow over time.",
+    large: true,
+  },
+];
+
 export default function LandingPage() {
   return (
-    <main className="min-h-dvh flex flex-col items-center px-6 pt-[12vh] pb-12 bg-linen">
-      <div className="w-full max-w-postcard mx-auto flex flex-col items-center text-center">
+    <main className="min-h-dvh flex flex-col items-center px-6 pt-[12vh] pb-20 bg-linen">
+      <div className="w-full max-w-[720px] mx-auto flex flex-col items-center text-center">
 
         {/* Brand Block */}
         <div className="flex flex-col items-center mb-10">
@@ -90,7 +106,77 @@ export default function LandingPage() {
           </p>
 
         </div>
+
+        {/* ── How postr works ── */}
+        <div
+          className="w-full flex flex-col items-center"
+          style={{ maxWidth: "640px", margin: "0 auto", paddingTop: "120px", paddingBottom: "120px" }}
+        >
+          {/* Section label */}
+          <p
+            style={{
+              fontFamily: "Inter, system-ui, sans-serif",
+              fontSize: "0.875rem",
+              color: "#6B635A",
+              letterSpacing: "0.08em",
+              opacity: 0.6,
+              textTransform: "lowercase",
+              marginBottom: "56px",
+            }}
+          >
+            how postr works
+          </p>
+
+          {/* Steps */}
+          <div className="flex flex-col items-center w-full" style={{ gap: 0 }}>
+            {steps.map(({ heading, body, large }, i) => (
+              <div key={heading} className="flex flex-col items-center w-full">
+                {/* Divider between blocks */}
+                {i > 0 && (
+                  <div
+                    style={{
+                      width: "40px",
+                      height: "1px",
+                      background: "rgba(0,0,0,0.08)",
+                      margin: "48px auto",
+                    }}
+                  />
+                )}
+
+                <div className="flex flex-col items-center" style={{ gap: "10px" }}>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-playfair), Georgia, serif",
+                      fontSize: large ? "clamp(1.625rem, 4vw, 1.875rem)" : "clamp(1.375rem, 3.5vw, 1.625rem)",
+                      color: "#1A1A1A",
+                      lineHeight: 1.35,
+                      fontStyle: "italic",
+                      textAlign: "center",
+                    }}
+                  >
+                    {heading}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: "Inter, system-ui, sans-serif",
+                      fontSize: "1rem",
+                      color: "#6B635A",
+                      lineHeight: 1.65,
+                      opacity: 0.85,
+                      maxWidth: "420px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {body}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </main>
   );
 }
+

@@ -11,6 +11,7 @@ const ALLOWED_TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
+  "image/gif": "gif",
   "video/mp4": "mp4",
 };
 
@@ -30,7 +31,7 @@ router.post("/", async (req: Request, res: Response) => {
   const ext = ALLOWED_TYPES[fileType];
   if (!ext) {
     return res.status(400).json({
-      error: "Unsupported file type. Allowed: JPG, PNG, WebP, MP4.",
+      error: "Unsupported file type. Allowed: JPG, PNG, WebP, GIF, MP4.",
     });
   }
 

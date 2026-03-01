@@ -24,15 +24,23 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
     const [flipped, setFlipped] = useState(false);
     const prefersReducedMotion = useReducedMotion();
 
-    const DURATION = "500ms";
-    const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
+    const DURATION = "550ms";
+    const EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
 
     return (
         <div
             className="w-full max-w-postcard mx-auto"
             aria-label="Postcard — tap or click to flip"
         >
-            <div className="w-full aspect-[4/3] sm:aspect-[3/2] relative overflow-hidden">
+            <div
+                className="w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl overflow-hidden"
+                style={{
+                    transition: `box-shadow ${DURATION} ${EASE}`,
+                    boxShadow: flipped
+                        ? "0 10px 30px rgba(0,0,0,0.10)"
+                        : "0 6px 20px rgba(0,0,0,0.06)",
+                }}
+            >
                 {prefersReducedMotion ? (
                     /* ── Reduced motion: crossfade ── */
                     <div
@@ -72,7 +80,7 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
                 ) : (
                     /* ── Standard: Y-axis 3D flip ── */
                     <div
-                        style={{ perspective: "800px" }}
+                        style={{ perspective: "1000px" }}
                         className="absolute inset-0 cursor-pointer select-none"
                         onClick={() => setFlipped((f) => !f)}
                         onKeyDown={(e) => e.key === "Enter" && setFlipped((f) => !f)}
@@ -136,7 +144,7 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
                 }}
                 aria-hidden="true"
             >
-                {flipped ? "tap to see front" : "tap to flip"}
+                {flipped ? "tap to see the front" : "tap to turn it over"}
             </p>
         </div>
     );

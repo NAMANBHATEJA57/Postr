@@ -62,6 +62,7 @@ async function getPostcardHandler(req: Request, res: Response) {
     isPasswordProtected: Boolean(postcard.passwordHash),
     stampId: postcard.stampId ?? null,
     createdAt: postcard.createdAt.toISOString(),
+    conversationId: postcard.conversationId ?? null,
   };
 
   return res.json(response);

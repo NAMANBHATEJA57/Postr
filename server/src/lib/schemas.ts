@@ -24,6 +24,7 @@ export const uploadMetaSchema = z.object({
     "image/jpeg",
     "image/png",
     "image/webp",
+    "image/gif",
     "video/mp4",
   ]),
   fileSize: z.number().positive(),

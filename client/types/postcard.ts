@@ -49,4 +49,5 @@ export interface ApiPostcardResponse {
   isPasswordProtected: boolean;
   stampId: string | null;
   createdAt: string;
+  conversationId: string | null;
 }
