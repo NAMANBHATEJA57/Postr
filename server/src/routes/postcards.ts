@@ -27,6 +27,7 @@ router.post("/", optionalAuth, async (req: Request, res: Response) => {
     });
   }
 
+<<<<<<< HEAD
   const { password, expiryAt, stampId, conversationId, ...data } = parsed.data;
   const userId = req.user?.id;
 
@@ -39,6 +40,9 @@ router.post("/", optionalAuth, async (req: Request, res: Response) => {
       return res.status(403).json({ error: "Unauthorized for this conversation" });
     }
   }
+=======
+  const { password, expiryAt, stampId, ...data } = parsed.data;
+>>>>>>> 072997066f8e120a2459e156fc6e213a35e7d9d2
 
   const id = generateId();
   const passwordHash = password ? await hashPassword(password) : null;
@@ -57,8 +61,11 @@ router.post("/", optionalAuth, async (req: Request, res: Response) => {
         expiryAt: expiryAt ? new Date(expiryAt) : null,
         passwordHash,
         stampId: stampId ?? null,
+<<<<<<< HEAD
         conversationId: conversationId ?? null,
         senderId: userId ?? null,
+=======
+>>>>>>> 072997066f8e120a2459e156fc6e213a35e7d9d2
       },
     });
   } catch (err) {
