@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import MediaUpload from "@/components/create/MediaUpload";
@@ -30,7 +30,7 @@ function computeExpiryAt(option: ExpiryOption, customDate?: string): string | nu
     }
 }
 
-export default function CreatePage() {
+function CreatePageInner() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const conversationId = searchParams.get("conversationId");
@@ -435,5 +435,13 @@ export default function CreatePage() {
                 </Button>
             </div>
         </>
+    );
+}
+
+export default function CreatePage() {
+    return (
+        <Suspense>
+            <CreatePageInner />
+        </Suspense>
     );
 }

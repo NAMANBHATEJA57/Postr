@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Input from "@/components/ui/Input";
@@ -8,7 +8,7 @@ import Button from "@/components/ui/Button";
 import { apiUrl } from "@/lib/api";
 import { useAuth } from "@/components/auth/AuthProvider";
 
-export default function RegisterPage() {
+function RegisterPageInner() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const claimPostcardId = searchParams.get("claimPostcardId");
@@ -116,5 +116,13 @@ export default function RegisterPage() {
                 </form>
             </div>
         </main>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense>
+            <RegisterPageInner />
+        </Suspense>
     );
 }
