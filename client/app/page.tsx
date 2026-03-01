@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,10 +12,21 @@ export default function LandingPage() {
     <main className="min-h-dvh flex flex-col items-center justify-center px-6 py-20">
       <div className="w-full max-w-postcard mx-auto flex flex-col items-center gap-10 text-center">
 
-        {/* Logo */}
-        <span className="font-serif text-ink text-2xl font-semibold tracking-tight">
-          postr
-        </span>
+        {/* Logo and Brand Name */}
+        <div className="flex flex-col items-center gap-3">
+          <Image
+            src="/Logo.png"
+            alt="postr logo"
+            width={60}
+            height={60}
+            className="w-[60px] h-[60px] object-contain drop-shadow-none"
+            priority
+            draggable={false}
+          />
+          <span className="font-serif text-ink text-2xl font-semibold tracking-tight">
+            postr
+          </span>
+        </div>
 
         {/* Headline + Subtext */}
         <div className="flex flex-col items-center gap-5">

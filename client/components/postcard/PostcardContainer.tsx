@@ -32,94 +32,97 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
             className="w-full max-w-postcard mx-auto"
             aria-label="Postcard — tap or click to flip"
         >
-            {prefersReducedMotion ? (
-                /* ── Reduced motion: crossfade ── */
-                <div
-                    className="relative w-full bg-white cursor-pointer select-none"
-                    onClick={() => setFlipped((f) => !f)}
-                    onKeyDown={(e) => e.key === "Enter" && setFlipped((f) => !f)}
-                    tabIndex={0}
-                    role="button"
-                    aria-pressed={flipped}
-                    aria-label={flipped ? "Viewing back of postcard" : "Viewing front of postcard"}
-                >
-                    {/* Front face */}
+            <div className="w-full aspect-[4/3] sm:aspect-[3/2] relative overflow-hidden">
+                {prefersReducedMotion ? (
+                    /* ── Reduced motion: crossfade ── */
                     <div
-                        style={{
-                            transition: `opacity ${DURATION} ease`,
-                            opacity: flipped ? 0 : 1,
-                            position: flipped ? "absolute" : "relative",
-                            inset: 0,
-                            pointerEvents: flipped ? "none" : "auto",
-                        }}
-                    >
-                        <FrontSide postcard={postcard} />
-                    </div>
-                    {/* Back face */}
-                    <div
-                        style={{
-                            transition: `opacity ${DURATION} ease`,
-                            opacity: flipped ? 1 : 0,
-                            position: flipped ? "relative" : "absolute",
-                            inset: 0,
-                            pointerEvents: flipped ? "auto" : "none",
-                        }}
-                    >
-                        <BackSide postcard={postcard} />
-                    </div>
-                </div>
-            ) : (
-                /* ── Standard: Y-axis 3D flip ── */
-                <div
-                    style={{ perspective: "800px" }}
-                    className="w-full cursor-pointer select-none"
-                    onClick={() => setFlipped((f) => !f)}
-                    onKeyDown={(e) => e.key === "Enter" && setFlipped((f) => !f)}
-                    tabIndex={0}
-                    role="button"
-                    aria-pressed={flipped}
-                    aria-label={flipped ? "Viewing back of postcard" : "Viewing front of postcard"}
-                >
-                    {/* Flip container — rotates on Y */}
-                    <div
-                        style={{
-                            position: "relative",
-                            width: "100%",
-                            transformStyle: "preserve-3d",
-                            transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
-                            transition: `transform ${DURATION} ${EASE}`,
-                        }}
+                        className="absolute inset-0 bg-white cursor-pointer select-none"
+                        onClick={() => setFlipped((f) => !f)}
+                        onKeyDown={(e) => e.key === "Enter" && setFlipped((f) => !f)}
+                        tabIndex={0}
+                        role="button"
+                        aria-pressed={flipped}
+                        aria-label={flipped ? "Viewing back of postcard" : "Viewing front of postcard"}
                     >
                         {/* Front face */}
                         <div
                             style={{
-                                backfaceVisibility: "hidden",
-                                WebkitBackfaceVisibility: "hidden",
-                                position: "relative",
-                                width: "100%",
+                                transition: `opacity ${DURATION} ease`,
+                                opacity: flipped ? 0 : 1,
+                                position: flipped ? "absolute" : "relative",
+                                inset: 0,
+                                pointerEvents: flipped ? "none" : "auto",
                             }}
                         >
                             <FrontSide postcard={postcard} />
                         </div>
-
-                        {/* Back face — pre-rotated 180° so it starts face-down */}
+                        {/* Back face */}
                         <div
                             style={{
-                                backfaceVisibility: "hidden",
-                                WebkitBackfaceVisibility: "hidden",
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                width: "100%",
-                                height: "100%",
-                                transform: "rotateY(180deg)",
+                                transition: `opacity ${DURATION} ease`,
+                                opacity: flipped ? 1 : 0,
+                                position: flipped ? "relative" : "absolute",
+                                inset: 0,
+                                pointerEvents: flipped ? "auto" : "none",
                             }}
                         >
                             <BackSide postcard={postcard} />
                         </div>
                     </div>
-                </div>
-            )}
+                ) : (
+                    /* ── Standard: Y-axis 3D flip ── */
+                    <div
+                        style={{ perspective: "800px" }}
+                        className="absolute inset-0 cursor-pointer select-none"
+                        onClick={() => setFlipped((f) => !f)}
+                        onKeyDown={(e) => e.key === "Enter" && setFlipped((f) => !f)}
+                        tabIndex={0}
+                        role="button"
+                        aria-pressed={flipped}
+                        aria-label={flipped ? "Viewing back of postcard" : "Viewing front of postcard"}
+                    >
+                        {/* Flip container — rotates on Y */}
+                        <div
+                            style={{
+                                position: "relative",
+                                width: "100%",
+                                height: "100%",
+                                transformStyle: "preserve-3d",
+                                transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+                                transition: `transform ${DURATION} ${EASE}`,
+                            }}
+                        >
+                            {/* Front face */}
+                            <div
+                                style={{
+                                    backfaceVisibility: "hidden",
+                                    WebkitBackfaceVisibility: "hidden",
+                                    position: "absolute",
+                                    inset: 0,
+                                }}
+                            >
+                                <FrontSide postcard={postcard} />
+                            </div>
+
+                            {/* Back face — pre-rotated 180° so it starts face-down */}
+                            <div
+                                style={{
+                                    backfaceVisibility: "hidden",
+                                    WebkitBackfaceVisibility: "hidden",
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    transform: "rotateY(180deg)",
+                                }}
+                            >
+                                <BackSide postcard={postcard} />
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {/* Flip hint */}
             <p

@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import MediaUpload from "@/components/create/MediaUpload";
 import ExpirySelector from "@/components/create/ExpirySelector";
 import Input from "@/components/ui/Input";
@@ -126,8 +127,17 @@ export default function CreatePage() {
     return (
         <main className="min-h-dvh px-5 py-12 md:py-16">
             <div className="w-full max-w-postcard mx-auto flex flex-col gap-10">
-                <header className="flex items-center justify-between">
-                    <a href="/" className="font-serif text-ink text-xl font-semibold tracking-tight">
+                <header className="flex flex-row items-center gap-3 mb-6">
+                    <Image
+                        src="/Logo.png"
+                        alt="postr logo"
+                        width={32}
+                        height={32}
+                        className="w-[32px] h-[32px] object-contain"
+                        priority
+                        draggable={false}
+                    />
+                    <a href="/" className="font-serif text-ink text-2xl font-semibold tracking-tight">
                         postr
                     </a>
                 </header>
@@ -193,7 +203,7 @@ export default function CreatePage() {
                             add a stamp (optional)
                         </h2>
                         <div
-                            className="flex items-center gap-3 overflow-x-auto pb-4 snap-x"
+                            className="flex items-center gap-3 overflow-x-auto pb-2 snap-x"
                             style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
                         >
                             {(Object.entries(STAMPS) as [StampId, typeof STAMPS[StampId]][]).map(([id, Stamp]) => {
@@ -203,14 +213,17 @@ export default function CreatePage() {
                                         key={id}
                                         type="button"
                                         onClick={() => setStampId(isSelected ? null : id)}
-                                        className={`flex-shrink-0 w-16 h-16 snap-start flex items-center justify-center bg-white transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ink rounded-sm ${isSelected
-                                            ? "border-2 border-accent shadow-sm bg-accent/5 scale-105"
-                                            : "border border-divider hover:border-ink/20 hover:scale-[1.02]"
+                                        className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 snap-start flex items-center justify-center bg-white transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ink rounded-md [&>svg]:max-w-[80%] [&>svg]:max-h-[80%] [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain ${isSelected
+                                            ? "border-2 border-black shadow-md scale-105"
+                                            : "border border-neutral-200 hover:scale-105 hover:shadow-sm"
                                             }`}
                                         aria-pressed={isSelected}
                                         aria-label={`Select ${id} stamp`}
                                     >
                                         <Stamp />
+                                        {isSelected && (
+                                            <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-black rounded-full" />
+                                        )}
                                     </button>
                                 );
                             })}

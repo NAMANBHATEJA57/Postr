@@ -20,8 +20,7 @@ export default function BackSide({ postcard }: BackSideProps) {
 
     return (
         <div
-            className="w-full bg-white flex relative"
-            style={{ minHeight: "clamp(280px, 56.25vw, 360px)" }}  /* ~16:9 compat height on desktop */
+            className="w-full h-full bg-white flex relative"
             aria-label="Postcard back"
         >
             {/* ── Left: Message column (60%) ── */}
@@ -149,16 +148,13 @@ export default function BackSide({ postcard }: BackSideProps) {
 
             {/* Stamp / Stamp Placeholder — Absolute top-right */}
             <div
-                className="absolute"
+                className="absolute flex items-center justify-center -rotate-2 drop-shadow-sm [&>svg]:max-w-full [&>svg]:max-h-full [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain"
                 style={{
-                    top: "clamp(1.25rem, 3vw, 2rem)",
+                    top: "clamp(1rem, 2.5vw, 1.5rem)",
                     right: "clamp(1rem, 2.5vw, 1.5rem)",
-                    width: "60px",
-                    height: "60px",
+                    width: "80px",
+                    height: "80px",
                     border: postcard.stampId && postcard.stampId in STAMPS ? "none" : "1px solid #E1DCD7",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
                     zIndex: 10,
                 }}
                 aria-hidden="true"

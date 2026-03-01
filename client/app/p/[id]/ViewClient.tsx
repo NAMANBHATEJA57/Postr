@@ -80,7 +80,7 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
 
     if (phase === "reveal" && postcard) {
         return (
-            <div className="min-h-dvh flex flex-col items-center px-5 py-12 md:py-16">
+            <div className="min-h-dvh flex flex-col items-center px-4 sm:px-0 py-12 md:py-16">
                 <div className="w-full max-w-postcard mx-auto flex flex-col items-center">
 
                     {/* ── HEADER ── */}
@@ -93,7 +93,7 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                 <h1
                                     style={{
                                         fontFamily: "var(--font-playfair), Georgia, serif",
-                                        fontSize: "clamp(1.75rem, 5vw, 2.25rem)",
+                                        fontSize: "clamp(1.5rem, 4.5vw, 2.25rem)",
                                         color: "#1A1A1A",
                                         lineHeight: 1.2,
                                         marginBottom: "0.25rem"
@@ -172,11 +172,7 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                             <>
                                 <button
                                     onClick={copyLink}
-                                    className="inline-flex items-center justify-center
-                                        bg-accent text-white font-sans text-body-sm tracking-ui
-                                        px-8 rounded-sm min-h-[44px]
-                                        hover:bg-[#958879] active:bg-[#877A6E]
-                                        transition-colors duration-150 select-none"
+                                    className="inline-flex items-center justify-center bg-accent text-white font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:bg-[#958879] active:bg-[#877A6E] transition-colors duration-150 select-none"
                                 >
                                     {copied ? "copied!" : "copy link"}
                                 </button>
@@ -191,11 +187,7 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                             <>
                                 <a
                                     href="/create"
-                                    className="inline-flex items-center justify-center
-                                        bg-accent text-white font-sans text-body-sm tracking-ui
-                                        px-8 rounded-sm min-h-[44px]
-                                        hover:bg-[#958879] active:bg-[#877A6E]
-                                        transition-colors duration-150 select-none"
+                                    className="inline-flex items-center justify-center bg-accent text-white font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:bg-[#958879] active:bg-[#877A6E] transition-colors duration-150 select-none"
                                 >
                                     create yours
                                 </a>

@@ -31,6 +31,8 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
                 return;
             }
 
+            setFileType(isVideo ? "video" : "image");
+
             const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
             if (file.size > maxSize) {
                 setUploadState("too-large");
@@ -38,7 +40,6 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
             }
 
             setUploadState("idle");
-            setFileType(isVideo ? "video" : "image");
             const objectUrl = URL.createObjectURL(file);
             setPreview(objectUrl);
             onFile(file);
