@@ -18,20 +18,28 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 const isProd = process.env.NODE_ENV === "production";
-const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:3000";
+
+const getAllowedOrigins = () => {
+  const originsStr = process.env.CLIENT_ORIGINS || process.env.CLIENT_ORIGIN || "http://localhost:3000";
+  return originsStr.split(",").map((o) => o.trim()).filter(Boolean);
+};
 
 app.use(
   cors({
-    origin: isProd
-      ? clientOrigin
-      : (origin, callback) => {
-        // In development, allow any localhost origin (port 3000, 3001, etc.)
-        if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error("Not allowed by CORS"));
-        }
-      },
+    origin: (origin, callback) => {
+      // In development, allow localhost
+      if (!isProd && (!origin || /^http:\/\/localhost:\d+$/.test(origin))) {
+        return callback(null, true);
+      }
+
+      // Allow if origin is in allowed list, or if there's no origin (e.g. server-to-server requests)
+      const allowedOrigins = getAllowedOrigins();
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
