@@ -12,6 +12,7 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
   display: "swap",
+  style: ["normal", "italic"],
 });
 
 const caveat = Caveat({
@@ -22,12 +23,12 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "postr — send a moment",
-  description: "A calm, minimal digital postcard. Send a moment to someone you care about.",
-  keywords: ["postcard", "digital postcard", "send a card", "minimal"],
+  title: "Dearly — write something that matters",
+  description: "A slower way to share what matters.",
+  keywords: ["letter", "digital letter", "postcard", "correspondence", "minimal"],
   openGraph: {
-    title: "postr — send a moment",
-    description: "A calm, minimal digital postcard.",
+    title: "Dearly — write something that matters",
+    description: "A slower way to share what matters.",
     type: "website",
   },
 };
@@ -41,7 +42,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} ${caveat.variable}`}>
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,300,0,0"
+        />
+      </head>
       <body className="bg-linen text-ink font-sans antialiased">
         <AuthProvider>
           {children}

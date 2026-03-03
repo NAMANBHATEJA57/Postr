@@ -115,8 +115,8 @@ function CreatePageInner() {
 
             if (!createRes.ok) {
                 const err = await createRes.json();
-                if (createRes.status === 429) throw new Error("Too many postcards. Try again later.");
-                throw new Error(err.error ?? "Failed to create postcard");
+                if (createRes.status === 429) throw new Error("Too many letters. Try again later.");
+                throw new Error(err.error ?? "Failed to create letter");
             }
 
             const { id } = await createRes.json();
@@ -132,12 +132,12 @@ function CreatePageInner() {
         }
     }, [mediaFile, submitting, title, message, toName, fromName, stampId, expiry, customDate, passwordEnabled, password, router, conversationId]);
 
-    const buttonLabel = uploading ? "uploading…" : submitting ? "creating…" : "create postcard";
+    const buttonLabel = uploading ? "uploading…" : submitting ? "sending…" : "send it";
 
     return (
         <>
             <main className="min-h-dvh px-5 pb-28 md:pb-16">
-                <div className="w-full max-w-[720px] mx-auto flex flex-col">
+                <div className="w-full max-w-[640px] mx-auto flex flex-col">
 
                     {/* ── Back link ── */}
                     <div style={{ paddingTop: "28px", paddingBottom: "32px" }}>
@@ -147,30 +147,18 @@ function CreatePageInner() {
                                 if (window.history.length > 1) router.back();
                                 else router.push("/");
                             }}
-                            style={{
-                                fontFamily: "Inter, sans-serif",
-                                fontSize: "0.875rem",
-                                fontWeight: 400,
-                                color: "#6B635A",
-                                opacity: 0.7,
-                                background: "none",
-                                border: "none",
-                                cursor: "pointer",
-                                padding: 0,
-                                textDecoration: "none",
-                                transition: "opacity 150ms ease",
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.opacity = "1";
-                                e.currentTarget.style.textDecoration = "underline";
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.opacity = "0.7";
-                                e.currentTarget.style.textDecoration = "none";
-                            }}
+                            className="cta-link font-sans text-ink-secondary hover:text-ink transition-colors duration-150"
+                            style={{ fontSize: "0.875rem", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                             aria-label="Go back"
                         >
-                            ← back
+                            <span
+                                className="material-symbols-rounded"
+                                style={{ fontSize: 16, lineHeight: 1, verticalAlign: "middle" }}
+                                aria-hidden="true"
+                            >
+                                chevron_left
+                            </span>
+                            {" "}back
                         </button>
                     </div>
 
@@ -179,12 +167,12 @@ function CreatePageInner() {
                         className="flex flex-col items-center text-center"
                         style={{ marginBottom: "48px", gap: 0 }}
                     >
-                        {/* Postcard icon */}
+                        {/* Logo */}
                         <Image
                             src="/Logo.png"
-                            alt="postr logo"
-                            width={32}
-                            height={32}
+                            alt="Dearly logo"
+                            width={36}
+                            height={36}
                             className="object-contain"
                             priority
                             draggable={false}
@@ -194,23 +182,23 @@ function CreatePageInner() {
                         <a
                             href="/"
                             className="font-serif text-ink tracking-tight"
-                            style={{ fontSize: "1.375rem", fontWeight: 600, marginTop: "12px", lineHeight: 1 }}
+                            style={{ fontSize: "1.25rem", fontWeight: 600, marginTop: "10px", lineHeight: 1 }}
                         >
-                            postr
+                            Dearly
                         </a>
 
                         {/* Heading */}
                         <h1
                             className="font-serif text-ink"
                             style={{
-                                fontSize: "clamp(2rem, 6vw, 3rem)",
-                                lineHeight: 1.15,
+                                fontSize: "clamp(1.875rem, 5.5vw, 2.75rem)",
+                                lineHeight: 1.2,
                                 marginTop: "24px",
                                 marginBottom: 0,
                                 letterSpacing: "-0.01em",
                             }}
                         >
-                            write your postcard.
+                            write your letter.
                         </h1>
 
                         {/* Subtext */}
@@ -226,7 +214,7 @@ function CreatePageInner() {
                             keep it short. make it meaningful.
                         </p>
 
-                        {/* Guest notice — quiet, not a UI element */}
+                        {/* Guest notice */}
                         {!authLoading && !user && (
                             <p
                                 style={{
@@ -239,11 +227,11 @@ function CreatePageInner() {
                                 You&apos;re sending as a guest.{" "}
                                 <Link
                                     href="/register"
-                                    style={{ color: "#A6998D", textDecoration: "underline", textUnderlineOffset: "2px" }}
+                                    style={{ color: "#C08497", textDecoration: "underline", textUnderlineOffset: "2px" }}
                                 >
-                                    Create an account
+                                    Join Dearly
                                 </Link>{" "}
-                                to save your postcards.
+                                to keep your letters safe.
                             </p>
                         )}
                     </div>
@@ -256,7 +244,7 @@ function CreatePageInner() {
                             <MediaUpload onFile={setMediaFile} />
                         </section>
 
-                        <div className="h-px bg-black/8" />
+                        <div className="h-px" style={{ background: "#E1DCD7" }} />
 
                         {/* Title */}
                         <div className="flex flex-col gap-1">
@@ -269,10 +257,13 @@ function CreatePageInner() {
                                 type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value.slice(0, 40))}
-                                placeholder="Title of your postcard"
+                                placeholder="Title of your letter"
                                 maxLength={40}
                                 required
-                                className="w-full bg-transparent text-ink font-serif text-xl border-b border-divider pb-2 outline-none focus:border-ink transition-colors duration-150 placeholder:text-accent-muted"
+                                className="w-full bg-transparent text-ink font-serif text-xl border-b border-divider pb-2 outline-none placeholder:text-accent-muted transition-colors duration-150"
+                                style={{ borderBottomColor: "#E1DCD7" }}
+                                onFocus={(e) => { e.currentTarget.style.borderBottomColor = "#C08497"; }}
+                                onBlur={(e) => { e.currentTarget.style.borderBottomColor = "#E1DCD7"; }}
                             />
                         </div>
 
@@ -286,12 +277,14 @@ function CreatePageInner() {
                                 id="message-input"
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                placeholder="Write your message here..."
+                                placeholder="Write your message here…"
                                 maxLength={120}
                                 required
                                 rows={3}
-                                className="w-full bg-transparent text-ink text-body-lg font-sans border-b border-divider pb-2 outline-none focus:border-ink transition-colors duration-150 placeholder:text-accent-muted resize-none"
-                                style={{ lineHeight: "1.6" }}
+                                className="w-full bg-transparent text-ink text-body-lg font-sans border-b border-divider pb-2 outline-none placeholder:text-accent-muted resize-none transition-colors duration-150"
+                                style={{ lineHeight: "1.6", borderBottomColor: "#E1DCD7" }}
+                                onFocus={(e) => { e.currentTarget.style.borderBottomColor = "#C08497"; }}
+                                onBlur={(e) => { e.currentTarget.style.borderBottomColor = "#E1DCD7"; }}
                             />
                         </div>
 
@@ -309,16 +302,26 @@ function CreatePageInner() {
                                             key={id}
                                             type="button"
                                             onClick={() => setStampId(isSelected ? null : id)}
-                                            className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 snap-start flex items-center justify-center bg-white transition-all duration-150 ease-subtle cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ink rounded-md [&>svg]:max-w-[80%] [&>svg]:max-h-[80%] [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain ${isSelected
-                                                ? "border-2 border-black shadow-md scale-[1.02]"
-                                                : "border border-neutral-200 hover:scale-[1.02] hover:shadow-sm"
-                                                }`}
+                                            className="relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 snap-start flex items-center justify-center bg-white transition-all duration-150 ease-subtle cursor-pointer outline-none [&>svg]:max-w-[80%] [&>svg]:max-h-[80%] [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain"
+                                            style={{
+                                                border: isSelected ? "2px solid #C08497" : "1px solid #E1DCD7",
+                                                transform: isSelected ? "scale(1.02)" : "scale(1)",
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                if (!isSelected) e.currentTarget.style.border = "1px solid #C08497";
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (!isSelected) e.currentTarget.style.border = "1px solid #E1DCD7";
+                                            }}
                                             aria-pressed={isSelected}
                                             aria-label={`Select ${id} stamp`}
                                         >
                                             <Stamp />
                                             {isSelected && (
-                                                <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-black rounded-full" />
+                                                <div
+                                                    className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full"
+                                                    style={{ background: "#C08497" }}
+                                                />
                                             )}
                                         </button>
                                     );
@@ -329,11 +332,11 @@ function CreatePageInner() {
                         {/* To / From */}
                         {!conversationId && (
                             <>
-                                <div className="h-px bg-black/8" />
+                                <div className="h-px" style={{ background: "#E1DCD7" }} />
                                 <div className="flex flex-col gap-6">
                                     <Input
                                         id="to-input"
-                                        label="To"
+                                        label="to"
                                         value={toName}
                                         onChange={(e) => setToName(e.target.value.slice(0, 60))}
                                         placeholder="their name"
@@ -342,7 +345,7 @@ function CreatePageInner() {
                                     />
                                     <Input
                                         id="from-input"
-                                        label="From"
+                                        label="from"
                                         value={fromName}
                                         onChange={(e) => setFromName(e.target.value.slice(0, 60))}
                                         placeholder="your name"
@@ -353,9 +356,9 @@ function CreatePageInner() {
                             </>
                         )}
 
-                        <div className="h-px bg-black/8" />
+                        <div className="h-px" style={{ background: "#E1DCD7" }} />
 
-                        {/* Expiry — available for everyone */}
+                        {/* Expiry */}
                         <ExpirySelector
                             value={expiry}
                             customDate={customDate}
@@ -377,13 +380,13 @@ function CreatePageInner() {
                                         className={`absolute top-1 h-4 w-4 bg-linen transition-all duration-150 ${passwordEnabled ? "left-5" : "left-1"}`}
                                     />
                                 </span>
-                                <span className="text-body-sm text-ink-secondary">Protect with password</span>
+                                <span className="text-body-sm text-ink-secondary">keep it safe with a password</span>
                             </label>
                             {passwordEnabled && (
                                 <Input
                                     id="password-input"
                                     type="password"
-                                    label="Password"
+                                    label="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value.slice(0, 100))}
                                     placeholder="Enter a password"
@@ -404,7 +407,7 @@ function CreatePageInner() {
                                 loading={submitting || uploading}
                                 size="lg"
                                 className="w-full"
-                                aria-label="Create postcard"
+                                aria-label="Send letter"
                             >
                                 {buttonLabel}
                             </Button>
@@ -429,7 +432,7 @@ function CreatePageInner() {
                     size="lg"
                     className="w-full"
                     style={{ height: "48px" }}
-                    aria-label="Create postcard"
+                    aria-label="Send letter"
                 >
                     {buttonLabel}
                 </Button>

@@ -39,7 +39,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                             "border-b pb-2 outline-none",
                             "placeholder:text-accent-muted",
                             "transition-colors duration-150",
-                            focused ? "border-ink" : "border-divider",
+                            focused ? "border-[#C08497]" : "border-divider",
                             error && "border-red-400",
                             className
                         )}
@@ -47,7 +47,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                     />
                     <span
                         className={clsx(
-                            "absolute bottom-0 left-0 h-px bg-ink transition-all",
+                            "absolute bottom-0 left-0 h-px bg-[#C08497] transition-all",
                             "duration-150 ease-out",
                             focused ? "w-full" : "w-0"
                         )}

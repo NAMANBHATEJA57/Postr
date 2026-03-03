@@ -197,7 +197,7 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                             <>
                                 <button
                                     onClick={copyLink}
-                                    className="inline-flex items-center justify-center bg-accent text-white font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:bg-[#958879] active:bg-[#877A6E] transition-colors duration-150 select-none"
+                                    className="inline-flex items-center justify-center bg-ink text-linen font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:opacity-80 active:opacity-70 transition-opacity duration-150 select-none"
                                 >
                                     {copied ? "copied!" : "copy link"}
                                 </button>
@@ -235,7 +235,7 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                             href={postcard.conversationId
                                                 ? `/create?conversationId=${postcard.conversationId}`
                                                 : "/create"}
-                                            className="inline-flex items-center justify-center bg-accent text-white font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:bg-[#958879] active:bg-[#877A6E] transition-colors duration-150 select-none"
+                                            className="inline-flex items-center justify-center bg-ink text-linen font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:opacity-80 active:opacity-70 transition-opacity duration-150 select-none"
                                         >
                                             Reply with a postcard
                                         </a>
@@ -245,7 +245,7 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                     <>
                                         <a
                                             href="/create"
-                                            className="inline-flex items-center justify-center bg-accent text-white font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:bg-[#958879] active:bg-[#877A6E] transition-colors duration-150 select-none"
+                                            className="inline-flex items-center justify-center bg-ink text-linen font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:opacity-80 active:opacity-70 transition-opacity duration-150 select-none"
                                         >
                                             create yours
                                         </a>

@@ -102,7 +102,7 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
                         className={[
                             "absolute inset-0 flex flex-col items-center justify-center gap-2",
                             "border border-dashed cursor-pointer transition-colors duration-150",
-                            isDragging ? "border-ink bg-linen/80" : "border-divider hover:border-accent-muted",
+                            isDragging ? "border-[#C08497] bg-surface" : "border-divider hover:border-[#C08497]",
                             errorMessage ? "border-red-400" : "",
                         ].filter(Boolean).join(" ")}
                     >

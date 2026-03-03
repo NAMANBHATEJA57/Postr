@@ -11,9 +11,15 @@ const config: Config = {
     extend: {
       colors: {
         linen: "#F8F4EF",
+        surface: "#F1ECE6",
         ink: "#1A1A1A",
         "ink-secondary": "#555555",
-        accent: "#A6998D",
+        // Primary accent — Dusty Rose
+        accent: "#C08497",
+        "accent-teal": "#5E8B7E",
+        "accent-terra": "#C46A4A",
+        "accent-lavender": "#8E7DBE",
+        // Muted accent for placeholder / secondary text
         "accent-muted": "#C7C0B8",
         divider: "#E1DCD7",
       },
@@ -44,8 +50,8 @@ const config: Config = {
         ui: "0.04em",
       },
       animation: {
-        "fade-in": "fadeIn 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
-        "fade-in-up": "fadeInUp 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "fade-in": "fadeIn 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "fade-in-up": "fadeInUp 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
         "fade-in-up-card": "fadeInUpCard 250ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
         "shimmer": "shimmer 1.5s infinite linear",
       },
@@ -56,8 +62,8 @@ const config: Config = {
         "150": "150ms",
         "200": "200ms",
         "250": "250ms",
+        "300": "300ms",
         "400": "400ms",
-        "500": "500ms",
       },
       keyframes: {
         fadeIn: {

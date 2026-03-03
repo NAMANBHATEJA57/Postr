@@ -3,180 +3,114 @@ import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "postr — send it beautifully",
-  description: "A simple way to send a moment as a digital postcard.",
+  title: "Dearly — write something that matters",
+  description: "A slower way to share what matters.",
 };
-
-const steps: { heading: string; body: string; large?: boolean }[] = [
-  {
-    heading: "write something real.",
-    body: "keep it short. add a photo or video if it helps.",
-  },
-  {
-    heading: "share the link.",
-    body: "no account required to receive.",
-  },
-  {
-    heading: "start something slow.",
-    body: "conversations grow over time.",
-    large: true,
-  },
-];
 
 export default function LandingPage() {
   return (
-    <main className="min-h-dvh flex flex-col items-center px-6 pt-[12vh] pb-20 bg-linen">
-      <div className="w-full max-w-[720px] mx-auto flex flex-col items-center text-center">
+    <main className="min-h-dvh flex flex-col items-center justify-center px-6 py-20 bg-linen">
+      <div className="w-full max-w-[640px] mx-auto flex flex-col items-center text-center">
 
         {/* Brand Block */}
-        <div className="flex flex-col items-center mb-10">
-          <div className="flex flex-col items-center gap-3 motion-safe:animate-fade-in-up">
-            <Image
-              src="/Logo.png"
-              alt="postr logo"
-              width={32}
-              height={32}
-              className="w-8 h-8 object-contain drop-shadow-none"
-              priority
-              draggable={false}
-            />
-            <span className="font-serif text-ink text-2xl font-semibold tracking-tight">
-              postr
-            </span>
-          </div>
+        <div
+          className="flex flex-col items-center mb-12 motion-safe:animate-fade-in-up"
+          style={{ gap: "12px" }}
+        >
+          <Image
+            src="/Logo.png"
+            alt="Dearly logo"
+            width={52}
+            height={52}
+            className="object-contain"
+            priority
+            draggable={false}
+          />
+          <span className="font-serif text-ink tracking-tight" style={{ fontSize: "1.75rem", fontWeight: 600, lineHeight: 1 }}>
+            Dearly
+          </span>
         </div>
 
+        {/* Headline */}
         <h1
-          className="font-serif text-ink leading-tight motion-safe:animate-fade-in [animation-delay:50ms]"
-          style={{ fontSize: "clamp(2.25rem, 6vw, 2.75rem)" }}
+          className="font-serif text-ink motion-safe:animate-fade-in"
+          style={{
+            fontSize: "clamp(1.875rem, 5.5vw, 2.5rem)",
+            lineHeight: 1.3,
+            letterSpacing: "-0.01em",
+            animationDelay: "60ms",
+            animationFillMode: "both",
+          }}
         >
-          send something that feels personal.
+          write something you hold dearly.
         </h1>
 
-        {/* CTA Blocks */}
-        <div className="w-full max-w-[320px] mx-auto flex flex-col items-center mt-14 motion-safe:animate-fade-in [animation-delay:100ms]">
+        {/* Subtext */}
+        <p
+          className="font-sans text-ink-secondary motion-safe:animate-fade-in"
+          style={{
+            fontSize: "1rem",
+            lineHeight: 1.65,
+            marginTop: "16px",
+            opacity: 0.8,
+            animationDelay: "120ms",
+            animationFillMode: "both",
+          }}
+        >
+          A slower way to share what matters.
+        </p>
 
+        {/* CTA Block */}
+        <div
+          className="w-full max-w-[320px] mx-auto flex flex-col items-center motion-safe:animate-fade-in"
+          style={{
+            marginTop: "48px",
+            gap: "20px",
+            animationDelay: "180ms",
+            animationFillMode: "both",
+          }}
+        >
           {/* Primary CTA */}
-          <div className="flex flex-col items-center w-full mb-8">
-            <Link
-              href="/create"
-              className="flex w-full items-center justify-center
-                bg-[#8e8174] text-white font-sans text-body-sm tracking-ui
-                rounded-sm min-h-[48px] px-6 shadow-sm
-                hover:bg-[#807468] active:bg-[#72675c]
-                transition-colors duration-150"
-            >
-              Make a postcard
-            </Link>
-            <p className="font-sans text-xs text-ink-secondary opacity-70 mt-3">
-              Send one instantly. No account needed.
-            </p>
-          </div>
+          <Link
+            href="/create"
+            className="flex w-full items-center justify-center
+              bg-ink text-linen font-sans text-body-sm tracking-ui
+              min-h-[48px] px-6
+              hover:opacity-80 active:opacity-70
+              transition-opacity duration-150"
+          >
+            Write a letter
+          </Link>
 
-          {/* Divider */}
-          <div className="flex w-full items-center justify-center mb-6">
-            <span className="text-xs text-neutral-400 font-sans tracking-widest uppercase">
-              — or —
-            </span>
-          </div>
-
-          {/* Secondary section */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full mb-4">
+          {/* Secondary CTAs */}
+          <div className="flex items-center justify-center gap-5 w-full">
             <Link
               href="/register"
-              className="flex w-full sm:w-auto items-center justify-center
-                bg-transparent border border-neutral-300 text-ink font-sans text-body-sm tracking-ui
-                rounded-sm min-h-[44px] px-6
-                hover:bg-black/5 active:bg-black/10
-                transition-colors duration-150"
+              className="flex items-center justify-center
+                border border-divider text-ink font-sans text-body-sm tracking-ui
+                min-h-[40px] px-5
+                hover:border-accent transition-colors duration-150"
             >
               Sign up
             </Link>
             <Link
               href="/login"
-              className="font-sans text-body-sm tracking-ui text-neutral-500 hover:text-ink hover:underline transition-all duration-150 px-2"
+              className="font-sans text-body-sm tracking-ui text-ink-secondary hover:text-ink transition-colors duration-150"
             >
               Log in
             </Link>
           </div>
 
-          {/* Contextual line */}
-          <p className="font-sans text-xs text-neutral-500 text-center opacity-80 mt-0">
-            Create an account to save your postcards.
-          </p>
-
-        </div>
-
-        {/* ── How postr works ── */}
-        <div
-          className="w-full flex flex-col items-center"
-          style={{ maxWidth: "640px", margin: "0 auto", paddingTop: "120px", paddingBottom: "120px" }}
-        >
-          {/* Section label */}
+          {/* Muted hint */}
           <p
-            style={{
-              fontFamily: "Inter, system-ui, sans-serif",
-              fontSize: "0.875rem",
-              color: "#6B635A",
-              letterSpacing: "0.08em",
-              opacity: 0.6,
-              textTransform: "lowercase",
-              marginBottom: "56px",
-            }}
+            className="font-sans text-center"
+            style={{ fontSize: "0.8125rem", color: "#C7C0B8", letterSpacing: "0.01em" }}
           >
-            how postr works
+            No account required to send one.
           </p>
-
-          {/* Steps */}
-          <div className="flex flex-col items-center w-full" style={{ gap: 0 }}>
-            {steps.map(({ heading, body, large }, i) => (
-              <div key={heading} className="flex flex-col items-center w-full">
-                {/* Divider between blocks */}
-                {i > 0 && (
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "1px",
-                      background: "rgba(0,0,0,0.08)",
-                      margin: "48px auto",
-                    }}
-                  />
-                )}
-
-                <div className="flex flex-col items-center" style={{ gap: "10px" }}>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-playfair), Georgia, serif",
-                      fontSize: large ? "clamp(1.625rem, 4vw, 1.875rem)" : "clamp(1.375rem, 3.5vw, 1.625rem)",
-                      color: "#1A1A1A",
-                      lineHeight: 1.35,
-                      fontStyle: "italic",
-                      textAlign: "center",
-                    }}
-                  >
-                    {heading}
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: "Inter, system-ui, sans-serif",
-                      fontSize: "1rem",
-                      color: "#6B635A",
-                      lineHeight: 1.65,
-                      opacity: 0.85,
-                      maxWidth: "420px",
-                      textAlign: "center",
-                    }}
-                  >
-                    {body}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
       </div>
     </main>
   );
 }
-

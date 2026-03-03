@@ -17,11 +17,21 @@ import conversationsRouter from "./routes/conversations.js";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+const isProd = process.env.NODE_ENV === "production";
 const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:3000";
 
 app.use(
   cors({
-    origin: clientOrigin,
+    origin: isProd
+      ? clientOrigin
+      : (origin, callback) => {
+        // In development, allow any localhost origin (port 3000, 3001, etc.)
+        if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
     credentials: true,
   })
 );

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -30,11 +29,22 @@ interface Conversation {
     postcards: PostcardData[];
 }
 
-/** Format a date as "March 1, 2026" for dividers */
 function formatDay(isoDate: string) {
     return new Date(isoDate).toLocaleDateString(undefined, {
         month: "long", day: "numeric", year: "numeric",
     });
+}
+
+function Icon({ name, size = 18, style }: { name: string; size?: number; style?: React.CSSProperties }) {
+    return (
+        <span
+            className="material-symbols-rounded select-none"
+            style={{ fontSize: size, lineHeight: 1, ...style }}
+            aria-hidden="true"
+        >
+            {name}
+        </span>
+    );
 }
 
 export default function ConversationThreadPage() {
@@ -68,7 +78,7 @@ export default function ConversationThreadPage() {
 
                 setConversation({ ...data.conversation, postcards: sortedPostcards });
             } catch (err) {
-                setError(err instanceof Error ? err.message : "Failed to load thread");
+                setError(err instanceof Error ? err.message : "Failed to load");
             } finally {
                 setLoading(false);
             }
@@ -77,48 +87,119 @@ export default function ConversationThreadPage() {
     }, [conversationId]);
 
     if (loading) return (
-        <main className="min-h-dvh flex items-center justify-center">
-            <p className="text-body-sm text-ink-secondary">loading...</p>
+        <main style={{ minHeight: "100dvh", background: "#F8F4EF", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.875rem", color: "#C7C0B8", opacity: 0.7 }}>opening…</p>
         </main>
     );
     if (error) return (
-        <main className="min-h-dvh flex items-center justify-center">
-            <p className="text-body-sm text-red-500">{error}</p>
+        <main style={{ minHeight: "100dvh", background: "#F8F4EF", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.875rem", color: "#ef4444" }}>{error}</p>
         </main>
     );
     if (!conversation) return null;
 
     return (
         <main
-            className="min-h-dvh flex flex-col items-center px-4 py-8 md:py-16"
-            style={{ animation: "pageEnter 200ms ease-out both" }}
+            style={{
+                minHeight: "100dvh",
+                background: "#F8F4EF",
+                animation: "pageEnter 200ms ease-out both",
+            }}
         >
-            <div className="w-full max-w-[600px] flex flex-col">
+            {/* ── Page container — matches dashboard ── */}
+            <div
+                style={{
+                    maxWidth: "720px",
+                    margin: "0 auto",
+                    paddingTop: "64px",
+                    paddingBottom: "80px",
+                    paddingLeft: "24px",
+                    paddingRight: "24px",
+                }}
+            >
+                {/* ── Card wrapper — matches dashboard ── */}
+                <div
+                    style={{
+                        background: "rgba(255,255,255,0.60)",
+                        borderRadius: "16px",
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)",
+                        padding: "32px",
+                    }}
+                >
 
-                {/* ── Header ── */}
-                <header className="flex flex-row items-center border-b border-black/10 pb-5 gap-4 sticky top-0 z-10 pt-4"
-                    style={{ background: "rgba(248,244,239,0.92)", backdropFilter: "blur(8px)" }}>
-                    <Link
-                        href="/dashboard"
-                        className="flex items-center justify-center bg-white border border-neutral-200 rounded-full w-8 h-8 shrink-0 text-ink-secondary hover:text-ink transition-colors"
+                    {/* ── Header row ── */}
+                    <header
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            width: "100%",
+                            marginBottom: "20px",
+                        }}
                     >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="m15 18-6-6 6-6" />
-                        </svg>
-                    </Link>
-                    <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                        <h1 className="font-serif text-h4 text-ink truncate">{conversation.otherUser.name}</h1>
-                        <p className="text-xs text-ink-secondary font-sans truncate">{conversation.otherUser.email}</p>
-                    </div>
-                    <Image src="/Logo.png" alt="postr logo" width={26} height={26} className="object-contain shrink-0" />
-                </header>
+                        {/* Left: back link */}
+                        <Link
+                            href="/dashboard"
+                            style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "4px",
+                                fontFamily: "Inter, sans-serif",
+                                fontSize: "0.875rem",
+                                color: "#6B635A",
+                                textDecoration: "none",
+                                transition: "color 150ms ease",
+                                flexShrink: 0,
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.color = "#1A1A1A"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.color = "#6B635A"; }}
+                        >
+                            <Icon name="chevron_left" size={16} />
+                            letters
+                        </Link>
 
-                {/* ── Thread ── */}
-                <div className="flex flex-col py-12 pb-8">
+                        {/* Center: conversation name */}
+                        <h1
+                            style={{
+                                fontFamily: "var(--font-playfair), Georgia, serif",
+                                fontSize: "1.0625rem",
+                                fontWeight: 400,
+                                fontStyle: "italic",
+                                color: "#1A1A1A",
+                                margin: 0,
+                                flex: 1,
+                                textAlign: "center",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                paddingLeft: "12px",
+                                paddingRight: "12px",
+                            }}
+                        >
+                            {conversation.otherUser.name.toLowerCase()}
+                        </h1>
+
+                        {/* Right: spacer to balance the back link */}
+                        <div style={{ width: "60px", flexShrink: 0 }} />
+                    </header>
+
+                    {/* ── Header divider — matches dashboard ── */}
+                    <div style={{ borderTop: "1px solid #E8E4DF", marginBottom: "32px" }} />
+
+                    {/* ── Thread ── */}
                     {conversation.postcards.length === 0 ? (
-                        <div className="text-center text-ink-secondary py-16 flex flex-col items-center gap-4">
-                            <p className="text-body-sm">No postcards yet.</p>
-                            <Image src="/Logo.png" alt="postr icon" width={28} height={28} className="opacity-20 mix-blend-multiply" />
+                        <div style={{ textAlign: "center", paddingTop: "48px", paddingBottom: "48px" }}>
+                            <p
+                                style={{
+                                    fontFamily: "var(--font-playfair), Georgia, serif",
+                                    fontSize: "1rem",
+                                    fontStyle: "italic",
+                                    color: "#6B635A",
+                                    opacity: 0.6,
+                                }}
+                            >
+                                nothing here yet.
+                            </p>
                         </div>
                     ) : (
                         (() => {
@@ -133,110 +214,114 @@ export default function ConversationThreadPage() {
                                 return (
                                     <div
                                         key={pc.id}
-                                        className="flex flex-col items-center"
-                                        style={{ animation: `fadeInUpCard 250ms ${index * 60}ms both` }}
+                                        style={{
+                                            animation: `fadeInUpCard 250ms ${index * 60}ms both`,
+                                            marginBottom: "40px",
+                                        }}
                                     >
                                         {/* Date divider */}
                                         {showDivider && (
-                                            <div className="flex items-center gap-3 w-full my-8">
-                                                <div className="flex-1 h-px bg-black/8" />
-                                                <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.6875rem", color: "#C7C0B8", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: "12px",
+                                                    marginBottom: "28px",
+                                                }}
+                                            >
+                                                <div style={{ flex: 1, height: "1px", background: "#E8E4DF" }} />
+                                                <span
+                                                    style={{
+                                                        fontFamily: "Inter, sans-serif",
+                                                        fontSize: "0.6875rem",
+                                                        color: "#A9A19A",
+                                                        letterSpacing: "0.06em",
+                                                        textTransform: "uppercase",
+                                                        flexShrink: 0,
+                                                    }}
+                                                >
                                                     {day}
                                                 </span>
-                                                <div className="flex-1 h-px bg-black/8" />
+                                                <div style={{ flex: 1, height: "1px", background: "#E8E4DF" }} />
                                             </div>
                                         )}
 
-                                        {/* Serif sender label */}
+                                        {/* Sender label */}
                                         <p
-                                            className="w-full text-center mb-3"
-                                            style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: "0.9375rem", color: "#6B635A", fontStyle: "italic" }}
+                                            style={{
+                                                fontFamily: "var(--font-playfair), Georgia, serif",
+                                                fontSize: "0.9375rem",
+                                                color: "#6B635A",
+                                                fontStyle: "italic",
+                                                textAlign: isMe ? "right" : "left",
+                                                marginBottom: "12px",
+                                            }}
                                         >
                                             {senderName}
                                         </p>
 
-                                        {/* Postcard — no wrapper shadow, PostcardContainer owns its own elevation */}
-                                        <PostcardContainer
-                                            postcard={{
-                                                ...pc,
-                                                fromName: (pc.sender?.name || pc.fromName) ?? "Unknown",
-                                                toName: conversation.otherUser.name,
-                                                isPasswordProtected: false,
-                                                expiryAt: null,
+                                        {/* Postcard */}
+                                        <div
+                                            style={{
+                                                marginLeft: isMe ? "24px" : "0",
+                                                marginRight: isMe ? "0" : "24px",
                                             }}
-                                        />
-
-                                        {/* bottom spacer between cards */}
-                                        <div className="h-10" />
+                                        >
+                                            <PostcardContainer
+                                                postcard={{
+                                                    ...pc,
+                                                    fromName: (pc.sender?.name || pc.fromName) ?? "Unknown",
+                                                    toName: conversation.otherUser.name,
+                                                    isPasswordProtected: false,
+                                                    expiryAt: null,
+                                                }}
+                                            />
+                                        </div>
                                     </div>
                                 );
                             });
                         })()
                     )}
-                </div>
 
-                <div ref={bottomRef} className="h-2" />
+                    <div ref={bottomRef} />
 
-                {/* ── Reply CTA ── */}
-                <div
-                    className="flex flex-col items-center"
-                    style={{ paddingTop: "56px", paddingBottom: "48px" }}
-                >
-                    {conversation.postcards.length === 1 && (
-                        <p
-                            style={{
-                                fontFamily: "Inter, sans-serif",
-                                fontSize: "0.8125rem",
-                                color: "#C7C0B8",
-                                letterSpacing: "0.04em",
-                                marginBottom: "16px",
-                            }}
-                        >
-                            start something back.
-                        </p>
-                    )}
-                    <a
-                        href={`/create?conversationId=${conversation.id}`}
-                        className="group"
-                        style={{ textDecoration: "none" }}
+                    {/* ── Reply CTA ── */}
+                    <div
+                        style={{
+                            borderTop: "1px solid #E8E4DF",
+                            paddingTop: "28px",
+                            marginTop: "32px",
+                        }}
                     >
-                        <span
+                        <a
+                            href={`/create?conversationId=${conversation.id}`}
                             style={{
-                                fontFamily: "var(--font-playfair), Georgia, serif",
-                                fontSize: "1.125rem",
-                                fontWeight: 500,
-                                color: "#1A1A1A",
-                                opacity: 0.9,
-                                transition: "opacity 150ms ease",
-                                display: "inline-flex",
+                                display: "flex",
                                 alignItems: "center",
-                                gap: "6px",
+                                justifyContent: "center",
+                                width: "100%",
+                                height: "48px",
+                                background: "#1A1A1A",
+                                color: "#F8F4EF",
+                                fontFamily: "Inter, sans-serif",
+                                fontSize: "0.875rem",
+                                letterSpacing: "0.02em",
+                                textDecoration: "none",
+                                borderRadius: "8px",
+                                boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+                                transition: "background 150ms ease, transform 100ms ease",
+                                userSelect: "none",
                             }}
-                            onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLElement).style.opacity = "1";
-                                const arrow = (e.currentTarget as HTMLElement).querySelector(".cta-arrow") as HTMLElement;
-                                if (arrow) arrow.style.transform = "translateX(2px)";
-                                (e.currentTarget as HTMLElement).style.textDecoration = "underline";
-                                (e.currentTarget as HTMLElement).style.textUnderlineOffset = "3px";
-                            }}
-                            onMouseLeave={(e) => {
-                                (e.currentTarget as HTMLElement).style.opacity = "0.9";
-                                const arrow = (e.currentTarget as HTMLElement).querySelector(".cta-arrow") as HTMLElement;
-                                if (arrow) arrow.style.transform = "translateX(0)";
-                                (e.currentTarget as HTMLElement).style.textDecoration = "none";
-                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = "#111111"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "#1A1A1A"; }}
+                            onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.98)"; }}
+                            onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
                         >
                             Write a new postcard
-                            <span
-                                className="cta-arrow"
-                                style={{ display: "inline-block", transition: "transform 150ms ease" }}
-                            >
-                                →
-                            </span>
-                        </span>
-                    </a>
-                </div>
+                        </a>
+                    </div>
 
+                </div>
             </div>
         </main>
     );

@@ -49,33 +49,24 @@ export default function EnvelopeAnimation({
                         }
                         className="flex flex-col items-center w-full max-w-[min(340px,80vw)]"
                     >
-                        {/* ── Message above envelope ── */}
-                        <div className="mb-8 flex flex-col gap-1.5">
-                            <p
-                                className="text-ink-secondary"
-                                style={{
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "1rem",
-                                    lineHeight: 1.6,
-                                }}
-                            >
-                                {fromName.toLowerCase()} has sent you a postcard.
-                            </p>
-                            <p
-                                className="text-accent-muted tracking-ui"
-                                style={{
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.875rem",
-                                    letterSpacing: "0.04em",
-                                }}
-                            >
-                                to {toName.toLowerCase()}
-                            </p>
-                        </div>
+                        {/* ── Headline ── */}
+                        <p
+                            style={{
+                                fontFamily: "var(--font-playfair), Georgia, serif",
+                                fontSize: "1.125rem",
+                                color: "#1A1A1A",
+                                lineHeight: 1.5,
+                                marginBottom: "20px",
+                                textAlign: "center",
+                            }}
+                        >
+                            something from {fromName.toLowerCase()} is waiting.
+                        </p>
 
                         {/* ── Envelope SVG — static, no flap animation ── */}
                         <div
                             className="w-full cursor-pointer select-none"
+                            style={{ marginTop: "32px" }}
                             onClick={handleTap}
                             onKeyDown={(e) => e.key === "Enter" && handleTap()}
                             tabIndex={0}
@@ -111,13 +102,16 @@ export default function EnvelopeAnimation({
                                 />
                             </svg>
 
-                            {/* Tap hint */}
+                            {/* Tap hint — quiet, not instructional */}
                             <p
-                                className="mt-6 text-accent-muted tracking-ui"
                                 style={{
                                     fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.875rem",
-                                    letterSpacing: "0.04em",
+                                    fontSize: "0.8125rem",
+                                    color: "#C7C0B8",
+                                    letterSpacing: "0.03em",
+                                    opacity: 0.75,
+                                    marginTop: "28px",
+                                    textAlign: "center",
                                 }}
                             >
                                 tap to open

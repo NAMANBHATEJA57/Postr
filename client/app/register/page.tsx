@@ -67,9 +67,10 @@ function RegisterPageInner() {
     return (
         <main className="min-h-dvh flex items-center justify-center px-4">
             <div className="w-full max-w-[400px] flex flex-col gap-8">
-                <header className="flex flex-col items-center gap-4 text-center">
-                    <Image src="/Logo.png" alt="postr logo" width={48} height={48} className="object-contain" />
-                    <h1 className="font-serif text-h2 text-ink">start a correspondence.</h1>
+                <header className="flex flex-col items-center gap-3 text-center">
+                    <Image src="/Logo.png" alt="Dearly logo" width={48} height={48} className="object-contain" />
+                    <span className="font-serif text-ink tracking-tight" style={{ fontSize: "1.25rem", fontWeight: 600 }}>Dearly</span>
+                    <h1 className="font-serif text-h2 text-ink">begin something dear.</h1>
                 </header>
 
                 <form onSubmit={handleRegister} className="flex flex-col gap-6">
