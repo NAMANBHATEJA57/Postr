@@ -4,7 +4,10 @@
  */
 
 const getApiUrl = () => {
-  const url = process.env.NEXT_PUBLIC_API_URL || "https://postr57.onrender.com";
+  if (typeof window !== "undefined") {
+    return "";
+  }
+  const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
   return url.replace(/\/$/, "");
 };
 
