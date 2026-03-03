@@ -4,7 +4,7 @@ export default function PostcardLoader() {
             {/* Logo Silhouette */}
             <div className="relative w-16 h-16 flex items-center justify-center opacity-40">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/Logo.png" alt="" className="w-full h-full object-contain mix-blend-multiply" />
+                <img src="https://res.cloudinary.com/db4cbtzey/image/upload/v1772543945/Logo_z9pkxr.png" alt="" className="w-full h-full object-contain mix-blend-multiply" />
             </div>
 
             {/* Shimmer Sweep Overlay */}

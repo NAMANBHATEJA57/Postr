@@ -24,8 +24,10 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
     const [flipped, setFlipped] = useState(false);
     const prefersReducedMotion = useReducedMotion();
 
-    const DURATION = "550ms";
+    const DURATION = "480ms";
     const EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
+    const SHADOW_REST = "0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)";
+    const SHADOW_FLIPPED = "0 8px 24px rgba(0,0,0,0.09), 0 2px 6px rgba(0,0,0,0.05)";
 
     return (
         <div
@@ -33,12 +35,10 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
             aria-label="Postcard — tap or click to flip"
         >
             <div
-                className="w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl overflow-hidden"
+                className="w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl overflow-hidden postcard-tiltable"
                 style={{
                     transition: `box-shadow ${DURATION} ${EASE}`,
-                    boxShadow: flipped
-                        ? "0 10px 30px rgba(0,0,0,0.10)"
-                        : "0 6px 20px rgba(0,0,0,0.06)",
+                    boxShadow: flipped ? SHADOW_FLIPPED : SHADOW_REST,
                 }}
             >
                 {prefersReducedMotion ? (

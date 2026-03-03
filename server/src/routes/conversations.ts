@@ -159,4 +159,40 @@ router.get("/:id", async (req: Request, res: Response) => {
     }
 });
 
+// Delete a conversation and its postcards
+router.delete("/:id", async (req: Request, res: Response) => {
+    const userId = req.user!.id;
+    const { id } = req.params;
+
+    try {
+        const conversation = await prisma.conversation.findUnique({
+            where: { id },
+        });
+
+        if (!conversation) {
+            return res.status(404).json({ error: "Conversation not found" });
+        }
+
+        // Check auth
+        if (conversation.userOneId !== userId && conversation.userTwoId !== userId) {
+            return res.status(403).json({ error: "Unauthorized" });
+        }
+
+        // Prisma transaction: Delete postcards then conversation
+        await prisma.$transaction([
+            prisma.postcard.deleteMany({
+                where: { conversationId: id },
+            }),
+            prisma.conversation.delete({
+                where: { id },
+            }),
+        ]);
+
+        return res.json({ success: true });
+    } catch (err) {
+        console.error("Error deleting conversation:", err);
+        return res.status(500).json({ error: "Failed to delete conversation" });
+    }
+});
+
 export default router;

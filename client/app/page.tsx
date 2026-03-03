@@ -4,113 +4,174 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Dearly — write something that matters",
-  description: "A slower way to share what matters.",
+  description: "A slower, more intentional way to send a private postcard.",
 };
 
 export default function LandingPage() {
   return (
-    <main className="min-h-dvh flex flex-col items-center justify-center px-6 py-20 bg-linen">
-      <div className="w-full max-w-[640px] mx-auto flex flex-col items-center text-center">
+    <main className="flex-1 flex flex-col w-full">
 
-        {/* Brand Block */}
-        <div
-          className="flex flex-col items-center mb-12 motion-safe:animate-fade-in-up"
-          style={{ gap: "12px" }}
+      {/* ── Header ── */}
+      <header
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "20px 32px",
+        }}
+      >
+        {/* Wordmark */}
+        <Link
+          href="/"
+          className="font-serif text-ink tracking-tight"
+          style={{ fontSize: "1.125rem", fontWeight: 600, textDecoration: "none" }}
         >
+          Dearly
+        </Link>
+
+        {/* Auth actions */}
+        <nav style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+          {/* Tertiary: Sign in — text only */}
+          <Link
+            href="/login"
+            className="nav-signin font-sans text-ink"
+            style={{
+              fontSize: "0.875rem",
+              textDecoration: "none",
+              opacity: 0.65,
+              transition: "opacity 150ms ease",
+            }}
+          >
+            Sign in
+          </Link>
+
+          {/* Secondary: Create account — outline */}
+          <Link
+            href="/register"
+            className="nav-outline font-sans text-ink"
+            style={{
+              fontSize: "0.875rem",
+              padding: "8px 20px",
+              border: "1px solid rgba(26,26,26,0.25)",
+              textDecoration: "none",
+              transition: "background 150ms ease, border-color 150ms ease",
+              background: "transparent",
+            }}
+          >
+            Create account
+          </Link>
+        </nav>
+      </header>
+
+      {/* ── Hero ── */}
+      <div
+        className="flex-1 flex flex-col items-center justify-center px-6 text-center"
+        style={{
+          paddingBottom: "32px",
+          animation: "fadeInUp 600ms ease-out both",
+        }}
+      >
+        <div className="w-full max-w-[600px] mx-auto flex flex-col items-center">
+
+          {/* Logo mark */}
           <Image
-            src="/Logo.png"
-            alt="Dearly logo"
-            width={52}
-            height={52}
+            src="https://res.cloudinary.com/db4cbtzey/image/upload/v1772543945/Logo_z9pkxr.png"
+            alt=""
+            width={44}
+            height={44}
             className="object-contain"
             priority
             draggable={false}
+            style={{ marginBottom: "36px", opacity: 0.9 }}
           />
-          <span className="font-serif text-ink tracking-tight" style={{ fontSize: "1.75rem", fontWeight: 600, lineHeight: 1 }}>
-            Dearly
-          </span>
-        </div>
 
-        {/* Headline */}
-        <h1
-          className="font-serif text-ink motion-safe:animate-fade-in"
-          style={{
-            fontSize: "clamp(1.875rem, 5.5vw, 2.5rem)",
-            lineHeight: 1.3,
-            letterSpacing: "-0.01em",
-            animationDelay: "60ms",
-            animationFillMode: "both",
-          }}
-        >
-          write something you hold dearly.
-        </h1>
-
-        {/* Subtext */}
-        <p
-          className="font-sans text-ink-secondary motion-safe:animate-fade-in"
-          style={{
-            fontSize: "1rem",
-            lineHeight: 1.65,
-            marginTop: "16px",
-            opacity: 0.8,
-            animationDelay: "120ms",
-            animationFillMode: "both",
-          }}
-        >
-          A slower way to share what matters.
-        </p>
-
-        {/* CTA Block */}
-        <div
-          className="w-full max-w-[320px] mx-auto flex flex-col items-center motion-safe:animate-fade-in"
-          style={{
-            marginTop: "48px",
-            gap: "20px",
-            animationDelay: "180ms",
-            animationFillMode: "both",
-          }}
-        >
-          {/* Primary CTA */}
-          <Link
-            href="/create"
-            className="flex w-full items-center justify-center
-              bg-ink text-linen font-sans text-body-sm tracking-ui
-              min-h-[48px] px-6
-              hover:opacity-80 active:opacity-70
-              transition-opacity duration-150"
+          {/* Headline */}
+          <h1
+            className="font-serif text-ink"
+            style={{
+              fontSize: "clamp(2rem, 6vw, 2.75rem)",
+              lineHeight: 1.25,
+              letterSpacing: "-0.015em",
+              marginBottom: "20px",
+              animation: "fadeInUp 600ms 80ms ease-out both",
+            }}
           >
-            Write a letter
-          </Link>
+            Write something that matters.
+          </h1>
 
-          {/* Secondary CTAs */}
-          <div className="flex items-center justify-center gap-5 w-full">
+          {/* Subheading */}
+          <p
+            className="font-sans"
+            style={{
+              fontSize: "1.0625rem",
+              lineHeight: 1.65,
+              color: "#6B635A",
+              marginBottom: "48px",
+              animation: "fadeInUp 600ms 160ms ease-out both",
+            }}
+          >
+            A slower, more intentional way to send a private postcard.
+          </p>
+
+          {/* Primary CTA */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "16px",
+              width: "100%",
+              maxWidth: "320px",
+              animation: "fadeInUp 600ms 240ms ease-out both",
+            }}
+          >
             <Link
-              href="/register"
-              className="flex items-center justify-center
-                border border-divider text-ink font-sans text-body-sm tracking-ui
-                min-h-[40px] px-5
-                hover:border-accent transition-colors duration-150"
+              href="/create"
+              className="hover-elevate font-sans"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                minHeight: "52px",
+                background: "#1A1A1A",
+                color: "#F8F4EF",
+                fontSize: "0.9375rem",
+                letterSpacing: "0.02em",
+                textDecoration: "none",
+                transition: "opacity 150ms ease",
+              }}
             >
-              Sign up
+              Send a postcard
             </Link>
-            <Link
-              href="/login"
-              className="font-sans text-body-sm tracking-ui text-ink-secondary hover:text-ink transition-colors duration-150"
+
+            {/* Supporting text */}
+            <p
+              className="font-sans"
+              style={{ fontSize: "0.8125rem", color: "#C7C0B8", letterSpacing: "0.01em" }}
             >
-              Log in
-            </Link>
+              No account needed to send your first one.
+            </p>
+
+            {/* Optional conversion line */}
+            <p
+              className="font-sans"
+              style={{ fontSize: "0.8125rem", color: "#A9A19A" }}
+            >
+              Or{" "}
+              <Link
+                href="/register"
+                style={{ color: "#6B635A", textDecoration: "underline", textUnderlineOffset: "2px" }}
+              >
+                create an account
+              </Link>{" "}
+              to start lasting conversations.
+            </p>
           </div>
 
-          {/* Muted hint */}
-          <p
-            className="font-sans text-center"
-            style={{ fontSize: "0.8125rem", color: "#C7C0B8", letterSpacing: "0.01em" }}
-          >
-            No account required to send one.
-          </p>
         </div>
-
       </div>
+
     </main>
   );
 }

@@ -68,7 +68,7 @@ function RegisterPageInner() {
         <main className="min-h-dvh flex items-center justify-center px-4">
             <div className="w-full max-w-[400px] flex flex-col gap-8">
                 <header className="flex flex-col items-center gap-3 text-center">
-                    <Image src="/Logo.png" alt="Dearly logo" width={48} height={48} className="object-contain" />
+                    <Image src="https://res.cloudinary.com/db4cbtzey/image/upload/v1772543945/Logo_z9pkxr.png" alt="Dearly logo" width={48} height={48} className="object-contain" />
                     <span className="font-serif text-ink tracking-tight" style={{ fontSize: "1.25rem", fontWeight: 600 }}>Dearly</span>
                     <h1 className="font-serif text-h2 text-ink">begin something dear.</h1>
                 </header>
@@ -108,11 +108,11 @@ function RegisterPageInner() {
                     {error && <p className="text-body-sm text-red-500">{error}</p>}
 
                     <Button type="submit" loading={loading} className="w-full mt-2" size="lg">
-                        register
+                        create account
                     </Button>
 
                     <p className="text-center text-body-sm text-ink-secondary">
-                        already have an account? <a href="/login" className="text-ink hover:underline">login</a>
+                        already have an account? <a href="/login" className="text-ink hover:underline">sign in</a>
                     </p>
                 </form>
             </div>

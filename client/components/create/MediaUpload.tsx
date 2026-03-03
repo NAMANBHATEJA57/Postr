@@ -121,11 +121,10 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
                             <line x1="12" y1="3" x2="12" y2="15" />
                         </svg>
                         <span className="text-body-sm text-ink-secondary">
-                            Tap to upload a photo or video
+                            upload a photo or video
                         </span>
                         <span className="text-body-sm text-accent-muted text-center leading-relaxed">
-                            JPG, PNG, WebP up to 5MB<br />
-                            GIF up to 10MB · MP4 up to 25MB
+                            photos up to 5MB. videos up to 25MB.
                         </span>
                         <input
                             ref={inputRef}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { apiUrl } from "@/lib/api";
 import PostcardContainer from "@/components/postcard/PostcardContainer";
@@ -49,6 +49,7 @@ function Icon({ name, size = 18, style }: { name: string; size?: number; style?:
 
 export default function ConversationThreadPage() {
     const params = useParams();
+    const router = useRouter();
     const conversationId = params.id as string;
     const { user } = useAuth();
 
@@ -56,6 +57,10 @@ export default function ConversationThreadPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const bottomRef = useRef<HTMLDivElement>(null);
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteToast, setDeleteToast] = useState("");
 
     useEffect(() => {
         if (!loading && conversation?.postcards.length) {
@@ -86,6 +91,31 @@ export default function ConversationThreadPage() {
         loadThread();
     }, [conversationId]);
 
+    const handleDelete = async () => {
+        setShowDeleteModal(false);
+        setIsDeleting(true);
+
+        try {
+            const res = await fetch(apiUrl(`/api/conversations/${conversationId}`), {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            if (!res.ok) throw new Error("Delete failed");
+
+            // Wait for fade-out, then redirect
+            setTimeout(() => {
+                router.push("/dashboard");
+            }, 200);
+
+        } catch (err) {
+            console.error(err);
+            setIsDeleting(false);
+            setDeleteToast("couldn’t delete. try again.");
+            setTimeout(() => setDeleteToast(""), 3000);
+        }
+    };
+
     if (loading) return (
         <main style={{ minHeight: "100dvh", background: "#F8F4EF", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.875rem", color: "#C7C0B8", opacity: 0.7 }}>opening…</p>
@@ -103,7 +133,10 @@ export default function ConversationThreadPage() {
             style={{
                 minHeight: "100dvh",
                 background: "#F8F4EF",
-                animation: "pageEnter 200ms ease-out both",
+                transition: "opacity 200ms ease-out, transform 200ms ease-out",
+                opacity: isDeleting ? 0 : 1,
+                transform: isDeleting ? "translateY(-6px)" : "translateY(0)",
+                animation: isDeleting ? "none" : "pageEnter 200ms ease-out both",
             }}
         >
             {/* ── Page container — matches dashboard ── */}
@@ -155,7 +188,7 @@ export default function ConversationThreadPage() {
                             onMouseLeave={(e) => { e.currentTarget.style.color = "#6B635A"; }}
                         >
                             <Icon name="chevron_left" size={16} />
-                            letters
+                            conversations
                         </Link>
 
                         {/* Center: conversation name */}
@@ -179,8 +212,31 @@ export default function ConversationThreadPage() {
                             {conversation.otherUser.name.toLowerCase()}
                         </h1>
 
-                        {/* Right: spacer to balance the back link */}
-                        <div style={{ width: "60px", flexShrink: 0 }} />
+                        {/* Right: delete action */}
+                        <div style={{ flexShrink: 0, display: "flex", justifyContent: "flex-end" }}>
+                            <button
+                                onClick={() => setShowDeleteModal(true)}
+                                className="cta-link"
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontFamily: "Inter, sans-serif",
+                                    fontSize: "0.8125rem",
+                                    color: "#A9A19A",
+                                    background: "none",
+                                    border: "none",
+                                    padding: 0,
+                                    cursor: "pointer",
+                                    transition: "opacity 150ms ease, color 150ms ease",
+                                    opacity: 0.6,
+                                }}
+                                onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.color = "#1A1A1A"; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.6"; e.currentTarget.style.color = "#A9A19A"; }}
+                            >
+                                <Icon name="delete" size={16} style={{ fontWeight: 300 }} />
+                                <span style={{ marginLeft: "6px", display: "inline-block" }}>delete</span>
+                            </button>
+                        </div>
                     </header>
 
                     {/* ── Header divider — matches dashboard ── */}
@@ -317,12 +373,139 @@ export default function ConversationThreadPage() {
                             onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.98)"; }}
                             onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
                         >
-                            Write a new postcard
+                            send another postcard
                         </a>
+                        <p
+                            style={{
+                                fontFamily: "Inter, sans-serif",
+                                fontSize: "0.75rem",
+                                color: "#C7C0B8",
+                                textAlign: "center",
+                                marginTop: "12px",
+                                letterSpacing: "0.02em",
+                            }}
+                        >
+                            this conversation is saved in your account.
+                        </p>
                     </div>
 
                 </div>
             </div>
+
+            {/* ── Soft Delete Confirmation Modal ── */}
+            {showDeleteModal && (
+                <div
+                    onClick={(e) => { if (e.target === e.currentTarget) setShowDeleteModal(false); }}
+                    style={{
+                        position: "fixed",
+                        inset: 0,
+                        zIndex: 50,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "24px",
+                        background: "rgba(248,244,239,0.50)",
+                        backdropFilter: "blur(2px)",
+                        animation: "fadeIn 180ms ease both",
+                    }}
+                >
+                    <div
+                        style={{
+                            background: "#FFFFFF",
+                            borderRadius: "16px",
+                            boxShadow: "0 4px 16px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)",
+                            padding: "36px",
+                            width: "100%",
+                            maxWidth: "400px",
+                            textAlign: "center",
+                            animation: "fadeInUpCard 220ms ease both",
+                        }}
+                    >
+                        <p
+                            style={{
+                                fontFamily: "var(--font-playfair), Georgia, serif",
+                                fontSize: "1.125rem",
+                                fontWeight: 400,
+                                color: "#1A1A1A",
+                                margin: "0 0 8px 0",
+                            }}
+                        >
+                            delete this conversation?
+                        </p>
+                        <p
+                            style={{
+                                fontFamily: "Inter, sans-serif",
+                                fontSize: "0.875rem",
+                                color: "#A9A19A",
+                                margin: "0 0 32px 0",
+                                lineHeight: 1.5,
+                            }}
+                        >
+                            This will remove all letters inside.
+                        </p>
+
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "24px" }}>
+                            <button
+                                onClick={() => setShowDeleteModal(false)}
+                                style={{
+                                    fontFamily: "Inter, sans-serif",
+                                    fontSize: "0.875rem",
+                                    color: "#A9A19A",
+                                    background: "none",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    padding: "8px",
+                                    transition: "color 150ms ease",
+                                }}
+                                onMouseEnter={(e) => { e.currentTarget.style.color = "#1A1A1A"; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.color = "#A9A19A"; }}
+                            >
+                                cancel
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                style={{
+                                    fontFamily: "Inter, sans-serif",
+                                    fontSize: "0.875rem",
+                                    color: "#C08497",
+                                    background: "none",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    padding: "8px",
+                                    transition: "opacity 150ms ease",
+                                }}
+                                onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.7"; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                            >
+                                delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Soft Error Toast ── */}
+            {deleteToast && (
+                <div
+                    style={{
+                        position: "fixed",
+                        bottom: "32px",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        zIndex: 60,
+                        background: "#1A1A1A",
+                        color: "#F8F4EF",
+                        padding: "10px 20px",
+                        borderRadius: "8px",
+                        fontFamily: "Inter, sans-serif",
+                        fontSize: "0.8125rem",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        animation: "fadeInUp 200ms ease both",
+                    }}
+                >
+                    {deleteToast}
+                </div>
+            )}
         </main>
     );
 }

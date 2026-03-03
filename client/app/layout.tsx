@@ -24,16 +24,17 @@ const caveat = Caveat({
 
 export const metadata: Metadata = {
   title: "Dearly — write something that matters",
-  description: "A slower way to share what matters.",
-  keywords: ["letter", "digital letter", "postcard", "correspondence", "minimal"],
+  description: "A slower, more intentional way to send a private postcard.",
+  keywords: ["postcard", "digital postcard", "private correspondence", "minimal", "intentional"],
   openGraph: {
     title: "Dearly — write something that matters",
-    description: "A slower way to share what matters.",
+    description: "A slower, more intentional way to send a private postcard.",
     type: "website",
   },
 };
 
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import Footer from "@/components/layout/Footer";
 
 export default function RootLayout({
   children,
@@ -53,6 +54,7 @@ export default function RootLayout({
         <AuthProvider>
           {children}
         </AuthProvider>
+        <Footer />
       </body>
     </html>
   );

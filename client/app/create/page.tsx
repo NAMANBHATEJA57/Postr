@@ -4,7 +4,6 @@ import { useState, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import MediaUpload from "@/components/create/MediaUpload";
-import ExpirySelector from "@/components/create/ExpirySelector";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import CharacterCounter from "@/components/ui/CharacterCounter";
@@ -35,6 +34,7 @@ function CreatePageInner() {
     const searchParams = useSearchParams();
     const conversationId = searchParams.get("conversationId");
     const { user, loading: authLoading } = useAuth();
+    const isGuest = !authLoading && !user;
 
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [title, setTitle] = useState("");
@@ -42,7 +42,7 @@ function CreatePageInner() {
     const [toName, setToName] = useState("");
     const [fromName, setFromName] = useState("");
     const [stampId, setStampId] = useState<StampId | null>(null);
-    const [expiry, setExpiry] = useState<ExpiryOption>("never");
+    const [expiry, setExpiry] = useState<ExpiryOption>(isGuest ? "7d" : "never");
     const [customDate, setCustomDate] = useState("");
     const [passwordEnabled, setPasswordEnabled] = useState(false);
     const [password, setPassword] = useState("");
@@ -50,10 +50,8 @@ function CreatePageInner() {
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
 
-    const handleExpiryChange = (option: ExpiryOption, cd?: string) => {
-        setExpiry(option);
-        if (cd) setCustomDate(cd);
-    };
+    // Lock expiry to 7d for guests
+    const effectiveExpiry = isGuest ? "7d" : expiry;
 
     const isPublishable =
         mediaFile && title.trim() && message.trim() && (conversationId || (toName.trim() && fromName.trim()));
@@ -92,7 +90,7 @@ function CreatePageInner() {
             setUploading(false);
 
             const mediaType = mediaFile.type.startsWith("video/") ? "video" : "image";
-            const expiryAt = computeExpiryAt(expiry, customDate);
+            const expiryAt = computeExpiryAt(effectiveExpiry, customDate);
 
             const createRes = await fetch(apiUrl("/api/postcards"), {
                 method: "POST",
@@ -115,8 +113,8 @@ function CreatePageInner() {
 
             if (!createRes.ok) {
                 const err = await createRes.json();
-                if (createRes.status === 429) throw new Error("Too many letters. Try again later.");
-                throw new Error(err.error ?? "Failed to create letter");
+                if (createRes.status === 429) throw new Error("Too many postcards. Try again later.");
+                throw new Error(err.error ?? "Failed to create postcard");
             }
 
             const { id } = await createRes.json();
@@ -130,7 +128,7 @@ function CreatePageInner() {
             setSubmitting(false);
             setUploading(false);
         }
-    }, [mediaFile, submitting, title, message, toName, fromName, stampId, expiry, customDate, passwordEnabled, password, router, conversationId]);
+    }, [mediaFile, submitting, title, message, toName, fromName, stampId, effectiveExpiry, customDate, passwordEnabled, password, router, conversationId]);
 
     const buttonLabel = uploading ? "uploading…" : submitting ? "sending…" : "send it";
 
@@ -169,7 +167,7 @@ function CreatePageInner() {
                     >
                         {/* Logo */}
                         <Image
-                            src="/Logo.png"
+                            src="https://res.cloudinary.com/db4cbtzey/image/upload/v1772543945/Logo_z9pkxr.png"
                             alt="Dearly logo"
                             width={36}
                             height={36}
@@ -198,7 +196,7 @@ function CreatePageInner() {
                                 letterSpacing: "-0.01em",
                             }}
                         >
-                            write your letter.
+                            send a postcard.
                         </h1>
 
                         {/* Subtext */}
@@ -214,25 +212,34 @@ function CreatePageInner() {
                             keep it short. make it meaningful.
                         </p>
 
-                        {/* Guest notice */}
-                        {!authLoading && !user && (
-                            <p
+                        {/* Guest notice badge */}
+                        {isGuest && (
+                            <div
                                 style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "6px",
+                                    marginTop: "14px",
+                                    padding: "5px 14px",
+                                    background: "rgba(0,0,0,0.04)",
+                                    borderRadius: "20px",
                                     fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.8125rem",
-                                    color: "#C7C0B8",
-                                    marginTop: "10px",
+                                    fontSize: "0.75rem",
+                                    color: "#A9A19A",
+                                    letterSpacing: "0.02em",
                                 }}
                             >
-                                You&apos;re sending as a guest.{" "}
-                                <Link
-                                    href="/register"
-                                    style={{ color: "#C08497", textDecoration: "underline", textUnderlineOffset: "2px" }}
-                                >
-                                    Join Dearly
-                                </Link>{" "}
-                                to keep your letters safe.
-                            </p>
+                                <span
+                                    style={{
+                                        width: 6,
+                                        height: 6,
+                                        borderRadius: "50%",
+                                        background: "#C08497",
+                                        flexShrink: 0,
+                                    }}
+                                />
+                                guest mode — disappears in 7 days
+                            </div>
                         )}
                     </div>
 
@@ -240,7 +247,8 @@ function CreatePageInner() {
                     <div className="flex flex-col" style={{ gap: "40px" }}>
 
                         {/* Media */}
-                        <section>
+                        <section className="flex flex-col gap-2">
+                            <p className="text-body-sm text-ink-secondary">add a memory</p>
                             <MediaUpload onFile={setMediaFile} />
                         </section>
 
@@ -249,7 +257,7 @@ function CreatePageInner() {
                         {/* Title */}
                         <div className="flex flex-col gap-1">
                             <div className="flex justify-between items-end">
-                                <label htmlFor="title-input" className="text-body-sm text-ink-secondary">title</label>
+                                <label htmlFor="title-input" className="text-body-sm text-ink-secondary">give it a title</label>
                                 <CharacterCounter current={title.length} max={40} warnAt={30} />
                             </div>
                             <input
@@ -257,7 +265,7 @@ function CreatePageInner() {
                                 type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value.slice(0, 40))}
-                                placeholder="Title of your letter"
+                                placeholder="a small note for the top."
                                 maxLength={40}
                                 required
                                 className="w-full bg-transparent text-ink font-serif text-xl border-b border-divider pb-2 outline-none placeholder:text-accent-muted transition-colors duration-150"
@@ -270,14 +278,14 @@ function CreatePageInner() {
                         {/* Message */}
                         <div className="flex flex-col gap-1">
                             <div className="flex justify-between items-end">
-                                <label htmlFor="message-input" className="text-body-sm text-ink-secondary">message</label>
+                                <label htmlFor="message-input" className="text-body-sm text-ink-secondary">your message</label>
                                 <CharacterCounter current={message.length} max={120} warnAt={90} />
                             </div>
                             <textarea
                                 id="message-input"
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                placeholder="Write your message here…"
+                                placeholder="what do you want them to remember?"
                                 maxLength={120}
                                 required
                                 rows={3}
@@ -289,8 +297,11 @@ function CreatePageInner() {
                         </div>
 
                         {/* Stamps */}
-                        <div className="flex flex-col gap-3">
-                            <p className="text-body-sm text-ink-secondary">add a stamp (optional)</p>
+                        <div className="flex flex-col gap-2">
+                            <p className="text-body-sm text-ink-secondary">choose a stamp (optional)</p>
+                            <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#C7C0B8", marginTop: "-4px" }}>
+                                each stamp leaves its mark.
+                            </p>
                             <div
                                 className="flex items-center gap-3 overflow-x-auto pb-2 snap-x"
                                 style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
@@ -305,13 +316,20 @@ function CreatePageInner() {
                                             className="relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 snap-start flex items-center justify-center bg-white transition-all duration-150 ease-subtle cursor-pointer outline-none [&>svg]:max-w-[80%] [&>svg]:max-h-[80%] [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain"
                                             style={{
                                                 border: isSelected ? "2px solid #C08497" : "1px solid #E1DCD7",
-                                                transform: isSelected ? "scale(1.02)" : "scale(1)",
+                                                transform: isSelected ? "scale(1.04)" : "scale(1)",
+                                                transition: "all 180ms ease-out",
                                             }}
                                             onMouseEnter={(e) => {
-                                                if (!isSelected) e.currentTarget.style.border = "1px solid #C08497";
+                                                if (!isSelected) {
+                                                    e.currentTarget.style.border = "1px solid #C08497";
+                                                    e.currentTarget.style.transform = "scale(1.06)";
+                                                }
                                             }}
                                             onMouseLeave={(e) => {
-                                                if (!isSelected) e.currentTarget.style.border = "1px solid #E1DCD7";
+                                                if (!isSelected) {
+                                                    e.currentTarget.style.border = "1px solid #E1DCD7";
+                                                    e.currentTarget.style.transform = "scale(1)";
+                                                }
                                             }}
                                             aria-pressed={isSelected}
                                             aria-label={`Select ${id} stamp`}
@@ -327,6 +345,27 @@ function CreatePageInner() {
                                     );
                                 })}
                             </div>
+                            {stampId && (
+                                <button
+                                    type="button"
+                                    onClick={() => setStampId(null)}
+                                    style={{
+                                        fontFamily: "Inter, sans-serif",
+                                        fontSize: "0.75rem",
+                                        color: "#A9A19A",
+                                        background: "none",
+                                        border: "none",
+                                        cursor: "pointer",
+                                        padding: 0,
+                                        alignSelf: "flex-start",
+                                        transition: "color 150ms ease",
+                                    }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.color = "#6B635A"; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.color = "#A9A19A"; }}
+                                >
+                                    clear stamp
+                                </button>
+                            )}
                         </div>
 
                         {/* To / From */}
@@ -334,15 +373,20 @@ function CreatePageInner() {
                             <>
                                 <div className="h-px" style={{ background: "#E1DCD7" }} />
                                 <div className="flex flex-col gap-6">
-                                    <Input
-                                        id="to-input"
-                                        label="to"
-                                        value={toName}
-                                        onChange={(e) => setToName(e.target.value.slice(0, 60))}
-                                        placeholder="their name"
-                                        maxLength={60}
-                                        required
-                                    />
+                                    <div className="flex flex-col gap-1">
+                                        <Input
+                                            id="to-input"
+                                            label="who is this for?"
+                                            value={toName}
+                                            onChange={(e) => setToName(e.target.value.slice(0, 60))}
+                                            placeholder="their name"
+                                            maxLength={60}
+                                            required
+                                        />
+                                        <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#C7C0B8", marginTop: "4px" }}>
+                                            we&apos;ll send them a private link.
+                                        </p>
+                                    </div>
                                     <Input
                                         id="from-input"
                                         label="from"
@@ -358,12 +402,49 @@ function CreatePageInner() {
 
                         <div className="h-px" style={{ background: "#E1DCD7" }} />
 
-                        {/* Expiry */}
-                        <ExpirySelector
-                            value={expiry}
-                            customDate={customDate}
-                            onChange={handleExpiryChange}
-                        />
+                        {/* Expiry / Duration */}
+                        {isGuest ? (
+                            <div className="flex flex-col gap-1">
+                                <p className="text-body-sm text-ink-secondary">duration</p>
+                                <p
+                                    style={{
+                                        fontFamily: "Inter, sans-serif",
+                                        fontSize: "1rem",
+                                        color: "#6B635A",
+                                        paddingBottom: "8px",
+                                        borderBottom: "1px solid #E1DCD7",
+                                    }}
+                                >
+                                    7 days <span style={{ color: "#C7C0B8", fontSize: "0.875rem" }}>(temporary)</span>
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col gap-2 w-full">
+                                <label htmlFor="expiry-select" className="text-body-sm text-ink-secondary">expiry</label>
+                                <select
+                                    id="expiry-select"
+                                    value={expiry}
+                                    onChange={(e) => setExpiry(e.target.value as ExpiryOption)}
+                                    className="w-full bg-transparent text-ink text-body-lg font-sans border-b border-divider pb-2 outline-none focus:border-ink transition-colors duration-150 appearance-none cursor-pointer min-h-[44px]"
+                                >
+                                    <option value="never">Never expires</option>
+                                    <option value="24h">24 hours</option>
+                                    <option value="7d">7 days</option>
+                                    <option value="30d">30 days</option>
+                                    <option value="custom">Custom date…</option>
+                                </select>
+                                {expiry === "custom" && (
+                                    <input
+                                        type="date"
+                                        value={customDate}
+                                        min={new Date().toISOString().split("T")[0]}
+                                        onChange={(e) => setCustomDate(e.target.value)}
+                                        className="w-full bg-transparent text-ink text-body-lg font-sans border-b border-divider pb-2 outline-none focus:border-ink transition-colors duration-150 min-h-[44px]"
+                                        aria-label="Custom expiry date"
+                                    />
+                                )}
+                            </div>
+                        )}
 
                         {/* Password */}
                         <div className="flex flex-col gap-3">
@@ -380,8 +461,13 @@ function CreatePageInner() {
                                         className={`absolute top-1 h-4 w-4 bg-linen transition-all duration-150 ${passwordEnabled ? "left-5" : "left-1"}`}
                                     />
                                 </span>
-                                <span className="text-body-sm text-ink-secondary">keep it safe with a password</span>
+                                <span className="text-body-sm text-ink-secondary">add a password (optional)</span>
                             </label>
+                            {!passwordEnabled && (
+                                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#C7C0B8", marginTop: "-8px" }}>
+                                    only someone with the password can open it.
+                                </p>
+                            )}
                             {passwordEnabled && (
                                 <Input
                                     id="password-input"
@@ -395,6 +481,26 @@ function CreatePageInner() {
                             )}
                         </div>
 
+                        {/* Guest conversion nudge */}
+                        {isGuest && (
+                            <p
+                                style={{
+                                    fontFamily: "Inter, sans-serif",
+                                    fontSize: "0.8125rem",
+                                    color: "#C7C0B8",
+                                    textAlign: "center",
+                                }}
+                            >
+                                want to keep your postcards?{" "}
+                                <Link
+                                    href="/register"
+                                    style={{ color: "#C08497", textDecoration: "underline", textUnderlineOffset: "2px" }}
+                                >
+                                    create an account
+                                </Link>
+                            </p>
+                        )}
+
                         {submitError && (
                             <p role="alert" className="text-body-sm text-red-500">{submitError}</p>
                         )}
@@ -407,7 +513,8 @@ function CreatePageInner() {
                                 loading={submitting || uploading}
                                 size="lg"
                                 className="w-full"
-                                aria-label="Send letter"
+                                style={{ opacity: !isPublishable ? 0.5 : 1 }}
+                                aria-label="Send postcard"
                             >
                                 {buttonLabel}
                             </Button>
@@ -431,8 +538,8 @@ function CreatePageInner() {
                     loading={submitting || uploading}
                     size="lg"
                     className="w-full"
-                    style={{ height: "48px" }}
-                    aria-label="Send letter"
+                    style={{ height: "48px", opacity: !isPublishable ? 0.5 : 1 }}
+                    aria-label="Send postcard"
                 >
                     {buttonLabel}
                 </Button>

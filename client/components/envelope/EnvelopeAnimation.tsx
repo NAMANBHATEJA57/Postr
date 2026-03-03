@@ -64,7 +64,7 @@ export default function EnvelopeAnimation({
                         </p>
 
                         {/* ── Envelope SVG — static, no flap animation ── */}
-                        <div
+                        <motion.div
                             className="w-full cursor-pointer select-none"
                             style={{ marginTop: "32px" }}
                             onClick={handleTap}
@@ -73,6 +73,8 @@ export default function EnvelopeAnimation({
                             role="button"
                             aria-label="Open envelope"
                             data-testid="envelope"
+                            whileHover={prefersReducedMotion ? {} : { rotate: 1.5, scale: 1.02 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
                         >
                             <svg
                                 viewBox="0 0 340 230"
@@ -116,7 +118,7 @@ export default function EnvelopeAnimation({
                             >
                                 tap to open
                             </p>
-                        </div>
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>

@@ -19,10 +19,10 @@ function accentForIndex(i: number) {
     return ACCENT_COLORS[i % ACCENT_COLORS.length];
 }
 
-function Icon({ name, size = 18, style }: { name: string; size?: number; style?: React.CSSProperties }) {
+function Icon({ name, size = 18, style, className }: { name: string; size?: number; style?: React.CSSProperties; className?: string }) {
     return (
         <span
-            className="material-symbols-rounded select-none"
+            className={`material-symbols-rounded select-none ${className || ""}`}
             style={{ fontSize: size, lineHeight: 1, ...style }}
             aria-hidden="true"
         >
@@ -143,7 +143,7 @@ export default function DashboardPage() {
                                 margin: 0,
                             }}
                         >
-                            letters for you
+                            your conversations
                         </p>
 
                         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -210,7 +210,7 @@ export default function DashboardPage() {
                             onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.99)"; }}
                             onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
                         >
-                            Write a new postcard
+                            Start a conversation
                             <Icon name="arrow_forward" size={18} style={{ color: "#F8F4EF", opacity: 0.7 }} />
                         </button>
                     </div>
@@ -249,7 +249,7 @@ export default function DashboardPage() {
                                     fontStyle: "italic",
                                 }}
                             >
-                                your letter box is empty.
+                                no conversations yet.
                             </p>
                             <button
                                 onClick={() => setShowNewDialogue(true)}
@@ -270,7 +270,7 @@ export default function DashboardPage() {
                                 onMouseLeave={(e) => { e.currentTarget.style.color = "#C7C0B8"; }}
                             >
                                 <Icon name="arrow_forward" size={16} />
-                                start something
+                                start one
                             </button>
                         </div>
                     ) : (
@@ -281,94 +281,133 @@ export default function DashboardPage() {
                                 const accent = accentForIndex(index);
 
                                 return (
-                                    <button
+                                    <div
                                         key={c.id}
-                                        onClick={() => navigateTo(`/conversation/${c.id}`)}
+                                        className="group relative"
                                         style={{
-                                            display: "block",
-                                            width: "100%",
-                                            textAlign: "left",
-                                            background: "#FFFFFF",
-                                            border: "none",
-                                            outline: "none",
-                                            cursor: "pointer",
-                                            borderRadius: "12px",
-                                            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-                                            paddingTop: "20px",
-                                            paddingBottom: "20px",
-                                            paddingLeft: "24px",
-                                            paddingRight: "24px",
-                                            transition: "box-shadow 150ms ease, transform 150ms ease",
-                                            animation: `fadeInUpCard 250ms ${index * 50}ms both`,
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.10)";
-                                            e.currentTarget.style.transform = "translateY(-2px)";
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)";
-                                            e.currentTarget.style.transform = "translateY(0)";
+                                            transition: "opacity 200ms ease-out, transform 200ms ease-out, height 200ms ease-out, margin 200ms ease-out",
                                         }}
                                     >
-                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
-                                            <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1, minWidth: 0 }}>
+                                        <button
+                                            onClick={() => navigateTo(`/conversation/${c.id}`)}
+                                            style={{
+                                                display: "block",
+                                                width: "100%",
+                                                textAlign: "left",
+                                                background: "#FFFFFF",
+                                                border: "none",
+                                                outline: "none",
+                                                cursor: "pointer",
+                                                borderRadius: "12px",
+                                                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                                                paddingTop: "20px",
+                                                paddingBottom: "20px",
+                                                paddingLeft: "28px",
+                                                paddingRight: "28px",
+                                                transition: "box-shadow 150ms ease, transform 150ms ease",
+                                                animation: `fadeInUpCard 250ms ${index * 50}ms both`,
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.10)";
+                                                e.currentTarget.style.transform = "translateY(-2px)";
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)";
+                                                e.currentTarget.style.transform = "translateY(0)";
+                                            }}
+                                        >
+                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
+                                                <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1, minWidth: 0 }}>
+                                                    <div
+                                                        style={{
+                                                            width: 8,
+                                                            height: 8,
+                                                            borderRadius: "50%",
+                                                            background: hasUnread ? accent : "transparent",
+                                                            flexShrink: 0,
+                                                            boxShadow: hasUnread ? `0 0 0 2px ${accent}22` : "none",
+                                                        }}
+                                                    />
+                                                    <div style={{ display: "flex", flexDirection: "column", gap: "3px", minWidth: 0 }}>
+                                                        <p
+                                                            style={{
+                                                                fontFamily: "var(--font-playfair), Georgia, serif",
+                                                                fontSize: "1.0625rem",
+                                                                fontWeight: hasUnread ? 600 : 400,
+                                                                color: "#1A1A1A",
+                                                                margin: 0,
+                                                                lineHeight: 1.3,
+                                                                whiteSpace: "nowrap",
+                                                                overflow: "hidden",
+                                                                textOverflow: "ellipsis",
+                                                            }}
+                                                        >
+                                                            {c.otherUser.name.toLowerCase()}
+                                                        </p>
+                                                        <p
+                                                            style={{
+                                                                fontFamily: "Inter, sans-serif",
+                                                                fontSize: "0.8125rem",
+                                                                color: "#C7C0B8",
+                                                                margin: 0,
+                                                                lineHeight: 1.4,
+                                                            }}
+                                                        >
+                                                            {count > 0 ? `${count} ${count === 1 ? "postcard" : "postcards"}` : "no postcards yet"}
+                                                        </p>
+                                                        {c.latestPostcard?.message && (
+                                                            <p
+                                                                style={{
+                                                                    fontFamily: "Inter, sans-serif",
+                                                                    fontSize: "0.75rem",
+                                                                    color: "#C7C0B8",
+                                                                    margin: 0,
+                                                                    lineHeight: 1.4,
+                                                                    whiteSpace: "nowrap",
+                                                                    overflow: "hidden",
+                                                                    textOverflow: "ellipsis",
+                                                                    maxWidth: "200px",
+                                                                    opacity: 0.7,
+                                                                }}
+                                                            >
+                                                                {c.latestPostcard.message}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+
                                                 <div
-                                                    style={{
-                                                        width: 8,
-                                                        height: 8,
-                                                        borderRadius: "50%",
-                                                        background: hasUnread ? accent : "transparent",
-                                                        flexShrink: 0,
-                                                        boxShadow: hasUnread ? `0 0 0 2px ${accent}22` : "none",
-                                                    }}
-                                                />
-                                                <div style={{ display: "flex", flexDirection: "column", gap: "3px", minWidth: 0 }}>
-                                                    <p
-                                                        style={{
-                                                            fontFamily: "var(--font-playfair), Georgia, serif",
-                                                            fontSize: "1.0625rem",
-                                                            fontWeight: hasUnread ? 600 : 400,
-                                                            color: "#1A1A1A",
-                                                            margin: 0,
-                                                            lineHeight: 1.3,
-                                                            whiteSpace: "nowrap",
-                                                            overflow: "hidden",
-                                                            textOverflow: "ellipsis",
-                                                        }}
-                                                    >
-                                                        {c.otherUser.name.toLowerCase()}
-                                                    </p>
-                                                    <p
-                                                        style={{
-                                                            fontFamily: "Inter, sans-serif",
-                                                            fontSize: "0.8125rem",
-                                                            color: "#C7C0B8",
-                                                            margin: 0,
-                                                            lineHeight: 1.4,
-                                                        }}
-                                                    >
-                                                        {count > 0 ? `${count} ${count === 1 ? "letter" : "letters"} inside` : "no letters yet"}
-                                                    </p>
+                                                    className="hidden md:flex transition-opacity duration-150 ease-out group-hover:opacity-0"
+                                                    style={{ alignItems: "center", gap: "8px", flexShrink: 0 }}
+                                                >
+                                                    {c.latestPostcard ? (
+                                                        <span
+                                                            className="md:block hidden"
+                                                            style={{
+                                                                fontFamily: "Inter, sans-serif",
+                                                                fontSize: "0.75rem",
+                                                                color: "#C7C0B8",
+                                                                letterSpacing: "0.02em",
+                                                            }}
+                                                        >
+                                                            {new Date(c.latestPostcard.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                                                        </span>
+                                                    ) : <span style={{ width: "36px" }} />}
+                                                    <Icon name="chevron_right" size={16} style={{ color: "#C7C0B8" }} />
+                                                </div>
+
+                                                {/* Mobile only right side (timestamp + chevron doesn't fade, just adds 3-dot) */}
+                                                <div className="md:hidden flex items-center gap-2 shrink-0">
+                                                    {c.latestPostcard && (
+                                                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#C7C0B8", letterSpacing: "0.02em" }}>
+                                                            {new Date(c.latestPostcard.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                                                        </span>
+                                                    )}
+                                                    <Icon name="chevron_right" size={16} style={{ color: "#C7C0B8" }} />
                                                 </div>
                                             </div>
-
-                                            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-                                                {c.latestPostcard && (
-                                                    <span
-                                                        style={{
-                                                            fontFamily: "Inter, sans-serif",
-                                                            fontSize: "0.75rem",
-                                                            color: "#C7C0B8",
-                                                            letterSpacing: "0.02em",
-                                                        }}
-                                                    >
-                                                        {new Date(c.latestPostcard.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
-                                                    </span>
-                                                )}
-                                                <Icon name="chevron_right" size={16} style={{ color: "#C7C0B8" }} />
-                                            </div>
-                                        </div>
-                                    </button>
+                                        </button>
+                                    </div>
                                 );
                             })}
                         </div>
