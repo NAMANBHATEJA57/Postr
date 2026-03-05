@@ -27,7 +27,6 @@ const nextConfig = {
     });
     return config;
   },
-  output: 'export',
   poweredByHeader: false,
 };
 

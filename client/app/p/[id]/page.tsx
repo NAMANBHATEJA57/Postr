@@ -1,10 +1,5 @@
 import ViewPageClient from "./ViewPageClient";
 
-export function generateStaticParams() {
-    return [{ id: 'unresolved' }];
-}
-
-export const dynamicParams = false;
 
 interface ViewPageProps {
     params: { id: string };
