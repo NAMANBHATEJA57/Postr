@@ -31,21 +31,21 @@ export default function BackSide({ postcard }: BackSideProps) {
                 </p>
 
                 {/* Greeting */}
-                <p className="font-handwriting text-[clamp(1.125rem,3.5vw,1.375rem)] text-ink leading-[1.5] mb-3">
+                <p className="font-handwritten text-[clamp(1.125rem,3.5vw,1.375rem)] text-ink leading-[1.5] mb-3">
                     Dear {postcard.toName},
                 </p>
 
                 {/* Message body */}
-                <p className="font-handwriting text-[clamp(1.125rem,3.5vw,1.375rem)] text-ink leading-[1.65] flex-1">
+                <p className="font-handwritten text-[clamp(1.125rem,3.5vw,1.375rem)] text-ink leading-[1.65] flex-1">
                     {postcard.message}
                 </p>
 
                 {/* Signature — right-aligned within left column */}
                 <div className="text-right mt-6">
-                    <p className="font-handwriting text-[clamp(1rem,3vw,1.25rem)] text-[#555] leading-[1.4] italic">
+                    <p className="font-handwritten text-[clamp(1rem,3vw,1.25rem)] text-[#555] leading-[1.4] italic">
                         Sincerely,
                     </p>
-                    <p className="font-handwriting text-[clamp(1.0625rem,3vw,1.3125rem)] text-ink leading-[1.4]">
+                    <p className="font-handwritten text-[clamp(1.0625rem,3vw,1.3125rem)] text-ink leading-[1.4]">
                         {postcard.fromName}
                     </p>
                 </div>
@@ -61,7 +61,7 @@ export default function BackSide({ postcard }: BackSideProps) {
                     <p className="font-sans text-[11px] text-accent-muted tracking-[0.06em] uppercase mb-2">
                         To
                     </p>
-                    <p className="font-handwriting text-[clamp(1.0625rem,3vw,1.25rem)] text-ink leading-[1.4]">
+                    <p className="font-handwritten text-[clamp(1.0625rem,3vw,1.25rem)] text-ink leading-[1.4]">
                         {postcard.toName}
                     </p>
                 </div>

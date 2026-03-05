@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useReducedMotion } from "framer-motion";
 import FrontSide from "./FrontSide";
 import BackSide from "./BackSide";
@@ -10,35 +10,50 @@ interface PostcardContainerProps {
     postcard: ApiPostcardResponse;
 }
 
+/** Detect Safari — it doesn't reliably support preserve-3d with overflow:hidden ancestors */
+function useIsSafari() {
+    const [isSafari, setIsSafari] = useState(false);
+    useEffect(() => {
+        const ua = navigator.userAgent;
+        const isSafariBrowser = /Safari/.test(ua) && !/Chrome/.test(ua) && !/Chromium/.test(ua);
+        setIsSafari(isSafariBrowser);
+    }, []);
+    return isSafari;
+}
+
 /**
  * PostcardContainer — handles the two-sided flip animation.
  *
- * Standard: Y-axis 3D flip, 360ms, perspective 800px, cubic-bezier ease.
- * Reduced motion: opacity crossfade between faces (200ms).
+ * Standard: Y-axis 3D flip, 480ms, perspective 1000px, cubic-bezier ease.
+ * Safari / Reduced motion: opacity crossfade between faces (480ms).
  *
- * The outer element sets perspective.
- * The inner element rotates and has transform-style: preserve-3d.
- * Each face uses backface-visibility: hidden so only the correct side shows.
+ * NOTE: overflow:hidden on a parent kills preserve-3d in Safari, so we
+ * apply overflow:hidden only on each individual face, not the wrapper.
  */
 export default function PostcardContainer({ postcard }: PostcardContainerProps) {
     const [flipped, setFlipped] = useState(false);
     const prefersReducedMotion = useReducedMotion();
+    const isSafari = useIsSafari();
 
     const DURATION = "480ms";
     const EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
+
+    // Use crossfade on Safari (preserve-3d is unreliable with overflow:hidden ancestors)
+    const useCrossfade = prefersReducedMotion || isSafari;
 
     return (
         <div
             className="w-full max-w-postcard mx-auto"
             aria-label="Postcard — tap or click to flip"
         >
+            {/* Wrapper: no overflow-hidden here — it kills preserve-3d in Safari */}
             <div
-                className={`w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl overflow-hidden postcard-tiltable transition-shadow duration-[480ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${flipped ? "shadow-[0_8px_24px_rgba(0,0,0,0.09),0_2px_6px_rgba(0,0,0,0.05)]" : "shadow-[0_2px_8px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]"}`}
+                className={`w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl postcard-tiltable transition-shadow duration-[480ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${flipped ? "shadow-[0_8px_24px_rgba(0,0,0,0.09),0_2px_6px_rgba(0,0,0,0.05)]" : "shadow-[0_2px_8px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]"}`}
             >
-                {prefersReducedMotion ? (
-                    /* ── Reduced motion: crossfade ── */
+                {useCrossfade ? (
+                    /* ── Crossfade (Safari + reduced motion) ── */
                     <div
-                        className="absolute inset-0 bg-white cursor-pointer select-none"
+                        className="absolute inset-0 rounded-xl overflow-hidden bg-white cursor-pointer select-none"
                         onClick={() => setFlipped((f) => !f)}
                         onKeyDown={(e) => e.key === "Enter" && setFlipped((f) => !f)}
                         tabIndex={0}
@@ -48,21 +63,32 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
                     >
                         {/* Front face */}
                         <div
-                            className={`transition-opacity duration-[480ms] ease-in-out inset-0 ${flipped ? "opacity-0 absolute pointer-events-none" : "opacity-100 relative pointer-events-auto"}`}
+                            className="absolute inset-0 rounded-xl overflow-hidden"
+                            style={{
+                                transition: `opacity ${DURATION} ${EASE}`,
+                                opacity: flipped ? 0 : 1,
+                                pointerEvents: flipped ? "none" : "auto",
+                            }}
                         >
                             <FrontSide postcard={postcard} />
                         </div>
                         {/* Back face */}
                         <div
-                            className={`transition-opacity duration-[480ms] ease-in-out inset-0 ${flipped ? "opacity-100 relative pointer-events-auto" : "opacity-0 absolute pointer-events-none"}`}
+                            className="absolute inset-0 rounded-xl overflow-hidden"
+                            style={{
+                                transition: `opacity ${DURATION} ${EASE}`,
+                                opacity: flipped ? 1 : 0,
+                                pointerEvents: flipped ? "auto" : "none",
+                            }}
                         >
                             <BackSide postcard={postcard} />
                         </div>
                     </div>
                 ) : (
-                    /* ── Standard: Y-axis 3D flip ── */
+                    /* ── Standard 3D flip (non-Safari) ── */
                     <div
-                        className="absolute inset-0 cursor-pointer select-none [perspective:1000px]"
+                        className="absolute inset-0 cursor-pointer select-none"
+                        style={{ perspective: "1000px" }}
                         onClick={() => setFlipped((f) => !f)}
                         onKeyDown={(e) => e.key === "Enter" && setFlipped((f) => !f)}
                         tabIndex={0}
@@ -72,15 +98,36 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
                     >
                         {/* Flip container — rotates on Y */}
                         <div
-                            className={`relative w-full h-full [transform-style:preserve-3d] transition-transform duration-[480ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${flipped ? "[transform:rotateY(180deg)]" : "[transform:rotateY(0deg)]"}`}
+                            style={{
+                                position: "relative",
+                                width: "100%",
+                                height: "100%",
+                                transformStyle: "preserve-3d",
+                                WebkitTransformStyle: "preserve-3d",
+                                transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+                                transition: `transform ${DURATION} ${EASE}`,
+                            }}
                         >
                             {/* Front face */}
-                            <div className="absolute inset-0 [backface-visibility:hidden] [-webkit-backface-visibility:hidden]">
+                            <div
+                                className="absolute inset-0 rounded-xl overflow-hidden"
+                                style={{
+                                    backfaceVisibility: "hidden",
+                                    WebkitBackfaceVisibility: "hidden",
+                                }}
+                            >
                                 <FrontSide postcard={postcard} />
                             </div>
 
                             {/* Back face — pre-rotated 180° so it starts face-down */}
-                            <div className="absolute top-0 left-0 w-full h-full [backface-visibility:hidden] [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)]">
+                            <div
+                                className="absolute inset-0 rounded-xl overflow-hidden"
+                                style={{
+                                    backfaceVisibility: "hidden",
+                                    WebkitBackfaceVisibility: "hidden",
+                                    transform: "rotateY(180deg)",
+                                }}
+                            >
                                 <BackSide postcard={postcard} />
                             </div>
                         </div>
