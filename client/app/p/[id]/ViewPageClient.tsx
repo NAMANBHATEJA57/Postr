@@ -51,12 +51,12 @@ export default function ViewPageClient({ id }: { id: string }) {
         return (
             <main className="min-h-dvh flex flex-col items-center justify-center px-6">
                 <div className="w-full max-w-postcard mx-auto flex flex-col gap-4">
-                    <h1 className="font-serif text-h2 text-ink">This postcard has expired.</h1>
+                    <h1 className="font-serif text-h2 text-ink">this postcard has expired.</h1>
                     <p className="text-body-sm text-ink-secondary">
-                        The sender set this postcard to expire. It is no longer available.
+                        guest postcards disappear after 7 days.
                     </p>
                     <a href="/create" className="text-body-sm text-accent hover:underline mt-4 tracking-ui">
-                        create yours
+                        create your own →
                     </a>
                 </div>
             </main>

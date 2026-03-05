@@ -24,6 +24,10 @@ async function getPostcardHandler(req: Request, res: Response) {
   }
 
   if (postcard.expiryAt && postcard.expiryAt < new Date()) {
+    // Lazy cleanup: actively delete the postcard from the DB asynchronously
+    prisma.postcard.delete({ where: { id } }).catch(err => {
+      console.error("Failed to lazy-delete expired postcard:", err);
+    });
     return res.status(410).json({ error: "This postcard has expired" });
   }
 

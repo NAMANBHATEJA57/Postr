@@ -41,12 +41,14 @@ router.post("/", optionalAuth, async (req: Request, res: Response) => {
   }
 
   let finalExpiryDate: Date | null = null;
-  if (expiryAt) {
-    finalExpiryDate = new Date(expiryAt);
-  } else if (!userId) {
-    // guest auto explicit 7-day fallback if not provided
+  if (!userId) {
+    // Guest: ALWAYS expires exactly 7 days from server creation time, ignoring any client input.
     finalExpiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  } else if (expiryAt) {
+    // User with explicit expiry
+    finalExpiryDate = new Date(expiryAt);
   }
+  // User without explicit expiry leaves finalExpiryDate as null (never expires).
 
   console.log("Saving postcard. Input expiryAt:", expiryAt, "-> finalExpiryDate:", finalExpiryDate);
 

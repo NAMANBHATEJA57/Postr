@@ -31,25 +31,7 @@
       "static/chunks/118-8cd5611c46160bc6.js",
       "static/chunks/485-28c821d33aeccd6d.js",
       "static/chunks/769-b300a051ef907788.js",
-      "static/chunks/app/conversation/[id]/page-8934b6c44b26723b.js"
-    ],
-    "/dashboard/page": [
-      "static/chunks/webpack-eb137d41e2655fe2.js",
-      "static/chunks/618f8807-6b9288b2c356b2d8.js",
-      "static/chunks/364-b2aef8406b1ab5cc.js",
-      "static/chunks/main-app-740d75b59576916a.js",
-      "static/chunks/app/dashboard/page-3afb0cb0a282bb3d.js"
-    ],
-    "/p/[id]/page": [
-      "static/chunks/webpack-eb137d41e2655fe2.js",
-      "static/chunks/618f8807-6b9288b2c356b2d8.js",
-      "static/chunks/364-b2aef8406b1ab5cc.js",
-      "static/chunks/main-app-740d75b59576916a.js",
-      "static/chunks/118-8cd5611c46160bc6.js",
-      "static/chunks/485-28c821d33aeccd6d.js",
-      "static/chunks/342-29fdc2068478e250.js",
-      "static/chunks/769-b300a051ef907788.js",
-      "static/chunks/app/p/[id]/page-05f7bab2f96bd43e.js"
+      "static/chunks/app/conversation/[id]/page-6b6dc559bc12cb33.js"
     ],
     "/login/page": [
       "static/chunks/webpack-eb137d41e2655fe2.js",
@@ -76,6 +58,24 @@
       "static/chunks/main-app-740d75b59576916a.js",
       "static/chunks/118-8cd5611c46160bc6.js",
       "static/chunks/app/register/page-29f0e004a1ce2299.js"
+    ],
+    "/dashboard/page": [
+      "static/chunks/webpack-eb137d41e2655fe2.js",
+      "static/chunks/618f8807-6b9288b2c356b2d8.js",
+      "static/chunks/364-b2aef8406b1ab5cc.js",
+      "static/chunks/main-app-740d75b59576916a.js",
+      "static/chunks/app/dashboard/page-861e6f67211fa7cb.js"
+    ],
+    "/p/[id]/page": [
+      "static/chunks/webpack-eb137d41e2655fe2.js",
+      "static/chunks/618f8807-6b9288b2c356b2d8.js",
+      "static/chunks/364-b2aef8406b1ab5cc.js",
+      "static/chunks/main-app-740d75b59576916a.js",
+      "static/chunks/118-8cd5611c46160bc6.js",
+      "static/chunks/485-28c821d33aeccd6d.js",
+      "static/chunks/342-29fdc2068478e250.js",
+      "static/chunks/769-b300a051ef907788.js",
+      "static/chunks/app/p/[id]/page-1856edc043451aa4.js"
     ],
     "/page": [
       "static/chunks/webpack-eb137d41e2655fe2.js",
