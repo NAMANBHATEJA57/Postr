@@ -40,6 +40,16 @@ router.post("/", optionalAuth, async (req: Request, res: Response) => {
     }
   }
 
+  let finalExpiryDate: Date | null = null;
+  if (expiryAt) {
+    finalExpiryDate = new Date(expiryAt);
+  } else if (!userId) {
+    // guest auto explicit 7-day fallback if not provided
+    finalExpiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  }
+
+  console.log("Saving postcard. Input expiryAt:", expiryAt, "-> finalExpiryDate:", finalExpiryDate);
+
   const id = generateId();
   const passwordHash = password ? await hashPassword(password) : null;
 
@@ -54,11 +64,7 @@ router.post("/", optionalAuth, async (req: Request, res: Response) => {
         toName: data.toName ?? "",
         fromName: data.fromName ?? "",
         theme: data.theme,
-        expiryAt: expiryAt
-          ? new Date(expiryAt)
-          : !userId
-            ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // guest: 7-day auto-expiry
-            : null,
+        expiryAt: finalExpiryDate,
         passwordHash,
         stampId: stampId ?? null,
         conversationId: conversationId ?? null,

@@ -32,7 +32,7 @@ function Icon({ name, size = 18, style, className }: { name: string; size?: numb
 }
 
 export default function DashboardPage() {
-    const { user, logout } = useAuth();
+    const { user, logout, loading: authLoading } = useAuth();
     const router = useRouter();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [loading, setLoading] = useState(true);
@@ -42,6 +42,13 @@ export default function DashboardPage() {
     const [leaving, setLeaving] = useState(false);
 
     useEffect(() => {
+        if (!authLoading && !user) {
+            router.replace("/login");
+        }
+    }, [authLoading, user, router]);
+
+    useEffect(() => {
+        if (!user) return; // Wait until authenticated
         async function loadConversations() {
             try {
                 const res = await fetch(apiUrl("/api/conversations"), { credentials: "include" });
@@ -56,7 +63,7 @@ export default function DashboardPage() {
             }
         }
         loadConversations();
-    }, []);
+    }, [user]);
 
     const handleStartConversation = async (e: React.FormEvent) => {
         e.preventDefault();

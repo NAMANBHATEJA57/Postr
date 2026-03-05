@@ -1,0 +1,1 @@
+import { PrismaClient } from '@prisma/client'; const prisma = new PrismaClient(); async function main() { console.log(await prisma.postcard.findMany({ orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, createdAt: true, expiryAt: true, senderId: true } })); } main().then(()=>prisma.$disconnect());

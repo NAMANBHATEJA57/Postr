@@ -1,0 +1,75 @@
+﻿
+> postr-client@0.1.0 build
+> next build
+
+  Γû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+node.exe : 
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo          : Not 
+   Specified: (:String) [], Remo  
+  teException
+    + FullyQualifiedErrorId : Nat 
+   iveCommandError
+ 
+> Build error occurred
+Error: Page "/conversation/[id]" 
+is missing 
+"generateStaticParams()" so it 
+cannot be used with "output: 
+export" config.
+    at C:\Users\naman\Desktop\Proj
+ects\Postcard\node_modules\next\di
+st\build\index.js:1297:59
+    at 
+process.processTicksAndRejections 
+(node:internal/process/task_queues
+:103:5)
+    at async Span.traceAsyncFn (C:
+\Users\naman\Desktop\Projects\Post
+card\node_modules\next\dist\trace\
+trace.js:154:20)
+    at async Promise.all (index 4)
+    at async C:\Users\naman\Deskto
+p\Projects\Postcard\node_modules\n
+ext\dist\build\index.js:1175:17
+    at async Span.traceAsyncFn (C:
+\Users\naman\Desktop\Projects\Post
+card\node_modules\next\dist\trace\
+trace.js:154:20)
+    at async C:\Users\naman\Deskto
+p\Projects\Postcard\node_modules\n
+ext\dist\build\index.js:1098:124
+    at async Span.traceAsyncFn (C:
+\Users\naman\Desktop\Projects\Post
+card\node_modules\next\dist\trace\
+trace.js:154:20)
+    at async build (C:\Users\naman
+\Desktop\Projects\Postcard\node_mo
+dules\next\dist\build\index.js:368
+:9)
+npm error Lifecycle script 
+`build` failed with error:
+npm error code 1
+npm error path C:\Users\naman\Desk
+top\Projects\Postcard\client
+npm error workspace 
+postr-client@0.1.0
+npm error location C:\Users\naman\
+Desktop\Projects\Postcard\client
+npm error command failed
+npm error command 
+C:\WINDOWS\system32\cmd.exe /d /s 
+/c next build
