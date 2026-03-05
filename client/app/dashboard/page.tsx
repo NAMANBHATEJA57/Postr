@@ -51,7 +51,10 @@ export default function DashboardPage() {
         if (!user) return; // Wait until authenticated
         async function loadConversations() {
             try {
-                const res = await fetch(apiUrl("/api/conversations"), { credentials: "include" });
+                const res = await fetch(apiUrl("/api/conversations"), {
+                    credentials: "include",
+                    cache: "no-store",
+                });
                 if (res.ok) {
                     const data = await res.json();
                     setConversations(data.conversations);

@@ -18,7 +18,7 @@ export default function ViewPageClient({ id }: { id: string }) {
         async function fetchPostcard() {
             try {
                 const url = apiUrl(`/api/postcards/${id}`);
-                const res = await fetch(url);
+                const res = await fetch(url, { cache: "no-store" });
                 // Parse JSON before updating state so both updates happen in
                 // the same render — avoids a render where status=200 but data=null.
                 const json = res.ok ? await res.json() : null;

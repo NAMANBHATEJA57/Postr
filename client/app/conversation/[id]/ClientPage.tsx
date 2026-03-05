@@ -79,7 +79,8 @@ export default function ConversationThreadPage() {
         async function loadThread() {
             try {
                 const res = await fetch(apiUrl(`/api/conversations/${conversationId}`), {
-                    credentials: "include"
+                    credentials: "include",
+                    cache: "no-store",
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error);

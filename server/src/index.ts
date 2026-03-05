@@ -46,6 +46,14 @@ app.use(
 app.use(cookieParser());
 app.use(express.json({ limit: "10kb" }));
 
+// ── Global: never let CDN/browser cache API responses ──
+app.use("/api", (_req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
+
 app.use("/api/upload", uploadRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/conversations", conversationsRouter);
