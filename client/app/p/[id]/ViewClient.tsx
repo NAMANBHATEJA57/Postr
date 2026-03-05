@@ -26,16 +26,19 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
     const isCreator = searchParams.get("created") === "true";
     const { user, loading: authLoading } = useAuth();
 
-    const [phase, setPhase] = useState<"loading" | "password" | "envelope" | "reveal">(
-        () => {
-            if (status === 401) return "password";
-            if (initialData) return isCreator ? "reveal" : "envelope";
-            return "loading";
-        }
-    );
+    const [phase, setPhase] = useState<"loading" | "password" | "envelope" | "reveal">("loading");
     const [postcard, setPostcard] = useState<ApiPostcardResponse | null>(initialData);
     const [shareUrl, setShareUrl] = useState("");
     const [copied, setCopied] = useState(false);
+
+    // Resolve initial phase on the client where searchParams is reliable.
+    // Using a lazy initializer caused isCreator to always be false during
+    // SSR/hydration because searchParams was empty at that point.
+    useEffect(() => {
+        if (status === 401) { setPhase("password"); return; }
+        if (initialData) { setPhase(isCreator ? "reveal" : "envelope"); return; }
+        // status > 0 but no data (e.g. 404/410/500) — parent handles it, but default to loading
+    }, [status, initialData, isCreator]);
 
     useEffect(() => {
         setShareUrl(typeof window !== "undefined" ? window.location.origin + `/p/${postcardId}` : "");
