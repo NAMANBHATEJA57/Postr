@@ -12,35 +12,21 @@ export default function LandingPage() {
     <main className="flex-1 flex flex-col w-full">
 
       {/* ── Header ── */}
-      <header
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "20px 32px",
-        }}
-      >
+      <header className="flex items-center justify-between px-8 py-5">
         {/* Wordmark */}
         <Link
           href="/"
-          className="font-serif text-ink tracking-tight"
-          style={{ fontSize: "1.125rem", fontWeight: 600, textDecoration: "none" }}
+          className="font-serif text-ink tracking-tight text-lg font-semibold no-underline"
         >
           Dearly
         </Link>
 
         {/* Auth actions */}
-        <nav style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+        <nav className="flex items-center gap-6">
           {/* Tertiary: Sign in — text only */}
           <Link
             href="/login"
-            className="nav-signin font-sans text-ink"
-            style={{
-              fontSize: "0.875rem",
-              textDecoration: "none",
-              opacity: 0.65,
-              transition: "opacity 150ms ease",
-            }}
+            className="nav-signin font-sans text-ink text-sm no-underline opacity-65 transition-opacity duration-150 ease-in-out"
           >
             Sign in
           </Link>
@@ -48,15 +34,7 @@ export default function LandingPage() {
           {/* Secondary: Create account — outline */}
           <Link
             href="/register"
-            className="nav-outline font-sans text-ink"
-            style={{
-              fontSize: "0.875rem",
-              padding: "8px 20px",
-              border: "1px solid rgba(26,26,26,0.25)",
-              textDecoration: "none",
-              transition: "background 150ms ease, border-color 150ms ease",
-              background: "transparent",
-            }}
+            className="nav-outline font-sans text-ink text-sm px-5 py-2 border border-ink/25 no-underline bg-transparent transition-all duration-150"
           >
             Create account
           </Link>
@@ -64,13 +42,7 @@ export default function LandingPage() {
       </header>
 
       {/* ── Hero ── */}
-      <div
-        className="flex-1 flex flex-col items-center justify-center px-6 text-center"
-        style={{
-          paddingBottom: "32px",
-          animation: "fadeInUp 600ms ease-out both",
-        }}
-      >
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center landing-hero-container">
         <div className="w-full max-w-[600px] mx-auto flex flex-col items-center">
 
           {/* Logo mark */}
@@ -79,89 +51,41 @@ export default function LandingPage() {
             alt=""
             width={44}
             height={44}
-            className="object-contain"
+            className="object-contain mb-9 opacity-90"
             priority
             draggable={false}
-            style={{ marginBottom: "36px", opacity: 0.9 }}
           />
 
           {/* Headline */}
-          <h1
-            className="font-serif text-ink"
-            style={{
-              fontSize: "clamp(2rem, 6vw, 2.75rem)",
-              lineHeight: 1.25,
-              letterSpacing: "-0.015em",
-              marginBottom: "20px",
-              animation: "fadeInUp 600ms 80ms ease-out both",
-            }}
-          >
+          <h1 className="font-serif text-ink landing-hero-title">
             Write something that matters.
           </h1>
 
           {/* Subheading */}
-          <p
-            className="font-sans"
-            style={{
-              fontSize: "1.0625rem",
-              lineHeight: 1.65,
-              color: "#6B635A",
-              marginBottom: "48px",
-              animation: "fadeInUp 600ms 160ms ease-out both",
-            }}
-          >
+          <p className="font-sans landing-hero-subtitle">
             A slower, more intentional way to send a private postcard.
           </p>
 
           {/* Primary CTA */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "16px",
-              width: "100%",
-              maxWidth: "320px",
-              animation: "fadeInUp 600ms 240ms ease-out both",
-            }}
-          >
+          <div className="landing-hero-cta">
             <Link
               href="/create"
-              className="hover-elevate font-sans"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-                minHeight: "52px",
-                background: "#1A1A1A",
-                color: "#F8F4EF",
-                fontSize: "0.9375rem",
-                letterSpacing: "0.02em",
-                textDecoration: "none",
-                transition: "opacity 150ms ease",
-              }}
+              className="btn-primary min-h-[52px] w-full"
             >
               Send a postcard
             </Link>
 
             {/* Supporting text */}
-            <p
-              className="font-sans"
-              style={{ fontSize: "0.8125rem", color: "#C7C0B8", letterSpacing: "0.01em" }}
-            >
+            <p className="font-sans text-[13px] text-accent-muted tracking-[0.01em]">
               No account needed to send your first one.
             </p>
 
             {/* Optional conversion line */}
-            <p
-              className="font-sans"
-              style={{ fontSize: "0.8125rem", color: "#A9A19A" }}
-            >
+            <p className="font-sans text-[13px] text-ink-muted">
               Or{" "}
               <Link
                 href="/register"
-                style={{ color: "#6B635A", textDecoration: "underline", textUnderlineOffset: "2px" }}
+                className="underline underline-offset-2 text-[#6B635A] hover:text-ink"
               >
                 create an account
               </Link>{" "}

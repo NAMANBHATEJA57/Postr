@@ -1,6 +1,6 @@
 export default function PostcardLoader() {
     return (
-        <div className="absolute inset-0 flex items-center justify-center bg-neutral-100 rounded-md overflow-hidden z-0 pointer-events-none w-full" style={{ aspectRatio: "3 / 2" }} aria-hidden="true">
+        <div className="absolute inset-0 flex items-center justify-center bg-neutral-100 rounded-md overflow-hidden z-0 pointer-events-none w-full aspect-[3/2]" aria-hidden="true">
             {/* Logo Silhouette */}
             <div className="relative w-16 h-16 flex items-center justify-center opacity-40">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

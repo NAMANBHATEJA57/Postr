@@ -50,23 +50,13 @@ export default function EnvelopeAnimation({
                         className="flex flex-col items-center w-full max-w-[min(340px,80vw)]"
                     >
                         {/* ── Headline ── */}
-                        <p
-                            style={{
-                                fontFamily: "var(--font-playfair), Georgia, serif",
-                                fontSize: "1.125rem",
-                                color: "#1A1A1A",
-                                lineHeight: 1.5,
-                                marginBottom: "20px",
-                                textAlign: "center",
-                            }}
-                        >
+                        <p className="font-serif text-lg text-ink leading-[1.5] mb-5 text-center">
                             something from {fromName.toLowerCase()} is waiting.
                         </p>
 
                         {/* ── Envelope SVG — static, no flap animation ── */}
                         <motion.div
-                            className="w-full cursor-pointer select-none"
-                            style={{ marginTop: "32px" }}
+                            className="w-full cursor-pointer select-none mt-8"
                             onClick={handleTap}
                             onKeyDown={(e) => e.key === "Enter" && handleTap()}
                             tabIndex={0}
@@ -105,17 +95,7 @@ export default function EnvelopeAnimation({
                             </svg>
 
                             {/* Tap hint — quiet, not instructional */}
-                            <p
-                                style={{
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.8125rem",
-                                    color: "#C7C0B8",
-                                    letterSpacing: "0.03em",
-                                    opacity: 0.75,
-                                    marginTop: "28px",
-                                    textAlign: "center",
-                                }}
-                            >
+                            <p className="font-sans text-[13px] text-accent-muted tracking-[0.03em] opacity-75 mt-7 text-center">
                                 tap to open
                             </p>
                         </motion.div>

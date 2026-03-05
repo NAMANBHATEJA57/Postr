@@ -138,20 +138,18 @@ function CreatePageInner() {
                 <div className="w-full max-w-[640px] mx-auto flex flex-col">
 
                     {/* ── Back link ── */}
-                    <div style={{ paddingTop: "28px", paddingBottom: "32px" }}>
+                    <div className="pt-7 pb-8">
                         <button
                             type="button"
                             onClick={() => {
                                 if (window.history.length > 1) router.back();
                                 else router.push("/");
                             }}
-                            className="cta-link font-sans text-ink-secondary hover:text-ink transition-colors duration-150"
-                            style={{ fontSize: "0.875rem", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                            className="cta-link font-sans text-ink-secondary hover:text-ink transition-colors duration-150 text-sm bg-transparent border-none cursor-pointer p-0"
                             aria-label="Go back"
                         >
                             <span
-                                className="material-symbols-rounded"
-                                style={{ fontSize: 16, lineHeight: 1, verticalAlign: "middle" }}
+                                className="material-symbols-rounded text-base leading-none align-middle"
                                 aria-hidden="true"
                             >
                                 chevron_left
@@ -161,10 +159,7 @@ function CreatePageInner() {
                     </div>
 
                     {/* ── Editorial hero ── */}
-                    <div
-                        className="flex flex-col items-center text-center"
-                        style={{ marginBottom: "48px", gap: 0 }}
-                    >
+                    <div className="flex flex-col items-center text-center mb-12 gap-0">
                         {/* Logo */}
                         <Image
                             src="https://res.cloudinary.com/db4cbtzey/image/upload/v1772543945/Logo_z9pkxr.png"
@@ -179,72 +174,32 @@ function CreatePageInner() {
                         {/* Wordmark */}
                         <a
                             href="/"
-                            className="font-serif text-ink tracking-tight"
-                            style={{ fontSize: "1.25rem", fontWeight: 600, marginTop: "10px", lineHeight: 1 }}
+                            className="font-serif text-ink tracking-tight text-xl font-semibold mt-2.5 leading-none"
                         >
                             Dearly
                         </a>
 
                         {/* Heading */}
-                        <h1
-                            className="font-serif text-ink"
-                            style={{
-                                fontSize: "clamp(1.875rem, 5.5vw, 2.75rem)",
-                                lineHeight: 1.2,
-                                marginTop: "24px",
-                                marginBottom: 0,
-                                letterSpacing: "-0.01em",
-                            }}
-                        >
+                        <h1 className="font-serif text-ink create-hero-title">
                             send a postcard.
                         </h1>
 
                         {/* Subtext */}
-                        <p
-                            style={{
-                                fontFamily: "Inter, sans-serif",
-                                fontSize: "1rem",
-                                color: "#6B635A",
-                                marginTop: "12px",
-                                opacity: 0.85,
-                            }}
-                        >
+                        <p className="create-hero-subtitle">
                             keep it short. make it meaningful.
                         </p>
 
                         {/* Guest notice badge */}
                         {isGuest && (
-                            <div
-                                style={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    gap: "6px",
-                                    marginTop: "14px",
-                                    padding: "5px 14px",
-                                    background: "rgba(0,0,0,0.04)",
-                                    borderRadius: "20px",
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.75rem",
-                                    color: "#A9A19A",
-                                    letterSpacing: "0.02em",
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        width: 6,
-                                        height: 6,
-                                        borderRadius: "50%",
-                                        background: "#C08497",
-                                        flexShrink: 0,
-                                    }}
-                                />
+                            <div className="guest-badge">
+                                <span className="guest-badge-dot" />
                                 guest mode — disappears in 7 days
                             </div>
                         )}
                     </div>
 
                     {/* ── Form sections ── */}
-                    <div className="flex flex-col" style={{ gap: "40px" }}>
+                    <div className="flex flex-col gap-10">
 
                         {/* Media */}
                         <section className="flex flex-col gap-2">
@@ -252,7 +207,7 @@ function CreatePageInner() {
                             <MediaUpload onFile={setMediaFile} />
                         </section>
 
-                        <div className="h-px" style={{ background: "#E1DCD7" }} />
+                        <div className="h-px bg-divider" />
 
                         {/* Title */}
                         <div className="flex flex-col gap-1">
@@ -268,10 +223,7 @@ function CreatePageInner() {
                                 placeholder="a small note for the top."
                                 maxLength={40}
                                 required
-                                className="w-full bg-transparent text-ink font-serif text-xl border-b border-divider pb-2 outline-none placeholder:text-accent-muted transition-colors duration-150"
-                                style={{ borderBottomColor: "#E1DCD7" }}
-                                onFocus={(e) => { e.currentTarget.style.borderBottomColor = "#C08497"; }}
-                                onBlur={(e) => { e.currentTarget.style.borderBottomColor = "#E1DCD7"; }}
+                                className="w-full bg-transparent text-ink font-serif text-xl border-b border-divider pb-2 outline-none placeholder:text-accent-muted transition-colors duration-150 focus:border-accent"
                             />
                         </div>
 
@@ -289,10 +241,8 @@ function CreatePageInner() {
                                 maxLength={120}
                                 required
                                 rows={3}
-                                className="w-full bg-transparent text-ink text-body-lg font-sans border-b border-divider pb-2 outline-none placeholder:text-accent-muted resize-none transition-colors duration-150"
-                                style={{ lineHeight: "1.6", borderBottomColor: "#E1DCD7" }}
-                                onFocus={(e) => { e.currentTarget.style.borderBottomColor = "#C08497"; }}
-                                onBlur={(e) => { e.currentTarget.style.borderBottomColor = "#E1DCD7"; }}
+                                className="w-full bg-transparent text-ink text-body-lg font-sans border-b border-divider pb-2 outline-none placeholder:text-accent-muted resize-none transition-colors duration-150 focus:border-accent"
+                                style={{ lineHeight: "1.6" }}
                             />
                         </div>
 
@@ -349,19 +299,7 @@ function CreatePageInner() {
                                 <button
                                     type="button"
                                     onClick={() => setStampId(null)}
-                                    style={{
-                                        fontFamily: "Inter, sans-serif",
-                                        fontSize: "0.75rem",
-                                        color: "#A9A19A",
-                                        background: "none",
-                                        border: "none",
-                                        cursor: "pointer",
-                                        padding: 0,
-                                        alignSelf: "flex-start",
-                                        transition: "color 150ms ease",
-                                    }}
-                                    onMouseEnter={(e) => { e.currentTarget.style.color = "#6B635A"; }}
-                                    onMouseLeave={(e) => { e.currentTarget.style.color = "#A9A19A"; }}
+                                    className="text-xs text-ink-muted bg-transparent border-none cursor-pointer p-0 self-start transition-colors duration-150 hover:text-ink-secondary"
                                 >
                                     clear stamp
                                 </button>
@@ -371,7 +309,7 @@ function CreatePageInner() {
                         {/* To / From */}
                         {!conversationId && (
                             <>
-                                <div className="h-px" style={{ background: "#E1DCD7" }} />
+                                <div className="h-px bg-divider" />
                                 <div className="flex flex-col gap-6">
                                     <div className="flex flex-col gap-1">
                                         <Input
@@ -383,7 +321,7 @@ function CreatePageInner() {
                                             maxLength={60}
                                             required
                                         />
-                                        <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#C7C0B8", marginTop: "4px" }}>
+                                        <p className="text-xs text-ink-ghost mt-1">
                                             we&apos;ll send them a private link.
                                         </p>
                                     </div>
@@ -400,22 +338,14 @@ function CreatePageInner() {
                             </>
                         )}
 
-                        <div className="h-px" style={{ background: "#E1DCD7" }} />
+                        <div className="h-px bg-divider" />
 
                         {/* Expiry / Duration */}
                         {isGuest ? (
                             <div className="flex flex-col gap-1">
                                 <p className="text-body-sm text-ink-secondary">duration</p>
-                                <p
-                                    style={{
-                                        fontFamily: "Inter, sans-serif",
-                                        fontSize: "1rem",
-                                        color: "#6B635A",
-                                        paddingBottom: "8px",
-                                        borderBottom: "1px solid #E1DCD7",
-                                    }}
-                                >
-                                    7 days <span style={{ color: "#C7C0B8", fontSize: "0.875rem" }}>(temporary)</span>
+                                <p className="create-duration-text">
+                                    7 days <span className="text-sm text-ink-ghost">(temporary)</span>
                                 </p>
                             </div>
                         ) : (
@@ -464,7 +394,7 @@ function CreatePageInner() {
                                 <span className="text-body-sm text-ink-secondary">add a password (optional)</span>
                             </label>
                             {!passwordEnabled && (
-                                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#C7C0B8", marginTop: "-8px" }}>
+                                <p className="create-password-hint">
                                     only someone with the password can open it.
                                 </p>
                             )}
@@ -483,18 +413,11 @@ function CreatePageInner() {
 
                         {/* Guest conversion nudge */}
                         {isGuest && (
-                            <p
-                                style={{
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.8125rem",
-                                    color: "#C7C0B8",
-                                    textAlign: "center",
-                                }}
-                            >
+                            <p className="text-[13px] text-ink-ghost text-center">
                                 want to keep your postcards?{" "}
                                 <Link
                                     href="/register"
-                                    style={{ color: "#C08497", textDecoration: "underline", textUnderlineOffset: "2px" }}
+                                    className="text-accent underline underline-offset-2"
                                 >
                                     create an account
                                 </Link>
@@ -524,21 +447,13 @@ function CreatePageInner() {
             </main>
 
             {/* ── Sticky bottom CTA — mobile only ── */}
-            <div
-                className="md:hidden fixed bottom-0 inset-x-0 z-20 px-4 py-3"
-                style={{
-                    background: "rgba(248,244,239,0.97)",
-                    backdropFilter: "blur(8px)",
-                    borderTop: "1px solid rgba(0,0,0,0.07)",
-                }}
-            >
+            <div className="md:hidden fixed bottom-0 inset-x-0 z-20 px-4 py-3 create-sticky-mobile">
                 <Button
                     onClick={handlePublish}
                     disabled={!isPublishable}
                     loading={submitting || uploading}
                     size="lg"
-                    className="w-full"
-                    style={{ height: "48px", opacity: !isPublishable ? 0.5 : 1 }}
+                    className={`w-full h-12 ${!isPublishable ? "opacity-50" : ""}`}
                     aria-label="Send postcard"
                 >
                     {buttonLabel}

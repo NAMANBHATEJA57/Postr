@@ -96,45 +96,26 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
 
                     {/* ── HEADER ── */}
                     <div
-                        className="text-center flex flex-col items-center gap-1 w-full"
-                        style={{ animation: "fadeIn 150ms ease-out forwards" }}
+                        className="text-center flex flex-col items-center gap-1 w-full reveal-header"
                     >
                         {isCreator ? (
                             <>
-                                <h1
-                                    style={{
-                                        fontFamily: "var(--font-playfair), Georgia, serif",
-                                        fontSize: "clamp(1.5rem, 4.5vw, 2.25rem)",
-                                        color: "#1A1A1A",
-                                        lineHeight: 1.2,
-                                        marginBottom: "0.25rem"
-                                    }}
-                                >
+                                <h1 className="reveal-title">
                                     your postcard is ready.
                                 </h1>
-                                <p
-                                    style={{
-                                        fontFamily: "Inter, system-ui, sans-serif",
-                                        fontSize: "1rem",
-                                        color: "#555555",
-                                    }}
-                                >
+                                <p className="reveal-subtitle">
                                     share it with {postcard.toName.toLowerCase()}.
                                 </p>
 
                                 {/* Inline copy link */}
                                 <div className="mt-6 flex items-center justify-center gap-3">
-                                    <span
-                                        className="text-ink-secondary truncate"
-                                        style={{ fontSize: "0.875rem", fontFamily: "Inter, sans-serif", maxWidth: "200px" }}
-                                    >
+                                    <span className="text-ink-secondary truncate reveal-link-text">
                                         {shareUrl.replace(/^https?:\/\//, '')}
                                     </span>
                                     <button
                                         type="button"
                                         onClick={copyLink}
-                                        className="text-accent hover:text-ink transition-colors px-2 py-1"
-                                        style={{ fontSize: "0.8125rem", fontFamily: "Inter, sans-serif" }}
+                                        className="text-accent hover:text-ink transition-colors px-2 py-1 reveal-link-btn"
                                     >
                                         {copied ? "copied" : "copy"}
                                     </button>
@@ -142,9 +123,9 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
 
                                 {/* Creator expiry notice for guest */}
                                 {!authLoading && !user && postcard.expiryAt && (
-                                    <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8125rem", color: "#C7C0B8", marginTop: "0.75rem", textAlign: "center" }}>
+                                    <p className="reveal-notice">
                                         this postcard disappears in 7 days.{" "}
-                                        <Link href={`/register?claimPostcardId=${postcard.id}`} style={{ color: "#C08497", textDecoration: "underline", textUnderlineOffset: "2px" }}>
+                                        <Link href={`/register?claimPostcardId=${postcard.id}`} className="reveal-notice-link">
                                             keep it forever — create an account
                                         </Link>.
                                     </p>
@@ -152,30 +133,15 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                             </>
                         ) : (
                             <>
-                                <p
-                                    style={{
-                                        fontFamily: "var(--font-playfair), Georgia, serif",
-                                        fontSize: "clamp(1.25rem, 4vw, 1.75rem)",
-                                        color: "#1A1A1A",
-                                        lineHeight: 1.3,
-                                        fontStyle: "italic",
-                                    }}
-                                >
+                                <p className="reveal-receiver-title">
                                     a postcard from {postcard.fromName.toLowerCase()}.
                                 </p>
-                                <p
-                                    style={{
-                                        fontFamily: "Inter, system-ui, sans-serif",
-                                        fontSize: "0.875rem",
-                                        color: "#C7C0B8",
-                                        letterSpacing: "0.04em",
-                                    }}
-                                >
+                                <p className="reveal-receiver-subtitle">
                                     to {postcard.toName.toLowerCase()}
                                 </p>
                                 {/* Receiver expiry notice — muted, no alarm */}
                                 {postcard.expiryAt && (
-                                    <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8125rem", color: "#C7C0B8", marginTop: "0.5rem" }}>
+                                    <p className="reveal-receiver-notice">
                                         this postcard disappears in {daysUntil(postcard.expiryAt)} day{daysUntil(postcard.expiryAt) !== 1 ? "s" : ""}.
                                     </p>
                                 )}
@@ -184,18 +150,12 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                     </div>
 
                     {/* ── POSTCARD ── */}
-                    <div
-                        className="w-full mt-10 mb-12"
-                        style={{ animation: "fadeIn 200ms 150ms ease-out both" }}
-                    >
+                    <div className="w-full mt-10 mb-12 reveal-postcard">
                         <PostcardRenderer postcard={postcard} />
                     </div>
 
                     {/* ── CTA BLOCK ── */}
-                    <div
-                        className="flex flex-col items-center gap-4 w-full"
-                        style={{ animation: "fadeIn 200ms 300ms ease-out both" }}
-                    >
+                    <div className="flex flex-col items-center gap-4 w-full reveal-cta">
                         {isCreator ? (
                             <>
                                 <button

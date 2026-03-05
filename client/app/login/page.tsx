@@ -56,7 +56,7 @@ export default function LoginPage() {
             <div className="w-full max-w-[400px] flex flex-col gap-8">
                 <header className="flex flex-col items-center gap-3 text-center">
                     <Image src="https://res.cloudinary.com/db4cbtzey/image/upload/v1772543945/Logo_z9pkxr.png" alt="Dearly logo" width={48} height={48} className="object-contain" />
-                    <span className="font-serif text-ink tracking-tight" style={{ fontSize: "1.25rem", fontWeight: 600 }}>Dearly</span>
+                    <span className="font-serif text-ink tracking-tight text-xl font-semibold">Dearly</span>
                     <h1 className="font-serif text-h2 text-ink">welcome back.</h1>
                 </header>
 

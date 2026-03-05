@@ -99,86 +99,29 @@ export default function DashboardPage() {
 
     return (
         <main
-            style={{
-                minHeight: "100dvh",
-                background: "#F8F4EF",
-                transition: "opacity 180ms ease, transform 180ms ease",
-                opacity: leaving ? 0 : 1,
-                transform: leaving ? "translateY(-6px)" : "translateY(0)",
-            }}
+            className={`min-h-dvh bg-[#F8F4EF] transition-all duration-150 ease-out ${leaving ? "opacity-0 -translate-y-[6px]" : "opacity-100 translate-y-0"}`}
         >
             {/* ── Page container ── */}
-            <div
-                style={{
-                    maxWidth: "720px",
-                    margin: "0 auto",
-                    paddingTop: "64px",
-                    paddingBottom: "80px",
-                    paddingLeft: "24px",
-                    paddingRight: "24px",
-                }}
-            >
+            <div className="max-w-[720px] mx-auto pt-16 pb-20 px-6">
                 {/* ── Card wrapper ── */}
                 <div
-                    style={{
-                        background: "rgba(255,255,255,0.60)",
-                        borderRadius: "16px",
-                        boxShadow: "0 1px 4px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)",
-                        padding: "32px",
-                        transition: "opacity 200ms ease",
-                        opacity: showNewDialogue ? 0.5 : 1,
-                    }}
+                    className={`bg-white/60 rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.04)] p-8 transition-opacity duration-200 ease-in-out ${showNewDialogue ? "opacity-50" : "opacity-100"}`}
                 >
 
                     {/* ── Header row ── */}
-                    <header
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            width: "100%",
-                            marginBottom: "20px",
-                        }}
-                    >
-                        <p
-                            style={{
-                                fontFamily: "var(--font-playfair), Georgia, serif",
-                                fontSize: "1.125rem",
-                                fontWeight: 400,
-                                color: "#1A1A1A",
-                                letterSpacing: "-0.01em",
-                                margin: 0,
-                            }}
-                        >
+                    <header className="flex justify-between items-center w-full mb-5">
+                        <p className="font-serif text-lg font-normal text-ink tracking-tight m-0">
                             your conversations
                         </p>
 
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <span
-                                style={{
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.8125rem",
-                                    color: "#C7C0B8",
-                                }}
-                            >
+                        <div className="flex items-center gap-2.5">
+                            <span className="font-sans text-[13px] text-accent-muted">
                                 {user?.email}
                             </span>
-                            <span style={{ color: "#E1DCD7", fontSize: "0.75rem", userSelect: "none" }}>·</span>
+                            <span className="text-divider text-xs select-none">·</span>
                             <button
                                 onClick={handleLogout}
-                                style={{
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.8125rem",
-                                    color: "#C7C0B8",
-                                    background: "none",
-                                    border: "none",
-                                    outline: "none",
-                                    cursor: "pointer",
-                                    padding: 0,
-                                    transition: "opacity 150ms ease",
-                                }}
-                                onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.5"; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                                className="font-sans text-[13px] text-accent-muted bg-transparent border-none outline-none cursor-pointer p-0 transition-opacity duration-150 hover:opacity-50"
                             >
                                 log out
                             </button>
@@ -186,102 +129,39 @@ export default function DashboardPage() {
                     </header>
 
                     {/* ── Divider ── */}
-                    <div style={{ borderTop: "1px solid #E8E4DF", marginBottom: "24px" }} />
+                    <div className="border-t border-[#E8E4DF] mb-6" />
 
                     {/* ── Write CTA ── */}
-                    <div style={{ marginBottom: "28px" }}>
+                    <div className="mb-7">
                         <button
                             onClick={() => setShowNewDialogue(true)}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                width: "100%",
-                                height: "48px",
-                                background: "#1A1A1A",
-                                color: "#F8F4EF",
-                                fontFamily: "Inter, sans-serif",
-                                fontSize: "0.875rem",
-                                letterSpacing: "0.02em",
-                                border: "none",
-                                borderRadius: "8px",
-                                paddingLeft: "20px",
-                                paddingRight: "16px",
-                                boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-                                cursor: "pointer",
-                                transition: "background 150ms ease, transform 100ms ease",
-                                userSelect: "none",
-                            }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = "#111111"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "#1A1A1A"; }}
-                            onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.99)"; }}
-                            onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+                            className="flex items-center justify-between w-full h-12 bg-ink text-linen font-sans text-sm tracking-[0.02em] border-none rounded-lg pl-5 pr-4 shadow-[0_1px_3px_rgba(0,0,0,0.12)] cursor-pointer transition-all duration-150 select-none hover:bg-[#111111] active:scale-[0.99] active:bg-[#111111]"
                         >
                             Start a conversation
-                            <Icon name="arrow_forward" size={18} style={{ color: "#F8F4EF", opacity: 0.7 }} />
+                            <Icon name="arrow_forward" size={18} className="text-linen opacity-70" />
                         </button>
                     </div>
 
                     {/* ── Conversation list / empty state ── */}
                     {loading ? (
-                        <p
-                            style={{
-                                fontFamily: "Inter, sans-serif",
-                                fontSize: "0.875rem",
-                                color: "#C7C0B8",
-                                textAlign: "center",
-                                paddingTop: "48px",
-                                opacity: 0.7,
-                            }}
-                        >
+                        <p className="font-sans text-sm text-accent-muted text-center pt-12 opacity-70">
                             opening your drawer…
                         </p>
                     ) : conversations.length === 0 ? (
-                        <div
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "flex-start",
-                                gap: "12px",
-                                paddingTop: "48px",
-                            }}
-                        >
-                            <p
-                                style={{
-                                    fontFamily: "var(--font-playfair), Georgia, serif",
-                                    fontSize: "1.125rem",
-                                    color: "#555555",
-                                    opacity: 0.85,
-                                    margin: 0,
-                                    fontStyle: "italic",
-                                }}
-                            >
+                        <div className="flex flex-col items-start gap-3 pt-12">
+                            <p className="font-serif text-[1.125rem] text-ink-secondary opacity-[0.85] m-0 italic">
                                 no conversations yet.
                             </p>
                             <button
                                 onClick={() => setShowNewDialogue(true)}
-                                style={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    gap: "6px",
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.875rem",
-                                    color: "#C7C0B8",
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    padding: 0,
-                                    transition: "color 150ms ease",
-                                }}
-                                onMouseEnter={(e) => { e.currentTarget.style.color = "#555555"; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.color = "#C7C0B8"; }}
+                                className="inline-flex items-center gap-1.5 font-sans text-sm text-accent-muted bg-transparent border-none cursor-pointer p-0 transition-colors duration-150 hover:text-ink-secondary"
                             >
                                 <Icon name="arrow_forward" size={16} />
                                 start one
                             </button>
                         </div>
                     ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                        <div className="flex flex-col gap-3">
                             {conversations.map((c, index) => {
                                 const hasUnread = !!(c.latestPostcard && c.latestPostcard.senderId !== user?.id);
                                 const count = c.postcardCount ?? (c.latestPostcard ? 1 : 0);
@@ -290,127 +170,56 @@ export default function DashboardPage() {
                                 return (
                                     <div
                                         key={c.id}
-                                        className="group relative"
-                                        style={{
-                                            transition: "opacity 200ms ease-out, transform 200ms ease-out, height 200ms ease-out, margin 200ms ease-out",
-                                        }}
+                                        className="group relative transition-all duration-200 ease-out"
                                     >
                                         <button
                                             onClick={() => navigateTo(`/conversation/${c.id}`)}
+                                            className="block w-full text-left bg-white border-none outline-none cursor-pointer rounded-xl px-7 py-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)] transition-all duration-150 hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)] hover:-translate-y-0.5"
                                             style={{
-                                                display: "block",
-                                                width: "100%",
-                                                textAlign: "left",
-                                                background: "#FFFFFF",
-                                                border: "none",
-                                                outline: "none",
-                                                cursor: "pointer",
-                                                borderRadius: "12px",
-                                                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-                                                paddingTop: "20px",
-                                                paddingBottom: "20px",
-                                                paddingLeft: "28px",
-                                                paddingRight: "28px",
-                                                transition: "box-shadow 150ms ease, transform 150ms ease",
                                                 animation: `fadeInUpCard 250ms ${index * 50}ms both`,
                                             }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.10)";
-                                                e.currentTarget.style.transform = "translateY(-2px)";
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)";
-                                                e.currentTarget.style.transform = "translateY(0)";
-                                            }}
                                         >
-                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
-                                                <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1, minWidth: 0 }}>
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className="flex items-center gap-3 flex-1 min-w-0">
                                                     <div
+                                                        className="w-2 h-2 rounded-full shrink-0"
                                                         style={{
-                                                            width: 8,
-                                                            height: 8,
-                                                            borderRadius: "50%",
                                                             background: hasUnread ? accent : "transparent",
-                                                            flexShrink: 0,
                                                             boxShadow: hasUnread ? `0 0 0 2px ${accent}22` : "none",
                                                         }}
                                                     />
-                                                    <div style={{ display: "flex", flexDirection: "column", gap: "3px", minWidth: 0 }}>
-                                                        <p
-                                                            style={{
-                                                                fontFamily: "var(--font-playfair), Georgia, serif",
-                                                                fontSize: "1.0625rem",
-                                                                fontWeight: hasUnread ? 600 : 400,
-                                                                color: "#1A1A1A",
-                                                                margin: 0,
-                                                                lineHeight: 1.3,
-                                                                whiteSpace: "nowrap",
-                                                                overflow: "hidden",
-                                                                textOverflow: "ellipsis",
-                                                            }}
-                                                        >
+                                                    <div className="flex flex-col gap-[3px] min-w-0">
+                                                        <p className={`font-serif text-[1.0625rem] text-ink m-0 leading-[1.3] whitespace-nowrap overflow-hidden text-ellipsis ${hasUnread ? "font-semibold" : "font-normal"}`}>
                                                             {c.otherUser.name.toLowerCase()}
                                                         </p>
-                                                        <p
-                                                            style={{
-                                                                fontFamily: "Inter, sans-serif",
-                                                                fontSize: "0.8125rem",
-                                                                color: "#C7C0B8",
-                                                                margin: 0,
-                                                                lineHeight: 1.4,
-                                                            }}
-                                                        >
+                                                        <p className="font-sans text-[13px] text-accent-muted m-0 leading-[1.4]">
                                                             {count > 0 ? `${count} ${count === 1 ? "postcard" : "postcards"}` : "no postcards yet"}
                                                         </p>
                                                         {c.latestPostcard?.message && (
-                                                            <p
-                                                                style={{
-                                                                    fontFamily: "Inter, sans-serif",
-                                                                    fontSize: "0.75rem",
-                                                                    color: "#C7C0B8",
-                                                                    margin: 0,
-                                                                    lineHeight: 1.4,
-                                                                    whiteSpace: "nowrap",
-                                                                    overflow: "hidden",
-                                                                    textOverflow: "ellipsis",
-                                                                    maxWidth: "200px",
-                                                                    opacity: 0.7,
-                                                                }}
-                                                            >
+                                                            <p className="font-sans text-xs text-accent-muted m-0 leading-[1.4] whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px] opacity-70">
                                                                 {c.latestPostcard.message}
                                                             </p>
                                                         )}
                                                     </div>
                                                 </div>
 
-                                                <div
-                                                    className="hidden md:flex transition-opacity duration-150 ease-out group-hover:opacity-0"
-                                                    style={{ alignItems: "center", gap: "8px", flexShrink: 0 }}
-                                                >
+                                                <div className="hidden md:flex items-center gap-2 shrink-0 transition-opacity duration-150 ease-out group-hover:opacity-0">
                                                     {c.latestPostcard ? (
-                                                        <span
-                                                            className="md:block hidden"
-                                                            style={{
-                                                                fontFamily: "Inter, sans-serif",
-                                                                fontSize: "0.75rem",
-                                                                color: "#C7C0B8",
-                                                                letterSpacing: "0.02em",
-                                                            }}
-                                                        >
+                                                        <span className="hidden md:block font-sans text-xs text-accent-muted tracking-[0.02em]">
                                                             {new Date(c.latestPostcard.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                                                         </span>
-                                                    ) : <span style={{ width: "36px" }} />}
-                                                    <Icon name="chevron_right" size={16} style={{ color: "#C7C0B8" }} />
+                                                    ) : <span className="w-9" />}
+                                                    <Icon name="chevron_right" size={16} className="text-accent-muted" />
                                                 </div>
 
                                                 {/* Mobile only right side (timestamp + chevron doesn't fade, just adds 3-dot) */}
                                                 <div className="md:hidden flex items-center gap-2 shrink-0">
                                                     {c.latestPostcard && (
-                                                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#C7C0B8", letterSpacing: "0.02em" }}>
+                                                        <span className="font-sans text-xs text-accent-muted tracking-[0.02em]">
                                                             {new Date(c.latestPostcard.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                                                         </span>
                                                     )}
-                                                    <Icon name="chevron_right" size={16} style={{ color: "#C7C0B8" }} />
+                                                    <Icon name="chevron_right" size={16} className="text-accent-muted" />
                                                 </div>
                                             </div>
                                         </button>
@@ -426,53 +235,17 @@ export default function DashboardPage() {
             {showNewDialogue && (
                 <div
                     onClick={(e) => { if (e.target === e.currentTarget) setShowNewDialogue(false); }}
-                    style={{
-                        position: "fixed",
-                        inset: 0,
-                        zIndex: 50,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: "24px",
-                        background: "rgba(248,244,239,0.70)",
-                        backdropFilter: "blur(4px)",
-                        animation: "fadeIn 180ms ease both",
-                    }}
+                    className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#F8F4EF]/70 backdrop-blur-sm animate-[fadeIn_180ms_ease_both]"
                 >
-                    <div
-                        style={{
-                            background: "#FFFFFF",
-                            borderRadius: "16px",
-                            boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05)",
-                            padding: "40px",
-                            width: "100%",
-                            maxWidth: "480px",
-                            animation: "fadeInUpCard 220ms ease both",
-                        }}
-                    >
-                        <p
-                            style={{
-                                fontFamily: "var(--font-playfair), Georgia, serif",
-                                fontSize: "1.25rem",
-                                fontWeight: 400,
-                                color: "#1A1A1A",
-                                margin: "0 0 6px 0",
-                            }}
-                        >
+                    <div className="bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.05)] p-10 w-full max-w-[480px] animate-[fadeInUpCard_220ms_ease_both]">
+                        <p className="font-serif text-xl font-normal text-ink mb-1.5">
                             Start a new conversation
                         </p>
-                        <p
-                            style={{
-                                fontFamily: "Inter, sans-serif",
-                                fontSize: "0.875rem",
-                                color: "#A9A19A",
-                                margin: "0 0 28px 0",
-                            }}
-                        >
+                        <p className="font-sans text-sm text-ink-muted mb-7">
                             Who are you writing to?
                         </p>
 
-                        <form onSubmit={handleStartConversation} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                        <form onSubmit={handleStartConversation} className="flex flex-col gap-4">
                             <Input
                                 id="new-email"
                                 type="email"
@@ -482,7 +255,7 @@ export default function DashboardPage() {
                                 required
                             />
                             {newError && (
-                                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8125rem", color: "#ef4444", margin: 0 }}>
+                                <p className="font-sans text-[13px] text-red-500 m-0">
                                     {newError}
                                 </p>
                             )}

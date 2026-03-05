@@ -35,10 +35,10 @@ function formatDay(isoDate: string) {
     });
 }
 
-function Icon({ name, size = 18, style }: { name: string; size?: number; style?: React.CSSProperties }) {
+function Icon({ name, size = 18, style, className }: { name: string; size?: number; style?: React.CSSProperties; className?: string }) {
     return (
         <span
-            className="material-symbols-rounded select-none"
+            className={`material-symbols-rounded select-none ${className || ""}`}
             style={{ fontSize: size, lineHeight: 1, ...style }}
             aria-hidden="true"
         >
@@ -124,143 +124,61 @@ export default function ConversationThreadPage() {
     };
 
     if (loading) return (
-        <main style={{ minHeight: "100dvh", background: "#F8F4EF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.875rem", color: "#C7C0B8", opacity: 0.7 }}>opening…</p>
+        <main className="min-h-dvh bg-[#F8F4EF] flex items-center justify-center">
+            <p className="font-sans text-sm text-accent-muted opacity-70">opening…</p>
         </main>
     );
     if (error) return (
-        <main style={{ minHeight: "100dvh", background: "#F8F4EF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.875rem", color: "#ef4444" }}>{error}</p>
+        <main className="min-h-dvh bg-[#F8F4EF] flex items-center justify-center">
+            <p className="font-sans text-sm text-red-500">{error}</p>
         </main>
     );
     if (!conversation) return null;
 
     return (
         <main
-            style={{
-                minHeight: "100dvh",
-                background: "#F8F4EF",
-                transition: "opacity 200ms ease-out, transform 200ms ease-out",
-                opacity: isDeleting ? 0 : 1,
-                transform: isDeleting ? "translateY(-6px)" : "translateY(0)",
-                animation: isDeleting ? "none" : "pageEnter 200ms ease-out both",
-            }}
+            className={`min-h-dvh bg-[#F8F4EF] transition-all duration-200 ease-out ${isDeleting ? "opacity-0 -translate-y-[6px]" : "opacity-100 translate-y-0 animate-[pageEnter_200ms_ease-out_both]"}`}
         >
             {/* ── Page container — matches dashboard ── */}
-            <div
-                style={{
-                    maxWidth: "720px",
-                    margin: "0 auto",
-                    paddingTop: "64px",
-                    paddingBottom: "80px",
-                    paddingLeft: "24px",
-                    paddingRight: "24px",
-                }}
-            >
+            <div className="max-w-[720px] mx-auto pt-16 pb-20 px-6">
                 {/* ── Card wrapper — matches dashboard ── */}
-                <div
-                    style={{
-                        background: "rgba(255,255,255,0.60)",
-                        borderRadius: "16px",
-                        boxShadow: "0 1px 4px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)",
-                        padding: "32px",
-                    }}
-                >
+                <div className="bg-white/60 rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.04)] p-8">
 
                     {/* ── Header row ── */}
-                    <header
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            width: "100%",
-                            marginBottom: "20px",
-                        }}
-                    >
+                    <header className="flex items-center justify-between w-full mb-5">
                         {/* Left: back link */}
                         <Link
                             href="/dashboard"
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "4px",
-                                fontFamily: "Inter, sans-serif",
-                                fontSize: "0.875rem",
-                                color: "#6B635A",
-                                textDecoration: "none",
-                                transition: "color 150ms ease",
-                                flexShrink: 0,
-                            }}
-                            onMouseEnter={(e) => { e.currentTarget.style.color = "#1A1A1A"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.color = "#6B635A"; }}
+                            className="inline-flex items-center gap-1 font-sans text-sm text-[#6B635A] no-underline transition-colors duration-150 shrink-0 hover:text-ink"
                         >
                             <Icon name="chevron_left" size={16} />
                             conversations
                         </Link>
 
                         {/* Center: conversation name */}
-                        <h1
-                            style={{
-                                fontFamily: "var(--font-playfair), Georgia, serif",
-                                fontSize: "1.0625rem",
-                                fontWeight: 400,
-                                fontStyle: "italic",
-                                color: "#1A1A1A",
-                                margin: 0,
-                                flex: 1,
-                                textAlign: "center",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                                paddingLeft: "12px",
-                                paddingRight: "12px",
-                            }}
-                        >
+                        <h1 className="font-serif text-[1.0625rem] font-normal italic text-ink m-0 flex-1 text-center overflow-hidden text-ellipsis whitespace-nowrap px-3">
                             {conversation.otherUser.name.toLowerCase()}
                         </h1>
 
                         {/* Right: delete action */}
-                        <div style={{ flexShrink: 0, display: "flex", justifyContent: "flex-end" }}>
+                        <div className="shrink-0 flex justify-end">
                             <button
                                 onClick={() => setShowDeleteModal(true)}
-                                className="cta-link"
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.8125rem",
-                                    color: "#A9A19A",
-                                    background: "none",
-                                    border: "none",
-                                    padding: 0,
-                                    cursor: "pointer",
-                                    transition: "opacity 150ms ease, color 150ms ease",
-                                    opacity: 0.6,
-                                }}
-                                onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.color = "#1A1A1A"; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.6"; e.currentTarget.style.color = "#A9A19A"; }}
+                                className="flex items-center font-sans text-[13px] text-ink-muted bg-transparent border-none p-0 cursor-pointer transition-all duration-150 opacity-60 hover:opacity-100 hover:text-ink group"
                             >
-                                <Icon name="delete" size={16} style={{ fontWeight: 300 }} />
-                                <span style={{ marginLeft: "6px", display: "inline-block" }}>delete</span>
+                                <Icon name="delete" size={16} className="font-light" />
+                                <span className="ml-[6px] inline-block">delete</span>
                             </button>
                         </div>
                     </header>
 
                     {/* ── Header divider — matches dashboard ── */}
-                    <div style={{ borderTop: "1px solid #E8E4DF", marginBottom: "32px" }} />
+                    <div className="border-t border-[#E8E4DF] mb-8" />
 
                     {/* ── Thread ── */}
                     {conversation.postcards.length === 0 ? (
-                        <div style={{ textAlign: "center", paddingTop: "48px", paddingBottom: "48px" }}>
-                            <p
-                                style={{
-                                    fontFamily: "var(--font-playfair), Georgia, serif",
-                                    fontSize: "1rem",
-                                    fontStyle: "italic",
-                                    color: "#6B635A",
-                                    opacity: 0.6,
-                                }}
-                            >
+                        <div className="text-center py-12">
+                            <p className="font-serif text-base italic text-ink-secondary opacity-60 m-0">
                                 nothing here yet.
                             </p>
                         </div>
@@ -277,59 +195,29 @@ export default function ConversationThreadPage() {
                                 return (
                                     <div
                                         key={pc.id}
+                                        className="mb-10"
                                         style={{
                                             animation: `fadeInUpCard 250ms ${index * 60}ms both`,
-                                            marginBottom: "40px",
                                         }}
                                     >
                                         {/* Date divider */}
                                         {showDivider && (
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    gap: "12px",
-                                                    marginBottom: "28px",
-                                                }}
-                                            >
-                                                <div style={{ flex: 1, height: "1px", background: "#E8E4DF" }} />
-                                                <span
-                                                    style={{
-                                                        fontFamily: "Inter, sans-serif",
-                                                        fontSize: "0.6875rem",
-                                                        color: "#A9A19A",
-                                                        letterSpacing: "0.06em",
-                                                        textTransform: "uppercase",
-                                                        flexShrink: 0,
-                                                    }}
-                                                >
+                                            <div className="flex items-center gap-3 mb-7">
+                                                <div className="flex-1 h-px bg-[#E8E4DF]" />
+                                                <span className="font-sans text-[11px] text-ink-muted tracking-[0.06em] uppercase shrink-0">
                                                     {day}
                                                 </span>
-                                                <div style={{ flex: 1, height: "1px", background: "#E8E4DF" }} />
+                                                <div className="flex-1 h-px bg-[#E8E4DF]" />
                                             </div>
                                         )}
 
                                         {/* Sender label */}
-                                        <p
-                                            style={{
-                                                fontFamily: "var(--font-playfair), Georgia, serif",
-                                                fontSize: "0.9375rem",
-                                                color: "#6B635A",
-                                                fontStyle: "italic",
-                                                textAlign: isMe ? "right" : "left",
-                                                marginBottom: "12px",
-                                            }}
-                                        >
+                                        <p className={`font-serif text-[15px] text-ink-secondary italic mb-3 ${isMe ? "text-right" : "text-left"}`}>
                                             {senderName}
                                         </p>
 
                                         {/* Postcard */}
-                                        <div
-                                            style={{
-                                                marginLeft: isMe ? "24px" : "0",
-                                                marginRight: isMe ? "0" : "24px",
-                                            }}
-                                        >
+                                        <div className={`${isMe ? "ml-6 mr-0" : "ml-0 mr-6"}`}>
                                             <PostcardContainer
                                                 postcard={{
                                                     ...pc,
@@ -349,49 +237,14 @@ export default function ConversationThreadPage() {
                     <div ref={bottomRef} />
 
                     {/* ── Reply CTA ── */}
-                    <div
-                        style={{
-                            borderTop: "1px solid #E8E4DF",
-                            paddingTop: "28px",
-                            marginTop: "32px",
-                        }}
-                    >
+                    <div className="border-t border-[#E8E4DF] pt-7 mt-8">
                         <a
                             href={`/create?conversationId=${conversation.id}`}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: "100%",
-                                height: "48px",
-                                background: "#1A1A1A",
-                                color: "#F8F4EF",
-                                fontFamily: "Inter, sans-serif",
-                                fontSize: "0.875rem",
-                                letterSpacing: "0.02em",
-                                textDecoration: "none",
-                                borderRadius: "8px",
-                                boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-                                transition: "background 150ms ease, transform 100ms ease",
-                                userSelect: "none",
-                            }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = "#111111"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "#1A1A1A"; }}
-                            onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.98)"; }}
-                            onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+                            className="flex items-center justify-center w-full h-12 bg-ink text-linen font-sans text-sm tracking-[0.02em] no-underline rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.12)] transition-all duration-150 select-none hover:bg-[#111111] active:scale-[0.98] active:bg-[#111111]"
                         >
                             send another postcard
                         </a>
-                        <p
-                            style={{
-                                fontFamily: "Inter, sans-serif",
-                                fontSize: "0.75rem",
-                                color: "#C7C0B8",
-                                textAlign: "center",
-                                marginTop: "12px",
-                                letterSpacing: "0.02em",
-                            }}
-                        >
+                        <p className="font-sans text-xs text-accent-muted text-center mt-3 tracking-[0.02em]">
                             this conversation is saved in your account.
                         </p>
                     </div>
@@ -403,86 +256,25 @@ export default function ConversationThreadPage() {
             {showDeleteModal && (
                 <div
                     onClick={(e) => { if (e.target === e.currentTarget) setShowDeleteModal(false); }}
-                    style={{
-                        position: "fixed",
-                        inset: 0,
-                        zIndex: 50,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: "24px",
-                        background: "rgba(248,244,239,0.50)",
-                        backdropFilter: "blur(2px)",
-                        animation: "fadeIn 180ms ease both",
-                    }}
+                    className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#F8F4EF]/50 backdrop-blur-[2px] animate-[fadeIn_180ms_ease_both]"
                 >
-                    <div
-                        style={{
-                            background: "#FFFFFF",
-                            borderRadius: "16px",
-                            boxShadow: "0 4px 16px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)",
-                            padding: "36px",
-                            width: "100%",
-                            maxWidth: "400px",
-                            textAlign: "center",
-                            animation: "fadeInUpCard 220ms ease both",
-                        }}
-                    >
-                        <p
-                            style={{
-                                fontFamily: "var(--font-playfair), Georgia, serif",
-                                fontSize: "1.125rem",
-                                fontWeight: 400,
-                                color: "#1A1A1A",
-                                margin: "0 0 8px 0",
-                            }}
-                        >
+                    <div className="bg-white rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.04)] p-9 w-full max-w-[400px] text-center animate-[fadeInUpCard_220ms_ease_both]">
+                        <p className="font-serif text-lg font-normal text-ink mb-2">
                             delete this conversation?
                         </p>
-                        <p
-                            style={{
-                                fontFamily: "Inter, sans-serif",
-                                fontSize: "0.875rem",
-                                color: "#A9A19A",
-                                margin: "0 0 32px 0",
-                                lineHeight: 1.5,
-                            }}
-                        >
+                        <p className="font-sans text-sm text-ink-muted mb-8 leading-[1.5]">
                             This will remove all letters inside.
                         </p>
-
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "24px" }}>
+                        <div className="flex items-center justify-center gap-6">
                             <button
                                 onClick={() => setShowDeleteModal(false)}
-                                style={{
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.875rem",
-                                    color: "#A9A19A",
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    padding: "8px",
-                                    transition: "color 150ms ease",
-                                }}
-                                onMouseEnter={(e) => { e.currentTarget.style.color = "#1A1A1A"; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.color = "#A9A19A"; }}
+                                className="font-sans text-sm text-ink-muted bg-transparent border-none cursor-pointer p-2 transition-colors duration-150 hover:text-ink"
                             >
                                 cancel
                             </button>
                             <button
                                 onClick={handleDelete}
-                                style={{
-                                    fontFamily: "Inter, sans-serif",
-                                    fontSize: "0.875rem",
-                                    color: "#C08497",
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    padding: "8px",
-                                    transition: "opacity 150ms ease",
-                                }}
-                                onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.7"; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                                className="font-sans text-sm text-[#C08497] bg-transparent border-none cursor-pointer p-2 transition-opacity duration-150 hover:opacity-70"
                             >
                                 delete
                             </button>
@@ -493,23 +285,7 @@ export default function ConversationThreadPage() {
 
             {/* ── Soft Error Toast ── */}
             {deleteToast && (
-                <div
-                    style={{
-                        position: "fixed",
-                        bottom: "32px",
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        zIndex: 60,
-                        background: "#1A1A1A",
-                        color: "#F8F4EF",
-                        padding: "10px 20px",
-                        borderRadius: "8px",
-                        fontFamily: "Inter, sans-serif",
-                        fontSize: "0.8125rem",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                        animation: "fadeInUp 200ms ease both",
-                    }}
-                >
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-ink text-linen px-5 py-2.5 rounded-lg font-sans text-[13px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] animate-[fadeInUp_200ms_ease_both]">
                     {deleteToast}
                 </div>
             )}

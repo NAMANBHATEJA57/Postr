@@ -19,10 +19,11 @@ export default function ViewPageClient({ id }: { id: string }) {
             try {
                 const url = apiUrl(`/api/postcards/${id}`);
                 const res = await fetch(url);
+                // Parse JSON before updating state so both updates happen in
+                // the same render — avoids a render where status=200 but data=null.
+                const json = res.ok ? await res.json() : null;
                 setStatus(res.status);
-                if (res.ok) {
-                    setData(await res.json());
-                }
+                if (json) setData(json);
             } catch {
                 setStatus(500);
             }
