@@ -1,0 +1,25 @@
+{
+    "version": 2,
+    "buildCommand": "npm run db:generate --workspace=server && npm run build --workspaces --if-present",
+    "installCommand": "npm install",
+    "builds": [
+        {
+            "src": "client/package.json",
+            "use": "@vercel/next"
+        },
+        {
+            "src": "server/api/index.ts",
+            "use": "@vercel/node"
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/server/api/index.ts"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/client/$1"
+        }
+    ]
+}
