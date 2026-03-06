@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth } from "../middleware/auth.js";
 import { generateId } from "../lib/nanoid.js";
+import { decryptMessage } from "../lib/encryption.js";
 
 const router = Router();
 router.use(requireAuth);
@@ -33,7 +34,9 @@ router.get("/", async (req: Request, res: Response) => {
 
         const formatted = conversations.map(c => {
             const otherUser = c.userOneId === userId ? c.userTwo : c.userOne;
-            const latestPostcard = c.postcards[0] || null;
+            const latestPostcard = c.postcards[0]
+                ? { ...c.postcards[0], message: decryptMessage(c.postcards[0].message) }
+                : null;
 
             return {
                 id: c.id,
@@ -149,7 +152,10 @@ router.get("/:id", async (req: Request, res: Response) => {
             conversation: {
                 id: conversation.id,
                 otherUser,
-                postcards: conversation.postcards,
+                postcards: conversation.postcards.map((post) => ({
+                    ...post,
+                    message: decryptMessage(post.message),
+                })),
                 createdAt: conversation.createdAt,
             }
         });

@@ -5,6 +5,7 @@ import { hashPassword } from "../lib/password.js";
 import { checkCreateLimit } from "../lib/ratelimit.js";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, optionalAuth } from "../middleware/auth.js";
+import { encryptMessage } from "../lib/encryption.js";
 
 const router = Router();
 
@@ -62,7 +63,7 @@ router.post("/", optionalAuth, async (req: Request, res: Response) => {
         mediaUrl: data.mediaUrl,
         mediaType: data.mediaType,
         title: data.title,
-        message: data.message,
+        message: encryptMessage(data.message),
         toName: data.toName ?? "",
         fromName: data.fromName ?? "",
         theme: data.theme,

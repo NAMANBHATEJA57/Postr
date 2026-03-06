@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { verifyAccessToken } from "../lib/token.js";
+import { decryptMessage } from "../lib/encryption.js";
 
 const router = Router();
 
@@ -58,7 +59,7 @@ async function getPostcardHandler(req: Request, res: Response) {
     mediaUrl: postcard.mediaUrl,
     mediaType: postcard.mediaType,
     title: postcard.title,
-    message: postcard.message,
+    message: decryptMessage(postcard.message),
     toName: postcard.toName,
     fromName: postcard.fromName,
     theme: postcard.theme,

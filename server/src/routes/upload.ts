@@ -3,9 +3,8 @@ import { uploadMetaSchema } from "../lib/schemas.js";
 import { generateId } from "../lib/nanoid.js";
 import {
   validateFileSize,
-  generateSignedUploadUrl,
-  buildPublicDownloadUrl,
-} from "../lib/r2-storage.js";
+  generateUploadSignature,
+} from "../lib/cloudinary.js";
 
 const ALLOWED_TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -41,14 +40,12 @@ router.post("/", async (req: Request, res: Response) => {
   }
 
   const id = generateId();
-  const storagePath = `uploads/${id}.${ext}`;
 
   try {
-    const uploadUrl = await generateSignedUploadUrl(storagePath, fileType);
-    const publicUrl = buildPublicDownloadUrl(storagePath);
-    return res.json({ uploadUrl, publicUrl });
+    const signatureData = await generateUploadSignature(id, fileType);
+    return res.json(signatureData);
   } catch (err) {
-    console.error("R2 Storage presign error:", err);
+    console.error("Cloudinary signature error:", err);
     return res.status(503).json({ error: "Storage unavailable" });
   }
 });

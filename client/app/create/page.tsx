@@ -77,16 +77,29 @@ function CreatePageInner() {
                 throw new Error(err.error ?? "Upload failed");
             }
 
-            const { uploadUrl, publicUrl } = await metaRes.json();
+            const { signature, timestamp, apiKey, cloudName, publicUrl, publicId } = await metaRes.json();
 
             setUploading(true);
-            const uploadRes = await fetch(uploadUrl, {
-                method: "PUT",
-                body: mediaFile,
-                headers: { "Content-Type": mediaFile.type },
+
+            const formData = new FormData();
+            formData.append("file", mediaFile);
+            formData.append("api_key", apiKey);
+            formData.append("timestamp", timestamp.toString());
+            formData.append("signature", signature);
+            formData.append("public_id", publicId);
+
+            const isVideo = mediaFile.type.startsWith("video/");
+            const resourceTypeStr = isVideo ? "video" : "image";
+
+            const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceTypeStr}/upload`, {
+                method: "POST",
+                body: formData,
             });
 
-            if (!uploadRes.ok) throw new Error("File upload to storage failed");
+            if (!uploadRes.ok) {
+                console.error(await uploadRes.text());
+                throw new Error("File upload to storage failed");
+            }
             setUploading(false);
 
             const mediaType = mediaFile.type.startsWith("video/") ? "video" : "image";
