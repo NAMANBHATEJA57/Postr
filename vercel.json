@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "buildCommand": "npm run db:generate --workspace=server && npm run build --workspaces --if-present",
+    "buildCommand": "cd server && npx prisma generate && cd .. && npm run build --workspaces --if-present",
     "installCommand": "npm install",
     "builds": [
         {
@@ -8,14 +8,14 @@
             "use": "@vercel/next"
         },
         {
-            "src": "server/api/index.ts",
+            "src": "server/src/index.ts",
             "use": "@vercel/node"
         }
     ],
     "rewrites": [
         {
             "source": "/api/(.*)",
-            "destination": "/server/api/index.ts"
+            "destination": "/server/src/index.ts"
         },
         {
             "source": "/(.*)",
