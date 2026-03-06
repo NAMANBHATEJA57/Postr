@@ -27,18 +27,25 @@ const getAllowedOrigins = () => {
 app.use(
   cors({
     origin: (origin, callback) => {
-      // In development, allow localhost
-      if (!isProd && (!origin || /^http:\/\/localhost:\d+$/.test(origin))) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      // In development, allow localhost matching
+      if (!isProd && /^http:\/\/localhost:\d+$/.test(origin)) {
         return callback(null, true);
       }
 
-      // Allow if origin is in allowed list, or if there's no origin (e.g. server-to-server requests)
+      // Allow any Vercel preview environments
+      if (origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+
       const allowedOrigins = getAllowedOrigins();
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error(`Not allowed by CORS: ${origin}`));
     },
     credentials: true,
   })
