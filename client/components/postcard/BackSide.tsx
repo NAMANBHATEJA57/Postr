@@ -20,7 +20,8 @@ export default function BackSide({ postcard }: BackSideProps) {
 
     return (
         <div
-            className="w-full h-full bg-white flex relative"
+            className="w-full h-full flex relative"
+            style={{ background: "linear-gradient(to right, #FAF8F5 60%, #F6F4F1 60%)" }}
             aria-label="Postcard back"
         >
             {/* ── Left: Message column (60%) ── */}
@@ -52,27 +53,43 @@ export default function BackSide({ postcard }: BackSideProps) {
             </div>
 
             {/* ── Vertical divider ── */}
-            <div className="w-px bg-[#E1DCD7] self-stretch shrink-0 my-6" aria-hidden="true" />
+            <div className="w-px self-stretch shrink-0 my-8 mx-0 border-l border-dashed border-[#D5D0CB] opacity-70 z-10" aria-hidden="true" />
 
             {/* ── Right: Postcard meta column (40%) ── */}
-            <div className="flex flex-col w-[40%] p-[clamp(1.25rem,3vw,2rem)] pl-[clamp(1rem,2.5vw,1.5rem)]">
+            <div className="flex flex-col w-[40%] p-[clamp(1.25rem,3vw,2rem)] pl-[clamp(1rem,2.5vw,1.5rem)] relative">
+
+                {/* Subtle Postal Postmark */}
+                <div className="absolute right-[clamp(4.5rem,8vw,5.5rem)] top-[clamp(1.25rem,3vw,1.75rem)] w-[72px] h-[72px] rounded-full border border-ink/15 flex flex-col items-center justify-center rotate-[6deg] pointer-events-none select-none z-10 mix-blend-multiply" aria-hidden="true">
+                    <div className="w-[64px] h-[64px] rounded-full border-[0.5px] border-ink/10 flex flex-col items-center justify-center">
+                        <span className="font-sans text-[7px] text-ink/40 font-medium tracking-widest leading-none mb-1">DEARLY POST</span>
+                        <span className="font-sans text-[6px] text-ink/30 tracking-wider leading-none">MAR 2026</span>
+                    </div>
+                </div>
+
                 {/* Address lines */}
-                <div className="mt-auto">
-                    <p className="font-sans text-[11px] text-accent-muted tracking-[0.06em] uppercase mb-2">
-                        To
+                <div className="mt-auto mb-[15%]">
+                    <p className="font-serif text-[11px] text-accent-muted tracking-[0.04em] lowercase mb-1">
+                        to
                     </p>
-                    <p className="font-handwritten text-[clamp(1.0625rem,3vw,1.25rem)] text-ink leading-[1.4]">
+                    <p className="font-serif text-[13px] text-accent-muted tracking-[0.02em] lowercase">
                         {postcard.toName}
                     </p>
+
+                    {/* Subtle Postal Code Boxes */}
+                    <div className="flex gap-[5px] mt-6 opacity-[0.15]">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="w-3.5 h-4 border border-ink rounded-[1px]" />
+                        ))}
+                    </div>
                 </div>
             </div>
 
             {/* Stamp / Stamp Placeholder — Absolute top-right */}
             <div
-                className={`absolute flex items-center justify-center -rotate-2 drop-shadow-sm [&>svg]:max-w-full [&>svg]:max-h-full [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain w-[80px] h-[80px] z-10 ${postcard.stampId && postcard.stampId in STAMPS ? "border-none" : "border border-[#E1DCD7]"}`}
+                className={`absolute flex items-center justify-center -rotate-2 drop-shadow-sm [&>svg]:max-w-full [&>svg]:max-h-full [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain w-[80px] h-[80px] z-20 ${postcard.stampId && postcard.stampId in STAMPS ? "border-none" : "border border-[#E1DCD7]"}`}
                 style={{
-                    top: "clamp(1rem, 2.5vw, 1.5rem)",
-                    right: "clamp(1rem, 2.5vw, 1.5rem)",
+                    top: "clamp(1.25rem, 3vw, 1.5rem)",
+                    right: "clamp(1.25rem, 3vw, 1.5rem)",
                 }}
                 aria-hidden="true"
             >
