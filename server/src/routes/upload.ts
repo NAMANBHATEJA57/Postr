@@ -5,6 +5,7 @@ import {
   validateFileSize,
   generateUploadSignature,
 } from "../lib/cloudinary.js";
+import { uploadLimiter } from "../middleware/rateLimiter.js";
 
 const ALLOWED_TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -16,7 +17,7 @@ const ALLOWED_TYPES: Record<string, string> = {
 
 const router = Router();
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", uploadLimiter, async (req: Request, res: Response) => {
   const parsed = uploadMetaSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({

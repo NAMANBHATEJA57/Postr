@@ -5,6 +5,8 @@ import { signToken } from "../lib/auth.js";
 import { generateId } from "../lib/nanoid.js";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth } from "../middleware/auth.js";
+import { authLimiter } from "../middleware/rateLimiter.js";
+import { verifyTurnstileToken } from "../middleware/turnstile.js";
 
 const router = Router();
 
@@ -29,7 +31,7 @@ const cookieOptions = {
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
 };
 
-router.post("/register", async (req: Request, res: Response) => {
+router.post("/register", authLimiter, verifyTurnstileToken, async (req: Request, res: Response) => {
     const parsed = registerSchema.safeParse(req.body);
     if (!parsed.success) {
         return res.status(400).json({ error: "Validation failed", issues: parsed.error.issues });
@@ -81,7 +83,7 @@ router.post("/register", async (req: Request, res: Response) => {
     }
 });
 
-router.post("/login", async (req: Request, res: Response) => {
+router.post("/login", authLimiter, verifyTurnstileToken, async (req: Request, res: Response) => {
     const parsed = loginSchema.safeParse(req.body);
     if (!parsed.success) {
         return res.status(400).json({ error: "Validation failed" });

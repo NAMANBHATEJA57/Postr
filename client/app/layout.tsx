@@ -50,7 +50,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,300,0,0"
         />
       </head>
-      <body className="bg-linen text-ink font-sans antialiased">
+      <body className="bg-linen text-ink font-sans antialiased page-enter">
         <AuthProvider>
           {children}
         </AuthProvider>

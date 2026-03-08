@@ -48,7 +48,7 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
         >
             {/* Wrapper: no overflow-hidden here — it kills preserve-3d in Safari */}
             <div
-                className={`w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl postcard-tiltable transition-shadow duration-[480ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${flipped ? "shadow-[0_8px_24px_rgba(0,0,0,0.09),0_2px_6px_rgba(0,0,0,0.05)]" : "shadow-[0_2px_8px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]"}`}
+                className={`w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl postcard-tiltable transition-shadow duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] ${flipped ? "shadow-[0_4px_12px_rgba(0,0,0,0.08),0_24px_48px_rgba(0,0,0,0.08)]" : "shadow-[0_2px_6px_rgba(0,0,0,0.06),0_20px_40px_rgba(0,0,0,0.06)]"}`}
             >
                 {useCrossfade ? (
                     /* ── Crossfade (Safari + reduced motion) ── */

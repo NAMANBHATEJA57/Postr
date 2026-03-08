@@ -7,6 +7,7 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { apiUrl } from "@/lib/api";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -15,6 +16,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState("");
 
     useEffect(() => {
         if (user) {
@@ -32,7 +34,10 @@ export default function LoginPage() {
         try {
             const res = await fetch(apiUrl("/api/auth/login"), {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "cf-turnstile-response": turnstileToken
+                },
                 credentials: "include",
                 body: JSON.stringify({ email, password }),
             });
@@ -81,6 +86,14 @@ export default function LoginPage() {
                         required
                         autoComplete="current-password"
                     />
+
+                    <div className="flex justify-center my-2">
+                        <Turnstile
+                            siteKey="1x00000000000000000000AA"
+                            onSuccess={(token) => setTurnstileToken(token)}
+                            options={{ theme: "light" }}
+                        />
+                    </div>
 
                     {error && <p className="text-body-sm text-red-500">{error}</p>}
 

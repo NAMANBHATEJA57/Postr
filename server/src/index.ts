@@ -13,8 +13,10 @@ import postcardByIdRouter from "./routes/postcardById.js";
 import unlockRouter from "./routes/unlock.js";
 import authRouter from "./routes/auth.js";
 import conversationsRouter from "./routes/conversations.js";
+import { requestLogger } from "./middleware/logger.js";
 
 const app = express();
+app.use(requestLogger);
 const PORT = process.env.PORT || 4000;
 
 const isProd = process.env.NODE_ENV === "production";

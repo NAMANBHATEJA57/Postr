@@ -151,16 +151,15 @@ export default function DashboardPage() {
                             opening your drawer…
                         </p>
                     ) : conversations.length === 0 ? (
-                        <div className="flex flex-col items-start gap-3 pt-12">
+                        <div className="flex flex-col items-start gap-4 pt-12 px-2">
                             <p className="font-serif text-[1.125rem] text-ink-secondary opacity-[0.85] m-0 italic">
-                                no conversations yet.
+                                your letter box is empty.
                             </p>
                             <button
                                 onClick={() => setShowNewDialogue(true)}
-                                className="inline-flex items-center gap-1.5 font-sans text-sm text-accent-muted bg-transparent border-none cursor-pointer p-0 transition-colors duration-150 hover:text-ink-secondary"
+                                className="inline-flex items-center gap-2 font-sans text-sm text-accent-muted bg-transparent border-none cursor-pointer p-0 transition-colors duration-150 hover:text-ink-secondary"
                             >
-                                <Icon name="arrow_forward" size={16} />
-                                start one
+                                start something <Icon name="arrow_forward" size={16} />
                             </button>
                         </div>
                     ) : (

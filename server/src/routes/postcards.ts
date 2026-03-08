@@ -6,10 +6,14 @@ import { checkCreateLimit } from "../lib/ratelimit.js";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, optionalAuth } from "../middleware/auth.js";
 import { encryptMessage } from "../lib/encryption.js";
+import { createPostcardLimiter } from "../middleware/rateLimiter.js";
+import { verifyTurnstileToken } from "../middleware/turnstile.js";
+import sanitizeHtml from "sanitize-html";
 
 const router = Router();
 
-router.post("/", optionalAuth, async (req: Request, res: Response) => {
+router.post("/", createPostcardLimiter, verifyTurnstileToken, optionalAuth, async (req: Request, res: Response) => {
+  // Legacy rate limiting (IP-based local limit fallback if desired, but we can rely on Upstash now)
   const ip = req.headers["x-forwarded-for"]?.toString().split(",")[0].trim() ?? "unknown";
   const { allowed, retryAfter } = checkCreateLimit(ip);
 
@@ -56,14 +60,24 @@ router.post("/", optionalAuth, async (req: Request, res: Response) => {
   const id = generateId();
   const passwordHash = password ? await hashPassword(password) : null;
 
+  // Sanitize text inputs
+  const sanitizedTitle = sanitizeHtml(data.title ?? "", {
+    allowedTags: [], // Strips all HTML tags
+    allowedAttributes: {},
+  });
+  const sanitizedMessage = sanitizeHtml(data.message ?? "", {
+    allowedTags: [], // Since messages are plain text, strip everything
+    allowedAttributes: {},
+  });
+
   try {
     await prisma.postcard.create({
       data: {
         id,
-        mediaUrl: data.mediaUrl,
-        mediaType: data.mediaType,
-        title: data.title,
-        message: encryptMessage(data.message),
+        mediaUrl: data.mediaUrl ?? "",
+        mediaType: data.mediaType ?? "",
+        title: sanitizedTitle,
+        message: encryptMessage(sanitizedMessage),
         toName: data.toName ?? "",
         fromName: data.fromName ?? "",
         theme: data.theme,

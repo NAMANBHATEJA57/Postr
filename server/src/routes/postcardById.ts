@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { verifyAccessToken } from "../lib/token.js";
 import { decryptMessage } from "../lib/encryption.js";
+import { fetchPostcardLimiter } from "../middleware/rateLimiter.js";
 
 const router = Router();
 
@@ -29,7 +30,7 @@ async function getPostcardHandler(req: Request, res: Response) {
     prisma.postcard.delete({ where: { id } }).catch(err => {
       console.error("Failed to lazy-delete expired postcard:", err);
     });
-    return res.status(410).json({ error: "This postcard has expired" });
+    return res.status(410).json({ error: "this postcard has expired." });
   }
 
   if (postcard.passwordHash) {
@@ -73,6 +74,6 @@ async function getPostcardHandler(req: Request, res: Response) {
   return res.json(response);
 }
 
-router.get("/:id", getPostcardHandler);
+router.get("/:id", fetchPostcardLimiter, getPostcardHandler);
 
 export default router;

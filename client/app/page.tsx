@@ -12,7 +12,7 @@ export default function LandingPage() {
     <main className="flex-1 flex flex-col w-full">
 
       {/* ── Header ── */}
-      <header className="flex items-center justify-between px-8 py-5">
+      <header className="flex items-center justify-between px-8 py-5 flex-shrink-0">
         {/* Wordmark */}
         <Link
           href="/"
@@ -41,9 +41,9 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      {/* ── Hero ── */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center landing-hero-container">
-        <div className="w-full max-w-[600px] mx-auto flex flex-col items-center">
+      {/* ── Main Content (Centered) ── */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+        <div className="w-full max-w-[600px] mx-auto flex flex-col items-center pb-4">
 
           {/* Logo mark */}
           <Image
@@ -51,45 +51,48 @@ export default function LandingPage() {
             alt=""
             width={44}
             height={44}
-            className="object-contain mb-9 opacity-90"
+            className="object-contain mb-5 opacity-90"
             priority
             draggable={false}
           />
 
-          {/* Headline */}
-          <h1 className="font-serif text-ink landing-hero-title">
+          {/* 1. Headline */}
+          <h1 className="font-serif text-ink landing-hero-title mb-2">
             Write something that matters.
           </h1>
 
           {/* Subheading */}
-          <p className="font-sans landing-hero-subtitle">
+          <p className="font-sans landing-hero-subtitle mb-6">
             A slower, more intentional way to send a private postcard.
           </p>
 
-          {/* Primary CTA */}
-          <div className="landing-hero-cta">
+          {/* 2. Primary CTA & 3. Helper Text */}
+          <div className="flex flex-col items-center gap-2.5 w-full max-w-[280px]">
             <Link
               href="/create"
-              className="btn-primary min-h-[52px] w-full"
+              className="btn-primary min-h-[52px] w-full flex items-center justify-center font-sans text-body-lg tracking-ui text-linen"
             >
               Send a postcard
             </Link>
 
-            {/* Supporting text */}
-            <p className="font-sans text-[13px] text-accent-muted tracking-[0.01em]">
-              No account needed to send your first one.
+            {/* Combined helper line with reduced opacity */}
+            <p className="font-sans text-[13px] text-ink-secondary tracking-[0.01em] opacity-80 leading-snug">
+              No account needed. <br className="sm:hidden" />
+              Or <Link href="/register" className="underline underline-offset-2 hover:text-ink transition-colors">create an account</Link> to keep conversations.
             </p>
+          </div>
 
-            {/* Optional conversion line */}
-            <p className="font-sans text-[13px] text-ink-muted">
-              Or{" "}
-              <Link
-                href="/register"
-                className="underline underline-offset-2 text-[#6B635A] hover:text-ink"
-              >
-                create an account
-              </Link>{" "}
-              to start lasting conversations.
+          {/* 4. Privacy Reassurance */}
+          <div className="mt-8 flex items-center justify-center gap-1.5 opacity-60">
+            <span
+              className="material-symbols-rounded"
+              style={{ fontSize: 15, strokeWidth: 1.5, color: "var(--ink-secondary)" }}
+              aria-hidden="true"
+            >
+              lock
+            </span>
+            <p className="font-sans text-[12px] text-ink-secondary tracking-[0.01em]">
+              your words stay private — every postcard is encrypted.
             </p>
           </div>
 

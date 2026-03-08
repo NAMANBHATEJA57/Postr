@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import EnvelopeAnimation from "@/components/envelope/EnvelopeAnimation";
 import PostcardRenderer from "@/components/postcard/PostcardRenderer";
+import FrontSide from "@/components/postcard/FrontSide";
+import BackSide from "@/components/postcard/BackSide";
 import PasswordGate from "@/components/postcard/PasswordGate";
 import { apiUrl } from "@/lib/api";
 import { ApiPostcardResponse } from "@/types/postcard";
@@ -30,6 +32,7 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
     const [postcard, setPostcard] = useState<ApiPostcardResponse | null>(initialData);
     const [shareUrl, setShareUrl] = useState("");
     const [copied, setCopied] = useState(false);
+    const [viewMode, setViewMode] = useState<"flip" | "full">("flip");
 
     // Resolve initial phase on the client where searchParams is reliable.
     // Using a lazy initializer caused isCreator to always be false during
@@ -42,7 +45,18 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
 
     useEffect(() => {
         setShareUrl(typeof window !== "undefined" ? window.location.origin + `/p/${postcardId}` : "");
+
+        // Read saved view mode preference
+        const savedMode = localStorage.getItem("dearly_viewMode");
+        if (savedMode === "flip" || savedMode === "full") {
+            setViewMode(savedMode);
+        }
     }, [postcardId]);
+
+    const handleViewModeChange = (mode: "flip" | "full") => {
+        setViewMode(mode);
+        localStorage.setItem("dearly_viewMode", mode);
+    };
 
     const fetchPostcard = async (token?: string) => {
         const headers: Record<string, string> = { "Content-Type": "application/json" };
@@ -61,10 +75,17 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
     const handleUnlocked = (token?: string) => { fetchPostcard(token); };
     const handleEnvelopeOpen = () => { setPhase("reveal"); };
 
-    const copyLink = () => {
-        navigator.clipboard.writeText(shareUrl);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+    const copyLink = async () => {
+        const textToShare = shareUrl;
+
+        // Remove native share per user request and only use clipboard
+        try {
+            await navigator.clipboard.writeText(textToShare);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error("Failed to copy link: ", err);
+        }
     };
 
     if (phase === "loading") {
@@ -92,48 +113,55 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
     if (phase === "reveal" && postcard) {
         return (
             <div className="min-h-dvh flex flex-col items-center px-4 sm:px-0 py-12 md:py-16">
-                <div className="w-full max-w-postcard mx-auto flex flex-col items-center">
+                <div className="w-full max-w-[800px] mx-auto flex flex-col items-center -rotate-[0.4deg]">
 
                     {/* ── HEADER ── */}
                     <div
-                        className="text-center flex flex-col items-center gap-1 w-full reveal-header"
+                        className="text-center flex flex-col items-center gap-1 w-full reveal-header relative"
                     >
+                        {/* ── HEADER CONTENT ── */}
+
                         {isCreator ? (
                             <>
-                                <h1 className="reveal-title">
+                                <h1 className="reveal-title mt-4 md:mt-0">
                                     your postcard is ready.
                                 </h1>
                                 <p className="reveal-subtitle">
-                                    share it with {postcard.toName.toLowerCase()}.
+                                    send it to {postcard.toName.toLowerCase()}.
                                 </p>
 
-                                {/* Inline copy link */}
-                                <div className="mt-6 flex items-center justify-center gap-3">
-                                    <span className="text-ink-secondary truncate reveal-link-text">
+                                {/* Inline copy link - clickable URL row */}
+                                <button
+                                    type="button"
+                                    onClick={copyLink}
+                                    className="mt-5 flex items-center justify-between w-full max-w-[280px] py-2 px-3 hover:bg-black/[0.03] rounded-md transition-colors duration-200 group cursor-pointer border-none bg-transparent focus:outline-none"
+                                    aria-label="Copy postcard link"
+                                >
+                                    <span className="text-ink-secondary group-hover:text-ink truncate reveal-link-text transition-colors duration-150 text-left">
                                         {shareUrl.replace(/^https?:\/\//, '')}
                                     </span>
-                                    <button
-                                        type="button"
-                                        onClick={copyLink}
-                                        className="text-accent hover:text-ink transition-colors px-2 py-1 reveal-link-btn"
+                                    <span
+                                        className="material-symbols-rounded text-ink-ghost group-hover:text-ink-secondary transition-colors duration-150 select-none flex-shrink-0 pl-3"
+                                        style={{ fontSize: 17 }}
+                                        aria-hidden="true"
                                     >
-                                        {copied ? "copied" : "copy"}
-                                    </button>
-                                </div>
+                                        {copied ? 'check' : 'content_copy'}
+                                    </span>
+                                </button>
 
                                 {/* Creator expiry notice for guest */}
                                 {!authLoading && !user && postcard.expiryAt && (
-                                    <p className="reveal-notice">
-                                        this postcard disappears in 7 days.{" "}
+                                    <p className="reveal-notice" style={{ fontSize: '0.75rem', marginTop: '16px' }}>
+                                        this postcard will fade in 7 days.{" "}
                                         <Link href={`/register?claimPostcardId=${postcard.id}`} className="reveal-notice-link">
                                             keep it forever — create an account
-                                        </Link>.
+                                        </Link>
                                     </p>
                                 )}
                             </>
                         ) : (
                             <>
-                                <p className="reveal-receiver-title">
+                                <p className="reveal-receiver-title mt-4 md:mt-0">
                                     a postcard from {postcard.fromName.toLowerCase()}.
                                 </p>
                                 <p className="reveal-receiver-subtitle">
@@ -141,17 +169,54 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                 </p>
                                 {/* Receiver expiry notice — muted, no alarm */}
                                 {postcard.expiryAt && (
-                                    <p className="reveal-receiver-notice">
-                                        this postcard disappears in {daysUntil(postcard.expiryAt)} day{daysUntil(postcard.expiryAt) !== 1 ? "s" : ""}.
+                                    <p className="reveal-receiver-notice" style={{ fontSize: '0.75rem' }}>
+                                        this postcard will fade in {daysUntil(postcard.expiryAt)} day{daysUntil(postcard.expiryAt) !== 1 ? "s" : ""}.
                                     </p>
                                 )}
                             </>
                         )}
                     </div>
 
-                    {/* ── POSTCARD ── */}
-                    <div className="w-full mt-10 mb-12 reveal-postcard">
-                        <PostcardRenderer postcard={postcard} />
+                    {/* ── POSTCARD & VIEW TOGGLE ── */}
+                    <div className="w-full mt-10 mb-12 reveal-postcard flex flex-col items-center">
+
+                        {/* ── VIEW MODE TOGGLE ── */}
+                        <div className="flex items-center gap-1 bg-surface-raised rounded-full p-1 shadow-sm border border-divider/40 mb-6">
+                            <button
+                                onClick={() => handleViewModeChange('flip')}
+                                className={`relative px-4 py-1 text-[11px] font-sans tracking-wide lowercase rounded-full transition-colors duration-200 z-10 ${viewMode === 'flip' ? 'text-ink font-medium' : 'text-ink-secondary hover:text-ink'}`}
+                            >
+                                {viewMode === 'flip' && (
+                                    <div className="absolute inset-0 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] -z-10" />
+                                )}
+                                flip
+                            </button>
+                            <button
+                                onClick={() => handleViewModeChange('full')}
+                                className={`relative px-4 py-1 text-[11px] font-sans tracking-wide lowercase rounded-full transition-colors duration-200 z-10 ${viewMode === 'full' ? 'text-ink font-medium' : 'text-ink-secondary hover:text-ink'}`}
+                            >
+                                {viewMode === 'full' && (
+                                    <div className="absolute inset-0 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] -z-10" />
+                                )}
+                                full
+                            </button>
+                        </div>
+
+                        {/* ── POSTCARD RENDERER ── */}
+                        <div className="w-full transition-all duration-300 ease-[cubic-bezier(0.25,0,0,1)]">
+                            {viewMode === 'flip' ? (
+                                <PostcardRenderer postcard={postcard} />
+                            ) : (
+                                <div className="w-full max-w-postcard mx-auto flex flex-col gap-8 duration-300 animate-in fade-in slide-in-from-top-4">
+                                    <div className="w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.06),0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden">
+                                        <FrontSide postcard={postcard} />
+                                    </div>
+                                    <div className="w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.06),0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden">
+                                        <BackSide postcard={postcard} />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* ── CTA BLOCK ── */}
@@ -160,9 +225,14 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                             <>
                                 <button
                                     onClick={copyLink}
-                                    className="inline-flex items-center justify-center bg-ink text-linen font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:opacity-80 active:opacity-70 transition-opacity duration-150 select-none"
+                                    className={`inline-flex items-center justify-center font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] transition-all duration-150 select-none ${copied ? 'bg-white text-ink shadow-[0_0_0_1px_rgba(0,0,0,0.1)]' : 'bg-ink text-linen hover:opacity-80 active:opacity-70'}`}
                                 >
-                                    {copied ? "copied!" : "copy link"}
+                                    <div className="flex items-center gap-2">
+                                        <span className="material-symbols-rounded" style={{ fontSize: 16 }}>
+                                            {copied ? 'check' : 'content_copy'}
+                                        </span>
+                                        {copied ? "link copied" : "copy link"}
+                                    </div>
                                 </button>
                                 <Link
                                     href="/create"

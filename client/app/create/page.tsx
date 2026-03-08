@@ -12,6 +12,7 @@ import { ExpiryOption } from "@/types/postcard";
 import { STAMPS, StampId } from "@/components/stamps/StampRegistry";
 import { useAuth } from "@/components/auth/AuthProvider";
 import Link from "next/link";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 function computeExpiryAt(option: ExpiryOption, customDate?: string): string | null {
     const now = new Date();
@@ -49,69 +50,80 @@ function CreatePageInner() {
     const [uploading, setUploading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
+    const [turnstileToken, setTurnstileToken] = useState("");
 
     // Lock expiry to 7d for guests
     const effectiveExpiry = isGuest ? "7d" : expiry;
 
     const isPublishable =
-        mediaFile && title.trim() && message.trim() && (conversationId || (toName.trim() && fromName.trim()));
+        title.trim() && message.trim() && (conversationId || (toName.trim() && fromName.trim()));
 
     const handlePublish = useCallback(async () => {
-        if (!mediaFile || submitting) return;
+        if (submitting) return;
         setSubmitting(true);
         setSubmitError(null);
 
         try {
-            const metaRes = await fetch(apiUrl("/api/upload"), {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    fileName: mediaFile.name,
-                    fileType: mediaFile.type,
-                    fileSize: mediaFile.size,
-                }),
-            });
+            let publicUrlStr = "";
+            let mediaTypeStr = "";
 
-            if (!metaRes.ok) {
-                const err = await metaRes.json();
-                throw new Error(err.error ?? "Upload failed");
+            if (mediaFile) {
+                const metaRes = await fetch(apiUrl("/api/upload"), {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        fileName: mediaFile.name,
+                        fileType: mediaFile.type,
+                        fileSize: mediaFile.size,
+                    }),
+                });
+
+                if (!metaRes.ok) {
+                    const err = await metaRes.json();
+                    throw new Error(err.error ?? "Upload failed");
+                }
+
+                const { signature, timestamp, apiKey, cloudName, publicUrl, publicId } = await metaRes.json();
+
+                setUploading(true);
+
+                const formData = new FormData();
+                formData.append("file", mediaFile);
+                formData.append("api_key", apiKey);
+                formData.append("timestamp", timestamp.toString());
+                formData.append("signature", signature);
+                formData.append("public_id", publicId);
+
+                const isVideo = mediaFile.type.startsWith("video/");
+                const resourceTypeStr = isVideo ? "video" : "image";
+
+                const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceTypeStr}/upload`, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (!uploadRes.ok) {
+                    console.error(await uploadRes.text());
+                    throw new Error("File upload to storage failed");
+                }
+                setUploading(false);
+
+                publicUrlStr = publicUrl;
+                mediaTypeStr = mediaFile.type.startsWith("video/") ? "video" : "image";
             }
 
-            const { signature, timestamp, apiKey, cloudName, publicUrl, publicId } = await metaRes.json();
-
-            setUploading(true);
-
-            const formData = new FormData();
-            formData.append("file", mediaFile);
-            formData.append("api_key", apiKey);
-            formData.append("timestamp", timestamp.toString());
-            formData.append("signature", signature);
-            formData.append("public_id", publicId);
-
-            const isVideo = mediaFile.type.startsWith("video/");
-            const resourceTypeStr = isVideo ? "video" : "image";
-
-            const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceTypeStr}/upload`, {
-                method: "POST",
-                body: formData,
-            });
-
-            if (!uploadRes.ok) {
-                console.error(await uploadRes.text());
-                throw new Error("File upload to storage failed");
-            }
-            setUploading(false);
-
-            const mediaType = mediaFile.type.startsWith("video/") ? "video" : "image";
             const expiryAt = computeExpiryAt(effectiveExpiry, customDate);
 
             const createRes = await fetch(apiUrl("/api/postcards"), {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "cf-turnstile-response": turnstileToken
+                },
                 credentials: "include",
                 body: JSON.stringify({
-                    mediaUrl: publicUrl,
-                    mediaType,
+                    mediaUrl: publicUrlStr,
+                    mediaType: mediaTypeStr,
                     title: title.trim(),
                     message: message.trim(),
                     toName: conversationId ? "Recipient" : toName.trim(),
@@ -141,7 +153,7 @@ function CreatePageInner() {
             setSubmitting(false);
             setUploading(false);
         }
-    }, [mediaFile, submitting, title, message, toName, fromName, stampId, effectiveExpiry, customDate, passwordEnabled, password, router, conversationId]);
+    }, [mediaFile, submitting, title, message, toName, fromName, stampId, effectiveExpiry, customDate, passwordEnabled, password, router, conversationId, turnstileToken]);
 
     const buttonLabel = uploading ? "uploading…" : submitting ? "sending…" : "send it";
 
@@ -216,7 +228,7 @@ function CreatePageInner() {
 
                         {/* Media */}
                         <section className="flex flex-col gap-2">
-                            <p className="text-body-sm text-ink-secondary">add a memory</p>
+                            <p className="text-body-sm text-ink-secondary">add a memory (optional)</p>
                             <MediaUpload onFile={setMediaFile} />
                         </section>
 
@@ -436,6 +448,14 @@ function CreatePageInner() {
                                 </Link>
                             </p>
                         )}
+
+                        <div className="flex justify-center my-4">
+                            <Turnstile
+                                siteKey="1x00000000000000000000AA"
+                                onSuccess={(token) => setTurnstileToken(token)}
+                                options={{ theme: "light" }}
+                            />
+                        </div>
 
                         {submitError && (
                             <p role="alert" className="text-body-sm text-red-500">{submitError}</p>

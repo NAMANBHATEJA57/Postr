@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const createPostcardSchema = z.object({
-  mediaUrl: z.string().url("Valid media URL is required"),
-  mediaType: z.enum(["image", "video"]),
+  mediaUrl: z.string().optional().or(z.literal("")),
+  mediaType: z.enum(["image", "video", ""]).optional(),
   title: z.string().min(1, "Title is required").max(60, "Title is too long"),
   message: z.string().min(1, "Message is required").max(500, "Message is too long"),
   toName: z.string().optional(),
