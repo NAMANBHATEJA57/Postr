@@ -1,10 +1,5 @@
 import ClientPage from "./ClientPage";
 
-
-interface ConversationPageProps {
-    params: { id: string };
-}
-
-export default function ConversationPage({ params }: ConversationPageProps) {
+export default function ConversationPage() {
     return <ClientPage />;
 }

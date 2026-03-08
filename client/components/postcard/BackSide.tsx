@@ -24,8 +24,8 @@ export default function BackSide({ postcard }: BackSideProps) {
             style={{ backgroundColor: "#FFFDF9", background: "linear-gradient(to right, #FFFDF9 60%, #FBF7F2 100%)" }}
             aria-label="Postcard back"
         >
-            {/* ── Left: Message column (60%) ── */}
-            <div className="flex flex-col justify-between w-[60%] p-[clamp(1.5rem,4vw,2.5rem)] pr-[clamp(1rem,3vw,1.75rem)]">
+            {/* ── Left: Message column (65%) ── */}
+            <div className="flex flex-col justify-between w-[65%] p-[clamp(1.5rem,4vw,2.5rem)] pr-[clamp(1rem,3vw,1.75rem)]">
                 {/* Title (small, serif, secondary) */}
                 <p className="font-serif text-xs text-accent-muted tracking-[0.06em] uppercase mb-4">
                     {postcard.title}
@@ -37,7 +37,7 @@ export default function BackSide({ postcard }: BackSideProps) {
                 </p>
 
                 {/* Message body */}
-                <p className="font-handwritten text-[clamp(1.125rem,3.5vw,1.375rem)] text-[#1f1f1f] leading-[1.7] tracking-[0.02em] flex-1">
+                <p className="font-handwritten text-[clamp(1.125rem,3.5vw,1.375rem)] text-[#1f1f1f] leading-[1.8] sm:leading-[1.7] whitespace-normal break-normal tracking-[0.02em] flex-1">
                     {postcard.message}
                 </p>
 
@@ -55,8 +55,8 @@ export default function BackSide({ postcard }: BackSideProps) {
             {/* ── Vertical divider ── */}
             <div className="w-px self-stretch shrink-0 my-8 mx-0 border-l border-dashed border-[#D5D0CB] opacity-60 z-10" aria-hidden="true" />
 
-            {/* ── Right: Postcard meta column (40%) ── */}
-            <div className="flex flex-col w-[40%] p-[clamp(1.25rem,3vw,2rem)] pl-[clamp(1rem,2.5vw,1.5rem)] relative">
+            {/* ── Right: Postcard meta column (35%) ── */}
+            <div className="flex flex-col w-[35%] p-[clamp(1.25rem,3vw,2rem)] pl-[clamp(1rem,2.5vw,1.5rem)] relative">
 
                 {/* Subtle Postal Postmark */}
                 <div className="absolute right-[clamp(3.5rem,7vw,4.5rem)] top-[clamp(1.75rem,3vw,2.25rem)] w-[76px] h-[76px] rounded-full border border-ink/15 flex flex-col items-center justify-center rotate-[6deg] pointer-events-none select-none z-30 mix-blend-multiply opacity-65" aria-hidden="true">
@@ -97,7 +97,6 @@ export default function BackSide({ postcard }: BackSideProps) {
             >
                 {postcard.stampId ? (
                     postcard.stampId in STAMPS ? (
-                        // @ts-ignore
                         (() => { const Stamp = STAMPS[postcard.stampId as StampId]; return <Stamp />; })()
                     ) : (
                         (() => { console.warn("BackSide: Received invalid stampId", postcard.stampId); return null; })()

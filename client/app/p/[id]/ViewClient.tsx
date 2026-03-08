@@ -129,35 +129,6 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                 <p className="reveal-subtitle">
                                     send it to {postcard.toName.toLowerCase()}.
                                 </p>
-
-                                {/* Inline copy link - clickable URL row */}
-                                <button
-                                    type="button"
-                                    onClick={copyLink}
-                                    className="mt-5 flex items-center justify-between w-full max-w-[280px] py-2 px-3 hover:bg-black/[0.03] rounded-md transition-colors duration-200 group cursor-pointer border-none bg-transparent focus:outline-none"
-                                    aria-label="Copy postcard link"
-                                >
-                                    <span className="text-ink-secondary group-hover:text-ink truncate reveal-link-text transition-colors duration-150 text-left">
-                                        {shareUrl.replace(/^https?:\/\//, '')}
-                                    </span>
-                                    <span
-                                        className="material-symbols-rounded text-ink-ghost group-hover:text-ink-secondary transition-colors duration-150 select-none flex-shrink-0 pl-3"
-                                        style={{ fontSize: 17 }}
-                                        aria-hidden="true"
-                                    >
-                                        {copied ? 'check' : 'content_copy'}
-                                    </span>
-                                </button>
-
-                                {/* Creator expiry notice for guest */}
-                                {!authLoading && !user && postcard.expiryAt && (
-                                    <p className="reveal-notice" style={{ fontSize: '0.75rem', marginTop: '16px' }}>
-                                        this postcard will fade in 7 days.{" "}
-                                        <Link href={`/register?claimPostcardId=${postcard.id}`} className="reveal-notice-link">
-                                            keep it forever — create an account
-                                        </Link>
-                                    </p>
-                                )}
                             </>
                         ) : (
                             <>
@@ -167,40 +138,13 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                 <p className="reveal-receiver-subtitle">
                                     to {postcard.toName.toLowerCase()}
                                 </p>
-                                {/* Receiver expiry notice — muted, no alarm */}
-                                {postcard.expiryAt && (
-                                    <p className="reveal-receiver-notice" style={{ fontSize: '0.75rem' }}>
-                                        this postcard will fade in {daysUntil(postcard.expiryAt)} day{daysUntil(postcard.expiryAt) !== 1 ? "s" : ""}.
-                                    </p>
-                                )}
                             </>
                         )}
                     </div>
 
                     {/* ── POSTCARD & VIEW TOGGLE ── */}
-                    <div className="w-full mt-10 mb-12 reveal-postcard flex flex-col items-center">
+                    <div className="w-full mt-10 mb-8 reveal-postcard flex flex-col items-center">
 
-                        {/* ── VIEW MODE TOGGLE ── */}
-                        <div className="flex items-center gap-1 bg-surface-raised rounded-full p-1 shadow-sm border border-divider/40 mb-6">
-                            <button
-                                onClick={() => handleViewModeChange('flip')}
-                                className={`relative px-4 py-1 text-[11px] font-sans tracking-wide lowercase rounded-full transition-colors duration-200 z-10 ${viewMode === 'flip' ? 'text-ink font-medium' : 'text-ink-secondary hover:text-ink'}`}
-                            >
-                                {viewMode === 'flip' && (
-                                    <div className="absolute inset-0 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] -z-10" />
-                                )}
-                                flip
-                            </button>
-                            <button
-                                onClick={() => handleViewModeChange('full')}
-                                className={`relative px-4 py-1 text-[11px] font-sans tracking-wide lowercase rounded-full transition-colors duration-200 z-10 ${viewMode === 'full' ? 'text-ink font-medium' : 'text-ink-secondary hover:text-ink'}`}
-                            >
-                                {viewMode === 'full' && (
-                                    <div className="absolute inset-0 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] -z-10" />
-                                )}
-                                full
-                            </button>
-                        </div>
 
                         {/* ── POSTCARD RENDERER ── */}
                         <div className="w-full transition-all duration-300 ease-[cubic-bezier(0.25,0,0,1)]">
@@ -219,10 +163,51 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                         </div>
                     </div>
 
+                    {/* ── VIEW MODE TOGGLE (Moved below postcard) ── */}
+                    <div className="flex items-center gap-1 bg-surface-raised rounded-full p-1 shadow-sm border border-divider/40 mb-10 mt-2">
+                        <button
+                            onClick={() => handleViewModeChange('flip')}
+                            className={`relative px-4 py-1 text-[11px] font-sans tracking-wide lowercase rounded-full transition-colors duration-200 z-10 ${viewMode === 'flip' ? 'text-ink font-medium' : 'text-ink-secondary hover:text-ink'}`}
+                        >
+                            {viewMode === 'flip' && (
+                                <div className="absolute inset-0 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] -z-10" />
+                            )}
+                            flip
+                        </button>
+                        <button
+                            onClick={() => handleViewModeChange('full')}
+                            className={`relative px-4 py-1 text-[11px] font-sans tracking-wide lowercase rounded-full transition-colors duration-200 z-10 ${viewMode === 'full' ? 'text-ink font-medium' : 'text-ink-secondary hover:text-ink'}`}
+                        >
+                            {viewMode === 'full' && (
+                                <div className="absolute inset-0 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] -z-10" />
+                            )}
+                            full
+                        </button>
+                    </div>
+
                     {/* ── CTA BLOCK ── */}
                     <div className="flex flex-col items-center gap-4 w-full reveal-cta">
                         {isCreator ? (
                             <>
+                                {/* Inline copy link - clickable URL row */}
+                                <button
+                                    type="button"
+                                    onClick={copyLink}
+                                    className="mb-2 mt-2 flex items-center justify-between w-full max-w-[280px] py-2 px-3 hover:bg-black/[0.03] rounded-md transition-colors duration-200 group cursor-pointer border-none bg-transparent focus:outline-none"
+                                    aria-label="Copy postcard link"
+                                >
+                                    <span className="text-ink-secondary group-hover:text-ink truncate reveal-link-text transition-colors duration-150 text-left">
+                                        {shareUrl.replace(/^https?:\/\//, '')}
+                                    </span>
+                                    <span
+                                        className="material-symbols-rounded text-ink-ghost group-hover:text-ink-secondary transition-colors duration-150 select-none flex-shrink-0 pl-3"
+                                        style={{ fontSize: 17 }}
+                                        aria-hidden="true"
+                                    >
+                                        {copied ? 'check' : 'content_copy'}
+                                    </span>
+                                </button>
+
                                 <button
                                     onClick={copyLink}
                                     className={`inline-flex items-center justify-center font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] transition-all duration-150 select-none ${copied ? 'bg-white text-ink shadow-[0_0_0_1px_rgba(0,0,0,0.1)]' : 'bg-ink text-linen hover:opacity-80 active:opacity-70'}`}
@@ -303,6 +288,26 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                 )}
                             </>
                         )}
+
+                        {/* ── EXPIRY MESSAGES (Moved to bottom) ── */}
+                        <div className="mt-8">
+                            {isCreator ? (
+                                !authLoading && !user && postcard.expiryAt && (
+                                    <p className="reveal-notice text-center" style={{ fontSize: '0.75rem' }}>
+                                        this postcard will fade in 7 days.{" "}
+                                        <Link href={`/register?claimPostcardId=${postcard.id}`} className="reveal-notice-link">
+                                            keep it forever — create an account
+                                        </Link>
+                                    </p>
+                                )
+                            ) : (
+                                postcard.expiryAt && (
+                                    <p className="reveal-receiver-notice text-center" style={{ fontSize: '0.75rem' }}>
+                                        this postcard will fade in {daysUntil(postcard.expiryAt)} day{daysUntil(postcard.expiryAt) !== 1 ? "s" : ""}.
+                                    </p>
+                                )
+                            )}
+                        </div>
                     </div>
 
                 </div>

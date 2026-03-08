@@ -97,7 +97,7 @@ export default function ConversationThreadPage() {
             }
         }
         loadThread();
-    }, [conversationId]);
+    }, [conversationId, user]);
 
     const handleDelete = async () => {
         setShowDeleteModal(false);

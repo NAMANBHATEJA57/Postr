@@ -10,16 +10,12 @@ export default function Footer() {
                 aria-hidden="true"
             />
 
-            {/* Line 1 — maker's signature */}
-            <p className="footer-signature">
-                made with care by NB &amp; DG.
-            </p>
-
-            {/* Line 2 — links */}
-            <p className="footer-links-row">
+            {/* Line 1 — makers signature */}
+            <p className="footer-signature flex items-center justify-center gap-1 flex-wrap">
+                made with care by
                 <FooterLink href="https://in.linkedin.com/in/namanbhateja0808" label="NB" />
-                <Dot />
-                <FooterLink href="https://www.linkedin.com/in/dev-garg771/" label="DG" />
+                <span className="text-[10px] mx-0.5">&amp;</span>
+                <FooterLink href="https://www.linkedin.com/in/dev-garg771/" label="DG" />.
             </p>
         </footer>
     );
@@ -38,13 +34,3 @@ function FooterLink({ href, label }: { href: string; label: string }) {
     );
 }
 
-function Dot() {
-    return (
-        <span
-            aria-hidden="true"
-            className="footer-dot"
-        >
-            ·
-        </span>
-    );
-}
