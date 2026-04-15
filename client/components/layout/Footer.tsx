@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 
 export default function Footer() {
     const pathname = usePathname();
-    const isCreatePage = pathname === "/create";
+    const hiddenRoutes = ["/create", "/login", "/register"];
+    if (hiddenRoutes.includes(pathname)) return null;
 
     return (
         <footer className="w-full bg-[#F8F4EF] pt-14 md:pt-24 pb-16 md:pb-20 relative overflow-hidden">
@@ -38,12 +39,10 @@ export default function Footer() {
                         <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png" alt="Watermark" fill className="object-contain" />
                     </div>
 
-                    {/* Floating CTA Button — hidden on /create */}
-                    {!isCreatePage && (
-                        <Link href="/create" className="relative z-10 inline-flex h-[52px] items-center justify-center bg-[#1a1a1a] px-[80px] py-[16px] rounded-[8px] hover:bg-[#1a1a1a]/90 transition-all shadow-sm">
-                            <span className="font-sans text-[#f8f4ef] text-[15px] tracking-[0.3px] font-normal">Send a postcard</span>
-                        </Link>
-                    )}
+                    {/* CTA Button */}
+                    <Link href="/create" className="relative z-10 inline-flex h-[52px] items-center justify-center bg-[#1a1a1a] px-[80px] py-[16px] rounded-[8px] hover:bg-[#1a1a1a]/90 transition-all shadow-sm">
+                        <span className="font-sans text-[#f8f4ef] text-[15px] tracking-[0.3px] font-normal">Send a postcard</span>
+                    </Link>
                 </div>
             </div>
         </footer>

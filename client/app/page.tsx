@@ -35,7 +35,7 @@ export default function LandingPage() {
 
             {/* SVG Background for Hero */}
             <div className="absolute top-0 left-0 w-full h-[782px] pointer-events-none -z-10">
-                <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259785/Hero_kwxtie.png" alt="Landscape" fill priority className="object-cover object-top" />
+                <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260680/Hero_vmnesf.png" alt="Landscape" fill priority className="object-cover object-top" />
                 <div className="absolute bottom-0 left-0 w-full h-[150px] bg-gradient-to-t from-[#F8F4EF] to-transparent" />
             </div>
 
