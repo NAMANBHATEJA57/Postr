@@ -118,7 +118,7 @@ function CreatePageInner() {
             <nav className="w-full h-[72px] bg-[#F8F4EF]/70 backdrop-blur-[11px] flex flex-col items-center justify-between px-[16px] md:px-[320px] relative z-50 py-0">
                 {/* Logo — centered */}
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-[10px]">
-                    <Image src="/Logo.png" alt="Dearly logo" width={38} height={28} className="opacity-90 object-cover" />
+                    <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png" alt="Dearly logo" width={38} height={28} className="opacity-90 object-cover" />
                     <span className="font-serif font-semibold text-[24px] tracking-[-0.45px] text-[#1A1A1A]">Dearly</span>
                 </div>
                 {/* Back button — left */}

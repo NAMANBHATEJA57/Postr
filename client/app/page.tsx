@@ -35,14 +35,14 @@ export default function LandingPage() {
 
             {/* SVG Background for Hero */}
             <div className="absolute top-0 left-0 w-full h-[782px] pointer-events-none -z-10">
-                <Image src="/Hero.svg" alt="Landscape" fill priority className="object-cover object-top" />
+                <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259785/Hero_kwxtie.png" alt="Landscape" fill priority className="object-cover object-top" />
                 <div className="absolute bottom-0 left-0 w-full h-[150px] bg-gradient-to-t from-[#F8F4EF] to-transparent" />
             </div>
 
             {/* ── HEADER ── */}
             <header className="sticky top-0 w-full h-[72px] flex items-center justify-between px-4 md:px-[80px] z-50 backdrop-blur-[11px] bg-[#f8f4ef]/70 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all">
                 <Link href="/" className="font-serif text-[#1a1a1a] tracking-tight text-[24px] font-semibold no-underline opacity-90 transition-opacity hover:opacity-100 flex items-center gap-[10px]">
-                    <Image src="/Logo.png" alt="Logo" width={38} height={28} className="object-cover" />
+                    <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png" alt="Logo" width={38} height={28} className="object-cover" />
                     Dearly
                 </Link>
                 <nav className="flex items-center gap-[8px]">
@@ -122,7 +122,7 @@ export default function LandingPage() {
                     {/* Card 1 */}
                     <div className="bg-white flex flex-col items-start shadow-[5px_0px_31px_0px_rgba(0,0,0,0.07)] md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] md:border md:border-[#E1DCD7]/40 md:rounded-lg px-[16px] py-[24px] md:p-[16px] md:pb-[32px] transition-transform duration-300 md:hover:-translate-y-1">
                         <div className="w-full h-[296px] md:h-[300px] relative mb-[27px] md:mb-[24px] overflow-hidden">
-                            <Image src="/Scene Container 1.svg" alt="Scene 1" fill className="object-cover" />
+                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Scene_Container_1_sxpd8a.png" alt="Scene 1" fill className="object-cover" />
                         </div>
                         <h3 className="font-serif text-[24px] text-[#1a1a1a] mb-[12px] px-0 md:px-2">create a postcard</h3>
                         <p className="font-sans text-[14px] md:text-[14px] leading-[1.5] font-medium opacity-50 text-[#555] px-0 md:px-2 text-left">
@@ -133,7 +133,7 @@ export default function LandingPage() {
                     {/* Card 2 */}
                     <div className="bg-white flex flex-col items-start shadow-[5px_0px_31px_0px_rgba(0,0,0,0.07)] md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] md:border md:border-[#E1DCD7]/40 md:rounded-lg px-[16px] py-[24px] md:p-[16px] md:pb-[32px] transition-transform duration-300 md:hover:-translate-y-1">
                         <div className="w-full h-[296px] md:h-[300px] relative mb-[27px] md:mb-[24px] overflow-hidden">
-                            <Image src="/Scene Container 3.svg" alt="Scene 2" fill className="object-cover" />
+                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259784/Scene_Container_3_q6d0uu.png" alt="Scene 2" fill className="object-cover" />
                         </div>
                         <h3 className="font-serif text-[24px] text-[#1a1a1a] mb-[12px] px-0 md:px-2">make it personal</h3>
                         <p className="font-sans text-[14px] leading-[1.5] font-medium opacity-50 text-[#555] px-0 md:px-2 text-left">
@@ -144,7 +144,7 @@ export default function LandingPage() {
                     {/* Card 3 */}
                     <div className="bg-white flex flex-col items-start shadow-[5px_0px_31px_0px_rgba(0,0,0,0.07)] md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] md:border md:border-[#E1DCD7]/40 md:rounded-lg px-[16px] py-[24px] md:p-[16px] md:pb-[32px] transition-transform duration-300 md:hover:-translate-y-1">
                         <div className="w-full h-[296px] md:h-[300px] relative mb-[27px] md:mb-[24px] overflow-hidden">
-                            <Image src="/Scene Container 2.svg" alt="Scene 3" fill className="object-cover" />
+                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Scene_Container_2_gmhdfi.png" alt="Scene 3" fill className="object-cover" />
                         </div>
                         <h3 className="font-serif text-[24px] text-[#1a1a1a] mb-[12px] px-0 md:px-2">send &amp; collect</h3>
                         <p className="font-sans text-[14px] leading-[1.5] font-medium opacity-50 text-[#555] px-0 md:px-2 text-left">
@@ -175,10 +175,10 @@ export default function LandingPage() {
                 {/* Mobile: stacked images; Desktop: tactile overlapping postcards */}
                 <div className="md:hidden w-full flex flex-col gap-[24px]">
                     <div className="w-full h-[254px] relative overflow-hidden">
-                        <Image src="/Postcard 1.png" alt="Beach Scene Postcard" fill className="object-cover" />
+                        <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259787/Postcard_1_vggrdf.png" alt="Beach Scene Postcard" fill className="object-cover" />
                     </div>
                     <div className="w-full aspect-[3600/2560] relative overflow-hidden">
-                        <Image src="/postcard 2.png" alt="Postcard Back" fill className="object-cover" />
+                        <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259785/postcard_2_s1tila.png" alt="Postcard Back" fill className="object-cover" />
                     </div>
                 </div>
 
@@ -186,12 +186,12 @@ export default function LandingPage() {
                 <div className="hidden md:flex relative w-full max-w-[800px] h-[450px] items-center justify-center group cursor-pointer">
                     {/* Lined Back (Postcard 2) */}
                     <div className="absolute right-[10%] top-[60px] w-[440px] aspect-[1.45] bg-white transform rotate-[6deg] transition-all duration-500 group-hover:rotate-[2deg] group-hover:scale-105 group-hover:z-30 group-hover:-translate-x-4 overflow-hidden rounded-[8px] shadow-[0_12px_40px_rgba(0,0,0,0.06)] border border-[#E1DCD7]/40 z-0">
-                        <Image src="/postcard 2.png" alt="Postcard Back" fill className="object-cover" />
+                        <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259785/postcard_2_s1tila.png" alt="Postcard Back" fill className="object-cover" />
                     </div>
 
                     {/* Beach Scene (Postcard 1) */}
                     <div className="absolute left-[5%] top-[20px] w-[440px] aspect-[1.45] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-[#E1DCD7]/40 transform rotate-[-4deg] z-10 transition-all duration-500 group-hover:rotate-[-6deg] group-hover:scale-[0.98] group-hover:opacity-90 rounded-[8px] overflow-hidden">
-                        <Image src="/Postcard 1.png" alt="Beach Scene" fill className="object-cover" />
+                        <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259787/Postcard_1_vggrdf.png" alt="Beach Scene" fill className="object-cover" />
                     </div>
                 </div>
             </motion.section>
@@ -210,19 +210,19 @@ export default function LandingPage() {
                     <div className="absolute inset-0 pointer-events-none hidden md:block">
                         {/* Top Left */}
                         <div className="absolute left-[30px] top-[20px] w-[90px] h-[120px] rotate-[-8deg] opacity-90 transition-transform duration-500 hover:rotate-0">
-                            <Image src="/Basic stamp.png" alt="Stamp" fill className="object-contain" />
+                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259784/Basic_stamp_ow9rf4.png" alt="Stamp" fill className="object-contain" />
                         </div>
                         {/* Bottom Left */}
                         <div className="absolute left-[50px] bottom-[30px] w-[90px] h-[120px] rotate-[12deg] opacity-90 transition-transform duration-500 hover:rotate-0">
-                            <Image src="/Basic stamp-1.png" alt="Stamp" fill className="object-contain" />
+                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Basic_stamp-1_foeywo.png" alt="Stamp" fill className="object-contain" />
                         </div>
                         {/* Top Right */}
                         <div className="absolute right-[40px] top-[40px] w-[90px] h-[120px] rotate-[6deg] opacity-90 transition-transform duration-500 hover:rotate-0">
-                            <Image src="/Basic stamp-2.png" alt="Stamp" fill className="object-contain" />
+                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259782/Basic_stamp-2_pzfxwl.png" alt="Stamp" fill className="object-contain" />
                         </div>
                         {/* Bottom Right */}
                         <div className="absolute right-[20px] bottom-[20px] w-[90px] h-[120px] rotate-[-5deg] opacity-90 transition-transform duration-500 hover:rotate-0">
-                            <Image src="/Basic stamp-3.png" alt="Stamp" fill className="object-contain" />
+                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259782/Basic_stamp-3_pspbqu.png" alt="Stamp" fill className="object-contain" />
                         </div>
                     </div>
 
