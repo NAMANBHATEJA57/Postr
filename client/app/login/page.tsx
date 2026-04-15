@@ -87,13 +87,7 @@ export default function LoginPage() {
                         autoComplete="current-password"
                     />
 
-                    <div className="flex justify-center my-2">
-                        <Turnstile
-                            siteKey="1x00000000000000000000AA"
-                            onSuccess={(token) => setTurnstileToken(token)}
-                            options={{ theme: "light" }}
-                        />
-                    </div>
+
 
                     {error && <p className="text-body-sm text-red-500">{error}</p>}
 

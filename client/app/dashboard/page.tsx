@@ -37,6 +37,9 @@ export default function DashboardPage() {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [loading, setLoading] = useState(true);
     const [showNewDialogue, setShowNewDialogue] = useState(false);
+    const [newToName, setNewToName] = useState("");
+    const [newFromName, setNewFromName] = useState("");
+    const [newDescription, setNewDescription] = useState("");
     const [newEmail, setNewEmail] = useState("");
     const [newError, setNewError] = useState("");
     const [leaving, setLeaving] = useState(false);
@@ -76,7 +79,7 @@ export default function DashboardPage() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify({ email: newEmail }),
+                body: JSON.stringify({ email: newEmail, toName: newToName, fromName: newFromName, description: newDescription }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error);
@@ -102,48 +105,42 @@ export default function DashboardPage() {
 
     return (
         <main
-            className={`min-h-dvh bg-[#F8F4EF] transition-all duration-150 ease-out ${leaving ? "opacity-0 -translate-y-[6px]" : "opacity-100 translate-y-0"}`}
+            className={`min-h-dvh transition-all duration-150 ease-out bg-surface ${leaving ? "opacity-0 -translate-y-[6px]" : "opacity-100 translate-y-0"}`}
         >
             {/* ── Page container ── */}
             <div className="max-w-[720px] mx-auto pt-16 pb-20 px-6">
-                {/* ── Card wrapper ── */}
-                <div
-                    className={`bg-white/60 rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.04)] p-8 transition-opacity duration-200 ease-in-out ${showNewDialogue ? "opacity-50" : "opacity-100"}`}
-                >
+                
+                {/* ── User Meta ── */}
+                <div className="flex justify-end items-center gap-2.5 mb-8">
+                    <span className="font-sans text-[13px] text-ink-muted">
+                        {user?.email}
+                    </span>
+                    <span className="text-divider text-xs select-none">·</span>
+                    <button
+                        onClick={handleLogout}
+                        className="font-sans text-[13px] text-ink-muted bg-transparent border-none outline-none cursor-pointer p-0 transition-colors duration-150 hover:text-ink-secondary"
+                    >
+                        log out
+                    </button>
+                </div>
 
-                    {/* ── Header row ── */}
-                    <header className="flex justify-between items-center w-full mb-5">
-                        <p className="font-serif text-lg font-normal text-ink tracking-tight m-0">
-                            your conversations
-                        </p>
-
-                        <div className="flex items-center gap-2.5">
-                            <span className="font-sans text-[13px] text-accent-muted">
-                                {user?.email}
-                            </span>
-                            <span className="text-divider text-xs select-none">·</span>
-                            <button
-                                onClick={handleLogout}
-                                className="font-sans text-[13px] text-accent-muted bg-transparent border-none outline-none cursor-pointer p-0 transition-opacity duration-150 hover:opacity-50"
-                            >
-                                log out
-                            </button>
-                        </div>
-                    </header>
-
-                    {/* ── Divider ── */}
-                    <div className="border-t border-[#E8E4DF] mb-6" />
-
+                {/* ── Emotional Header ── */}
+                <header className="flex flex-col items-center text-center w-full mb-12">
+                    <h1 className="font-serif text-[2.25rem] md:text-[2.75rem] font-normal text-ink leading-tight mb-2">
+                        your collections
+                    </h1>
+                    <p className="font-sans text-[1.0625rem] text-ink-secondary mb-8">
+                        for all the times I can’t be there
+                    </p>
+                    
                     {/* ── Write CTA ── */}
-                    <div className="mb-7">
-                        <button
-                            onClick={() => setShowNewDialogue(true)}
-                            className="flex items-center justify-between w-full h-12 bg-ink text-linen font-sans text-sm tracking-[0.02em] border-none rounded-lg pl-5 pr-4 shadow-[0_1px_3px_rgba(0,0,0,0.12)] cursor-pointer transition-all duration-150 select-none hover:bg-[#111111] active:scale-[0.99] active:bg-[#111111]"
-                        >
-                            Start a conversation
-                            <Icon name="arrow_forward" size={18} className="text-linen opacity-70" />
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => setShowNewDialogue(true)}
+                        className="flex items-center justify-center gap-2 h-14 bg-ink text-linen font-sans text-[0.9375rem] tracking-[0.02em] border-none rounded-xl px-8 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:bg-ink-secondary hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0"
+                    >
+                        + add letter
+                    </button>
+                </header>
 
                     {/* ── Conversation list / empty state ── */}
                     {loading ? (
@@ -176,7 +173,7 @@ export default function DashboardPage() {
                                     >
                                         <button
                                             onClick={() => navigateTo(`/conversation/${c.id}`)}
-                                            className="block w-full text-left bg-white border-none outline-none cursor-pointer rounded-xl px-7 py-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)] transition-all duration-150 hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)] hover:-translate-y-0.5"
+                                            className="block w-full text-left bg-surface-card border border-divider outline-none cursor-pointer rounded-xl px-7 py-6 elevation-1 transition-all duration-300 hover:elevation-2 hover:-rotate-1 hover:scale-[1.01]"
                                             style={{
                                                 animation: `fadeInUpCard 250ms ${index * 50}ms both`,
                                             }}
@@ -230,34 +227,54 @@ export default function DashboardPage() {
                             })}
                         </div>
                     )}
-                </div>
             </div>
 
-            {/* ── New conversation card overlay ── */}
+            {/* ── New collection card overlay ── */}
             {showNewDialogue && (
                 <div
                     onClick={(e) => { if (e.target === e.currentTarget) setShowNewDialogue(false); }}
-                    className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#F8F4EF]/70 backdrop-blur-sm animate-[fadeIn_180ms_ease_both]"
+                    className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-surface/80 backdrop-blur-sm animate-[fadeIn_200ms_ease_both]"
                 >
-                    <div className="bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.05)] p-10 w-full max-w-[480px] animate-[fadeInUpCard_220ms_ease_both]">
-                        <p className="font-serif text-xl font-normal text-ink mb-1.5">
-                            Start a new conversation
+                    <div className="bg-surface-card rounded-2xl elevation-2 p-10 w-full max-w-[480px] animate-[fadeInUpCard_300ms_ease_both] flex flex-col items-center text-center">
+                        <p className="font-serif text-[1.75rem] font-normal text-ink mb-1">
+                            create collection
                         </p>
-                        <p className="font-sans text-sm text-ink-muted mb-7">
-                            Who are you writing to?
+                        <p className="font-sans text-sm text-ink-secondary mb-8">
+                            start gathering letters for someone.
                         </p>
 
-                        <form onSubmit={handleStartConversation} className="flex flex-col gap-4">
+                        <form onSubmit={handleStartConversation} className="flex flex-col gap-5 w-full">
+                            <Input
+                                id="to-name"
+                                type="text"
+                                placeholder="to — someone special"
+                                value={newToName}
+                                onChange={(e) => setNewToName(e.target.value)}
+                            />
+                            <Input
+                                id="from-name"
+                                type="text"
+                                placeholder="from — your name"
+                                value={newFromName}
+                                onChange={(e) => setNewFromName(e.target.value)}
+                            />
+                            <Input
+                                id="description"
+                                type="text"
+                                placeholder="description — for all the times I can't be there"
+                                value={newDescription}
+                                onChange={(e) => setNewDescription(e.target.value)}
+                            />
                             <Input
                                 id="new-email"
                                 type="email"
-                                placeholder="their email address"
+                                placeholder="recipient's email address"
                                 value={newEmail}
                                 onChange={(e) => setNewEmail(e.target.value)}
                                 required
                             />
                             {newError && (
-                                <p className="font-sans text-[13px] text-red-500 m-0">
+                                <p className="font-sans text-[13px] text-accent-red m-0">
                                     {newError}
                                 </p>
                             )}

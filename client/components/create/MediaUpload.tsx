@@ -211,7 +211,7 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
             {/* ── 4:3 container for both drop zone and preview ── */}
             <div
                 ref={containerRef}
-                className={`relative w-full aspect-[4/3] sm:aspect-[3/2] overflow-hidden bg-[#FBF7F2] rounded-xl border ${isAdjusting ? "border-accent shadow-inner ring-4 ring-accent-soft" : "border-divider"}`}
+                className={`relative w-full aspect-[4/3] overflow-hidden bg-white rounded-[8px] border ${isAdjusting ? "border-accent shadow-inner ring-4 ring-accent-soft" : "border-black/10"}`}
             >
                 {!preview ? (
                     /* Drop zone */
@@ -225,32 +225,21 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
                         onClick={() => inputRef.current?.click()}
                         onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
                         className={[
-                            "absolute inset-0 flex flex-col items-center justify-center gap-2",
-                            "border-2 border-dashed border-transparent cursor-pointer transition-colors duration-150 rounded-xl",
-                            isDragging ? "border-[#C08497] bg-surface" : "hover:bg-black/[0.02]",
-                            errorMessage ? "border-red-400" : "",
+                            "absolute inset-0 flex flex-col items-center justify-center gap-4",
+                            "cursor-pointer transition-colors duration-150 rounded-[8px]",
+                            isDragging ? "bg-black/[0.05]" : "hover:bg-black/[0.02]",
+                            errorMessage ? "bg-red-50/50" : "",
                         ].filter(Boolean).join(" ")}
                     >
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            className="text-accent"
-                            aria-hidden="true"
-                        >
-                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                            <polyline points="17 8 12 3 7 8" />
-                            <line x1="12" y1="3" x2="12" y2="15" />
-                        </svg>
-                        <span className="text-body-sm text-ink-secondary">
-                            upload a photo or video
-                        </span>
-                        <span className="text-body-sm text-accent-muted text-center leading-relaxed">
-                            photos up to 5MB. videos up to 25MB.
-                        </span>
+                        <span className="material-symbols-rounded text-[48px] text-[#1A1A1A] mb-2">upload</span>
+                        <div className="flex flex-col items-center gap-1">
+                            <span className="text-[16px] font-medium text-[#3e3a36]">
+                                upload a photo or video
+                            </span>
+                            <span className="text-[14px] text-[#6b6560]">
+                                photos up to 5MB · videos up to 25MB
+                            </span>
+                        </div>
                         <input
                             ref={inputRef}
                             type="file"

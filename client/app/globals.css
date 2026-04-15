@@ -417,6 +417,25 @@
     transform: perspective(800px) rotateX(1deg) rotateY(-1.5deg) translateY(-2px);
     box-shadow: var(--shadow-card-hover);
   }
+
+  /* ── 3D Flip Utilities ── */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+
+  .font-handwritten {
+    font-family: var(--font-caveat), cursive;
+  }
 }
 
 /* ── Keyframe animations ── */
