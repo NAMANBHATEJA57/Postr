@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 export default function Footer() {
     const pathname = usePathname();
     const hiddenRoutes = ["/create", "/login", "/register"];
-    if (hiddenRoutes.includes(pathname)) return null;
+    if (hiddenRoutes.includes(pathname) || pathname.startsWith("/p/")) return null;
 
     return (
         <footer className="w-full bg-[#F8F4EF] pt-14 md:pt-24 pb-16 md:pb-20 relative overflow-hidden">

@@ -20,79 +20,82 @@ export default function BackSide({ postcard }: BackSideProps) {
 
     return (
         <div
-            className="w-full h-full flex relative rounded-xl overflow-hidden shadow-inner"
-            style={{ backgroundColor: "#FFFDF9", background: "linear-gradient(to right, #FFFDF9 60%, #FBF7F2 100%)" }}
+            className="w-full h-full flex relative rounded-[2px] overflow-hidden shadow-sm"
+            style={{ 
+                backgroundColor: "#FFFFFF", 
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.028'/%3E%3C/svg%3E")` 
+            }}
             aria-label="Postcard back"
         >
-            {/* ── Left: Message column (65%) ── */}
-            <div className="flex flex-col justify-between w-[65%] p-[clamp(1.5rem,4vw,2.5rem)] pr-[clamp(1rem,3vw,1.75rem)]">
-                {/* Title (small, serif, secondary) */}
-                <p className="font-serif text-xs text-accent-muted tracking-[0.06em] uppercase mb-4">
-                    {postcard.title}
+            {/* ── Header: @DEARLY centered at very top ── */}
+            <div className="absolute top-[8%] left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <p className="font-serif text-[clamp(6px,1.5vw,9px)] text-ink/70 tracking-[0.2em] uppercase">
+                    @DEARLY
                 </p>
+            </div>
 
-                {/* Greeting */}
-                <p className="font-handwritten text-[clamp(1.125rem,3.5vw,1.375rem)] text-[#1f1f1f] leading-[1.7] tracking-[0.02em] mb-3">
-                    Dear {postcard.toName},
-                </p>
-
-                {/* Message body */}
-                <p className="font-handwritten text-[clamp(1.125rem,3.5vw,1.375rem)] text-[#1f1f1f] leading-[1.8] sm:leading-[1.7] whitespace-normal break-normal tracking-[0.02em] flex-1">
-                    {postcard.message}
-                </p>
-
-                {/* Signature — right-aligned within left column */}
-                <div className="text-right mt-6">
-                    <p className="font-handwritten text-[clamp(1rem,3vw,1.25rem)] text-[#555] leading-[1.4] italic">
-                        Sincerely,
+            {/* ── Left: Message column (50%) ── */}
+            <div className="flex flex-col w-1/2 h-full justify-between p-[clamp(1.5rem,4vw,2.5rem)] pr-[clamp(1rem,2vw,1.5rem)]">
+                <div>
+                    {/* Title */}
+                    <p className="font-serif text-[clamp(12px,2vw,15px)] text-ink/80 tracking-[0.1em] capitalize mb-[clamp(1.5rem,4vw,2rem)] mt-[clamp(0.5rem,2vw,1rem)] font-medium">
+                        {postcard.title}
                     </p>
-                    <p className="font-handwritten text-[clamp(1.0625rem,3vw,1.3125rem)] text-[#1f1f1f] leading-[1.4] tracking-[0.02em]">
-                        {postcard.fromName}
+
+                    {/* Greeting */}
+                    <p className="font-handwritten text-[clamp(1rem,2.5vw,1.35rem)] text-[#4a4a4a] leading-[1.6] tracking-normal mb-3">
+                        Dear {postcard.toName},
+                    </p>
+
+                    {/* Message body */}
+                    <p className="font-handwritten text-[clamp(1rem,2.5vw,1.35rem)] text-[#4a4a4a] leading-[1.7] whitespace-pre-wrap break-words tracking-normal">
+                        {postcard.message}
                     </p>
                 </div>
             </div>
 
             {/* ── Vertical divider ── */}
-            <div className="w-px self-stretch shrink-0 my-8 mx-0 border-l border-dashed border-[#D5D0CB] opacity-60 z-10" aria-hidden="true" />
+            <div className="w-px self-stretch border-l border-ink/40 z-10" style={{ margin: '8% 0' }} aria-hidden="true" />
 
-            {/* ── Right: Postcard meta column (35%) ── */}
-            <div className="flex flex-col w-[35%] p-[clamp(1.25rem,3vw,2rem)] pl-[clamp(1rem,2.5vw,1.5rem)] relative">
-
+            {/* ── Right: Postcard meta column (50%) ── */}
+            <div className="flex flex-col w-1/2 h-full p-[clamp(1.5rem,4vw,2.5rem)] pl-[clamp(1rem,2vw,1.5rem)] relative">
+                
                 {/* Subtle Postal Postmark */}
-                <div className="absolute right-[clamp(3.5rem,7vw,4.5rem)] top-[clamp(1.75rem,3vw,2.25rem)] w-[76px] h-[76px] rounded-full border border-ink/15 flex flex-col items-center justify-center rotate-[6deg] pointer-events-none select-none z-30 mix-blend-multiply opacity-65" aria-hidden="true">
-                    <div className="w-[66px] h-[66px] rounded-full border-[0.5px] border-ink/10 flex flex-col items-center justify-center">
-                        <span className="font-sans text-[7px] text-ink/50 font-medium tracking-widest leading-none mb-1">DEARLY POST</span>
-                        <span className="font-sans text-[6px] text-ink/40 tracking-wider leading-none">
-                            {new Date(postcard.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase()}
-                        </span>
+                <div className="absolute right-[clamp(3.5rem,7vw,5.5rem)] top-[clamp(1.5rem,3vw,2.5rem)] w-[76px] h-[76px] rounded-full border-[1.5px] border-ink/40 flex flex-col items-center justify-center -rotate-[12deg] pointer-events-none select-none z-30 mix-blend-multiply opacity-50" aria-hidden="true">
+                    <div className="w-[66px] h-[66px] rounded-full border border-ink/30 flex flex-col items-center justify-center">
+                        <span className="font-sans text-[7px] text-ink/60 font-semibold tracking-widest leading-none mb-1">DEARLY</span>
+                        <div className="flex flex-col items-center border-y border-ink/30 px-2 py-0.5 my-0.5">
+                            <span className="font-sans text-[6px] text-ink/50 tracking-[0.2em] leading-none mb-[1px]">POST</span>
+                            <span className="font-sans text-[5px] text-ink/40 tracking-wider leading-none">
+                                {new Date(postcard.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }).toUpperCase()}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                {/* Address lines */}
-                <div className="mt-auto mb-[15%]">
-                    <p className="font-serif text-[11px] text-accent-muted tracking-[0.04em] lowercase mb-1">
-                        to
-                    </p>
-                    <p className="font-serif text-[13px] text-accent-muted tracking-[0.02em] lowercase">
-                        {postcard.toName}
-                    </p>
-
-                    {/* Subtle Postal Code Boxes */}
-                    <div className="flex gap-[5px] mt-6 opacity-[0.15]">
-                        {[...Array(5)].map((_, i) => (
-                            <div key={i} className="w-3.5 h-4 border border-ink rounded-[1px]" />
-                        ))}
+                {/* 4 Empty Address lines & Sender Signature */}
+                <div className="mt-auto mb-[8%] w-[85%] self-end">
+                    <div className="flex flex-col gap-[clamp(1.25rem,3.5vw,1.75rem)] mb-[clamp(1rem,3vw,2rem)]">
+                        <div className="w-full h-px bg-ink/30" />
+                        <div className="w-full h-px bg-ink/30" />
+                        <div className="w-full h-px bg-ink/30" />
+                        <div className="w-full h-px bg-ink/30" />
+                    </div>
+                    {/* Signature — right-aligned underneath address lines */}
+                    <div className="text-right">
+                        <p className="font-handwritten text-[clamp(1rem,2.5vw,1.35rem)] text-[#4a4a4a] leading-[1.4] tracking-normal">
+                            Sincerely,
+                        </p>
+                        <p className="font-handwritten text-[clamp(1rem,2.5vw,1.35rem)] text-[#4a4a4a] leading-[1.4] tracking-normal">
+                            {postcard.fromName}
+                        </p>
                     </div>
                 </div>
             </div>
 
             {/* Stamp / Stamp Placeholder — Absolute top-right */}
             <div
-                className={`absolute flex items-center justify-center -rotate-[1deg] [&>svg]:max-w-full [&>svg]:max-h-full [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain w-[80px] h-[80px] z-20 opacity-[0.92] contrast-[1.05] ${postcard.stampId && postcard.stampId in STAMPS ? "border-none" : "border border-[#E1DCD7]"}`}
-                style={{
-                    top: "clamp(1.25rem, 3vw, 1.5rem)",
-                    right: "clamp(1.25rem, 3vw, 1.5rem)",
-                }}
+                className={`absolute right-[8%] top-[8%] flex items-center justify-center rotate-[4deg] [&>svg]:max-w-full [&>svg]:max-h-full [&>svg]:w-auto [&>svg]:h-auto [&>svg]:object-contain w-[15%] max-w-[80px] aspect-[4/5] z-20 transition-all ${postcard.stampId && postcard.stampId in STAMPS ? "opacity-[0.95] contrast-[1.05] drop-shadow-sm" : "border-2 border-ink/40 border-dashed rounded-[6px] overflow-hidden"}`}
                 aria-hidden="true"
             >
                 {postcard.stampId ? (

@@ -35,6 +35,8 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
     const [isPanning, setIsPanning] = useState(false);
     const [startPan, setStartPan] = useState({ x: 0, y: 0 });
 
+    const [naturalDims, setNaturalDims] = useState({ w: 0, h: 0 });
+
     const validateAndSet = useCallback(
         (file: File) => {
             const isImage = ACCEPTED_IMAGE_TYPES.includes(file.type);
@@ -60,6 +62,12 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
             setPreview(objectUrl);
             setOriginalFile(file);
             onFile(file);
+
+            if (category === "image") {
+                const img = new Image();
+                img.onload = () => setNaturalDims({ w: img.naturalWidth, h: img.naturalHeight });
+                img.src = objectUrl;
+            }
 
             // Reset crop state
             setOffset({ x: 0, y: 0 });
@@ -277,13 +285,21 @@ export default function MediaUpload({ onFile, error }: MediaUploadProps) {
                                 ref={imgRef}
                                 src={preview}
                                 alt="Selected media preview"
-                                className={isAdjusting ? "max-w-none pointer-events-none" : "w-full h-full object-cover object-center pointer-events-none"}
+                                className={isAdjusting ? "absolute max-w-none pointer-events-none" : "w-full h-full object-cover object-center pointer-events-none"}
                                 style={isAdjusting ? {
-                                    transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
-                                    transformOrigin: '50% 50%',
-                                    // Make image big enough to cover viewport initially when adjusting
-                                    minWidth: '100%',
-                                    minHeight: '100%',
+                                    width: naturalDims.w && containerRef.current ? 
+                                        (((naturalDims.w / naturalDims.h) > (containerRef.current.getBoundingClientRect().width / containerRef.current.getBoundingClientRect().height)) ? 
+                                            `${containerRef.current.getBoundingClientRect().height * (naturalDims.w / naturalDims.h)}px` : 
+                                            `${containerRef.current.getBoundingClientRect().width}px`
+                                        ) : '100%',
+                                    height: naturalDims.h && containerRef.current ?
+                                        (((naturalDims.w / naturalDims.h) > (containerRef.current.getBoundingClientRect().width / containerRef.current.getBoundingClientRect().height)) ? 
+                                            `${containerRef.current.getBoundingClientRect().height}px` : 
+                                            `${containerRef.current.getBoundingClientRect().width / (naturalDims.w / naturalDims.h)}px`
+                                        ) : '100%',
+                                    transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px)) scale(${scale})`,
+                                    left: '50%',
+                                    top: '50%',
                                 } : {}}
                             />
                         )}

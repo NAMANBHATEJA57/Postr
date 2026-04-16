@@ -11,6 +11,8 @@ import { apiUrl } from "@/lib/api";
 import { ApiPostcardResponse } from "@/types/postcard";
 import { useAuth } from "@/components/auth/AuthProvider";
 import Link from "next/link";
+import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 
 function daysUntil(isoDate: string): number {
     const diff = new Date(isoDate).getTime() - Date.now();
@@ -115,130 +117,155 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
             <div className="min-h-dvh flex flex-col items-center px-4 sm:px-0 py-12 md:py-16">
                 <div className="w-full max-w-[800px] mx-auto flex flex-col items-center -rotate-[0.4deg]">
 
-                    {/* ── HEADER ── */}
-                    <div
-                        className="text-center flex flex-col items-center gap-1 w-full reveal-header relative"
-                    >
-                        {/* ── HEADER CONTENT ── */}
+                    {/* ── HEADER NAVIGATION ── */}
+                    <div className="w-full max-w-postcard flex justify-between items-center mb-16 relative">
+                        <button onClick={() => window.history.back()} className="text-[#888] hover:text-ink flex items-center gap-1.5 transition-colors">
+                            <span className="material-symbols-rounded" style={{ fontSize: 16 }}>arrow_back</span>
+                            <span className="text-[12px] font-sans">Back</span>
+                        </button>
+                        <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                            <Image 
+                                src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png" 
+                                alt="Dearly Logo" 
+                                width={24} 
+                                height={24} 
+                                className="object-contain opacity-90" 
+                                priority
+                            />
+                            <span className="font-serif text-[1.4rem] font-bold tracking-tight text-ink">Dearly</span>
+                        </Link>
+                    </div>
 
+                    {/* ── HEADER CONTENT ── */}
+                    <div className="text-center flex flex-col items-center w-full reveal-header relative z-10 mb-6">
                         {isCreator ? (
                             <>
-                                <h1 className="reveal-title mt-4 md:mt-0">
-                                    your postcard is ready.
+                                <h1 className="font-serif text-[24px] leading-[1.5] text-ink">
+                                    it's ready.
                                 </h1>
-                                <p className="reveal-subtitle">
-                                    send it to {postcard.toName.toLowerCase()}.
+                                <p className="font-sans text-[13px] text-[#555555] mt-2">
+                                    send it to <span className="font-semibold italic text-[#555555]">{postcard.toName}</span>.
                                 </p>
                             </>
                         ) : (
                             <>
-                                <p className="reveal-receiver-title mt-4 md:mt-0">
+                                <h1 className="font-serif text-[24px] leading-[1.5] text-ink">
                                     a postcard from {postcard.fromName.toLowerCase()}.
-                                </p>
-                                <p className="reveal-receiver-subtitle">
-                                    to {postcard.toName.toLowerCase()}
+                                </h1>
+                                <p className="font-sans text-[13px] text-[#888888] mt-2">
+                                    to <span className="font-medium italic text-[#555555]">{postcard.toName}</span>.
                                 </p>
                             </>
                         )}
                     </div>
 
-                    {/* ── POSTCARD & VIEW TOGGLE ── */}
-                    <div className="w-full mt-10 mb-8 reveal-postcard flex flex-col items-center">
+                    {/* ── VIEW MODE TOGGLE ── */}
+                    <div className="flex flex-col items-center mb-8 w-full relative z-20">
+                        <div className="flex items-center gap-1 rounded-[100px] p-1 border border-[#888888]/40 bg-transparent">
+                            <button
+                                onClick={() => handleViewModeChange('flip')}
+                                className={`relative px-6 py-1.5 text-[11px] font-sans tracking-wide rounded-[100px] transition-all duration-200 z-10 ${viewMode === 'flip' ? 'text-ink font-medium bg-white shadow-sm' : 'text-[#888888] hover:text-ink'}`}
+                            >
+                                Flip Mode
+                            </button>
+                            <button
+                                onClick={() => handleViewModeChange('full')}
+                                className={`relative px-6 py-1.5 text-[11px] font-sans tracking-wide rounded-[100px] transition-all duration-200 z-10 ${viewMode === 'full' ? 'text-ink font-medium bg-white shadow-sm' : 'text-[#888888] hover:text-ink'}`}
+                            >
+                                Full Mode
+                            </button>
+                        </div>
+                        <p className="font-sans text-[11px] text-[#FFBBEB] italic mt-3 font-medium">
+                            this postcard will fade in 7 days
+                        </p>
+                    </div>
 
+                    {/* ── POSTCARD & VIEW TOGGLE ── */}
+                    <div className="w-full mb-8 reveal-postcard flex flex-col items-center mt-4">
 
                         {/* ── POSTCARD RENDERER ── */}
                         <div className="w-full transition-all duration-300 ease-[cubic-bezier(0.25,0,0,1)]">
                             {viewMode === 'flip' ? (
                                 <PostcardRenderer postcard={postcard} />
                             ) : (
-                                <div className="w-full max-w-postcard mx-auto flex flex-col gap-8 duration-300 animate-in fade-in slide-in-from-top-4">
-                                    <div className="w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.06),0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden">
-                                        <FrontSide postcard={postcard} />
+                                <div className="w-full max-w-postcard mx-auto flex flex-col gap-12 duration-300 animate-in fade-in slide-in-from-top-4">
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.06),0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden">
+                                            <FrontSide postcard={postcard} />
+                                        </div>
                                     </div>
-                                    <div className="w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.06),0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden">
-                                        <BackSide postcard={postcard} />
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="w-full aspect-[4/3] sm:aspect-[3/2] relative rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.06),0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden">
+                                            <BackSide postcard={postcard} />
+                                        </div>
                                     </div>
+                                    <p className="text-center font-sans text-[12px] text-ink-secondary opacity-80 mt-[-1rem]">Turn it over see front</p>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    {/* ── VIEW MODE TOGGLE (Moved below postcard) ── */}
-                    <div className="flex items-center gap-1 bg-surface-raised rounded-full p-1 shadow-sm border border-divider/40 mb-10 mt-2">
-                        <button
-                            onClick={() => handleViewModeChange('flip')}
-                            className={`relative px-4 py-1 text-[11px] font-sans tracking-wide lowercase rounded-full transition-colors duration-200 z-10 ${viewMode === 'flip' ? 'text-ink font-medium' : 'text-ink-secondary hover:text-ink'}`}
-                        >
-                            {viewMode === 'flip' && (
-                                <div className="absolute inset-0 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] -z-10" />
-                            )}
-                            flip
-                        </button>
-                        <button
-                            onClick={() => handleViewModeChange('full')}
-                            className={`relative px-4 py-1 text-[11px] font-sans tracking-wide lowercase rounded-full transition-colors duration-200 z-10 ${viewMode === 'full' ? 'text-ink font-medium' : 'text-ink-secondary hover:text-ink'}`}
-                        >
-                            {viewMode === 'full' && (
-                                <div className="absolute inset-0 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] -z-10" />
-                            )}
-                            full
-                        </button>
-                    </div>
-
                     {/* ── CTA BLOCK ── */}
-                    <div className="flex flex-col items-center gap-4 w-full reveal-cta">
+                    <div className="flex flex-col items-center w-full reveal-cta mt-4 relative">
+                        
+                        {/* ── TOAST MESSAGE ── */}
+                        <AnimatePresence>
+                            {copied && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.15 }}
+                                    className="absolute -top-12 flex items-center gap-2 bg-[#1a1a1a] text-white px-4 py-2 rounded-md shadow-md z-50 pointer-events-none"
+                                >
+                                    <span className="material-symbols-rounded text-white" style={{ fontSize: 16 }}>check_circle</span>
+                                    <span className="font-sans text-[12px] font-medium tracking-wide">Link copied</span>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
                         {isCreator ? (
                             <>
-                                {/* Inline copy link - clickable URL row */}
-                                <button
-                                    type="button"
-                                    onClick={copyLink}
-                                    className="mb-2 mt-2 flex items-center justify-between w-full max-w-[280px] py-2 px-3 hover:bg-black/[0.03] rounded-md transition-colors duration-200 group cursor-pointer border-none bg-transparent focus:outline-none"
-                                    aria-label="Copy postcard link"
-                                >
-                                    <span className="text-ink-secondary group-hover:text-ink truncate reveal-link-text transition-colors duration-150 text-left">
-                                        {shareUrl.replace(/^https?:\/\//, '')}
+                                {/* Copy Link Box */}
+                                <div className="flex items-center justify-between w-full max-w-[420px] bg-white rounded-[6px] py-3.5 pl-4 pr-3 mb-4 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+                                    <span className="text-[13px] font-sans text-ink truncate pr-6 font-medium">
+                                        {shareUrl}
                                     </span>
-                                    <span
-                                        className="material-symbols-rounded text-ink-ghost group-hover:text-ink-secondary transition-colors duration-150 select-none flex-shrink-0 pl-3"
-                                        style={{ fontSize: 17 }}
-                                        aria-hidden="true"
+                                    <button
+                                        onClick={copyLink}
+                                        className="p-1 hover:bg-ink/5 rounded-md transition-colors text-ink-secondary hover:text-ink cursor-pointer focus:outline-none flex-shrink-0"
+                                        aria-label="Copy link"
                                     >
-                                        {copied ? 'check' : 'content_copy'}
-                                    </span>
-                                </button>
-
-                                <button
-                                    onClick={copyLink}
-                                    className={`inline-flex items-center justify-center font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] transition-all duration-150 select-none ${copied ? 'bg-white text-ink shadow-[0_0_0_1px_rgba(0,0,0,0.1)]' : 'bg-ink text-linen hover:opacity-80 active:opacity-70'}`}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <span className="material-symbols-rounded" style={{ fontSize: 16 }}>
+                                        <span className="material-symbols-rounded block" style={{ fontSize: 20 }}>
                                             {copied ? 'check' : 'content_copy'}
                                         </span>
-                                        {copied ? "link copied" : "copy link"}
-                                    </div>
-                                </button>
+                                    </button>
+                                </div>
+
+                                {/* Create Another Button */}
                                 <Link
                                     href="/create"
-                                    className="font-sans text-body-sm text-accent-muted hover:text-ink-secondary transition-colors duration-150"
+                                    className="w-full max-w-[420px] py-3 border border-[#888] rounded-[6px] flex items-center justify-center font-sans text-[13px] text-ink hover:bg-ink/5 transition-colors mb-7"
                                 >
-                                    create another
+                                    Create another
                                 </Link>
 
+                                {/* Account link text removed based on user feedback */}
+
+                                {/* Keep it forever Box */}
                                 {!authLoading && !user && (
-                                    <div className="flex flex-col items-center mt-12 pt-12 border-t border-divider w-full max-w-[400px]">
-                                        <h2 className="font-serif text-center text-ink text-xl mb-2">
+                                    <div className="bg-white rounded-xl p-10 flex flex-col items-center w-full max-w-[420px] mb-8 mt-4" style={{boxShadow: '0 4px 24px rgba(0,0,0,0.04)'}}>
+                                        <h2 className="font-serif text-[1.8rem] font-bold text-ink mb-2">
                                             keep it forever.
                                         </h2>
-                                        <p className="font-sans text-center text-ink-secondary text-sm mb-6 leading-relaxed">
-                                            create an account to save your postcards and continue the conversation.
+                                        <p className="font-sans text-[14px] text-ink mb-8 font-medium">
+                                            it takes less than a minute
                                         </p>
                                         <Link
                                             href={`/register?claimPostcardId=${postcard.id}`}
-                                            className="inline-flex items-center justify-center bg-ink text-linen font-sans text-body-sm tracking-ui px-8 py-2 rounded-sm min-h-[44px] hover:opacity-80 active:opacity-70 transition-opacity duration-150"
+                                            className="w-full bg-[#1A1A1A] text-white rounded-[6px] py-3.5 flex items-center justify-center font-sans text-[13px] hover:bg-black transition-colors"
                                         >
-                                            create account
+                                            Create Account
                                         </Link>
                                     </div>
                                 )}
@@ -263,24 +290,24 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                                     <>
                                         <a
                                             href="/create"
-                                            className="inline-flex items-center justify-center bg-ink text-linen font-sans text-body-sm tracking-ui w-full sm:w-auto px-8 py-3 sm:py-2 rounded-sm min-h-[44px] hover:opacity-80 active:opacity-70 transition-opacity duration-150 select-none"
+                                            className="inline-flex items-center justify-center border border-[#1a1a1a] text-[#1a1a1a] font-sans text-[13px] font-medium w-full max-w-[320px] py-3 rounded-[6px] hover:bg-black/5 transition-colors duration-150 select-none mb-8"
                                         >
-                                            create yours
+                                            Create your own postcard
                                         </a>
 
-                                        {!authLoading && (
-                                            <div className="flex flex-col items-center mt-12 pt-12 border-t border-divider w-full max-w-[400px]">
-                                                <h2 className="font-serif text-center text-ink text-xl mb-2">
-                                                    want to keep this conversation?
+                                        {!authLoading && !user && (
+                                            <div className="bg-white rounded-xl p-10 flex flex-col items-center w-full max-w-[420px] mb-8" style={{boxShadow: '0 4px 24px rgba(0,0,0,0.04)'}}>
+                                                <h2 className="font-serif text-[1.8rem] font-bold text-ink mb-2">
+                                                    keep it forever.
                                                 </h2>
-                                                <p className="font-sans text-center text-ink-secondary text-sm mb-6 leading-relaxed">
-                                                    create an account to save your postcards and continue anytime.
+                                                <p className="font-sans text-[14px] text-ink mb-8 font-medium">
+                                                    it takes less than a minute
                                                 </p>
                                                 <Link
-                                                    href="/register"
-                                                    className="inline-flex items-center justify-center bg-ink text-linen font-sans text-body-sm tracking-ui px-8 py-2 rounded-sm min-h-[44px] hover:opacity-80 active:opacity-70 transition-opacity duration-150"
+                                                    href={`/register?claimPostcardId=${postcard.id}`}
+                                                    className="w-full bg-[#1A1A1A] text-white rounded-[6px] py-3.5 flex items-center justify-center font-sans text-[13px] hover:bg-black transition-colors"
                                                 >
-                                                    create account
+                                                    Create Account
                                                 </Link>
                                             </div>
                                         )}
@@ -289,25 +316,6 @@ export default function ViewClient({ postcardId, initialData, status }: ViewClie
                             </>
                         )}
 
-                        {/* ── EXPIRY MESSAGES (Moved to bottom) ── */}
-                        <div className="mt-8">
-                            {isCreator ? (
-                                !authLoading && !user && postcard.expiryAt && (
-                                    <p className="reveal-notice text-center" style={{ fontSize: '0.75rem' }}>
-                                        this postcard will fade in 7 days.{" "}
-                                        <Link href={`/register?claimPostcardId=${postcard.id}`} className="reveal-notice-link">
-                                            keep it forever — create an account
-                                        </Link>
-                                    </p>
-                                )
-                            ) : (
-                                postcard.expiryAt && (
-                                    <p className="reveal-receiver-notice text-center" style={{ fontSize: '0.75rem' }}>
-                                        this postcard will fade in {daysUntil(postcard.expiryAt)} day{daysUntil(postcard.expiryAt) !== 1 ? "s" : ""}.
-                                    </p>
-                                )
-                            )}
-                        </div>
                     </div>
 
                 </div>

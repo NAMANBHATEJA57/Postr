@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
 
 interface EnvelopeAnimationProps {
     toName: string;
@@ -28,7 +30,7 @@ export default function EnvelopeAnimation({
 
     return (
         <div
-            className="flex flex-col items-center justify-center min-h-dvh px-6 text-center"
+            className="flex flex-col items-center justify-start min-h-dvh px-6 text-center pt-16"
             aria-label="Tap the envelope to open your postcard"
         >
             <AnimatePresence>
@@ -46,55 +48,46 @@ export default function EnvelopeAnimation({
                                     transition: { duration: DURATION, ease: EASE },
                                 }
                         }
-                        className="flex flex-col items-center w-full max-w-[min(340px,80vw)]"
+                        className="flex flex-col items-center w-full max-w-[min(640px,94vw)]"
                     >
+                        {/* ── Logo ── */}
+                        <Link href="/" className="flex items-center gap-2 mb-16 hover:opacity-80 transition-opacity">
+                            <Image 
+                                src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png" 
+                                alt="Dearly Logo" 
+                                width={32} 
+                                height={24} 
+                                className="object-contain opacity-90" 
+                                priority
+                            />
+                            <span className="font-serif text-[1.4rem] font-bold tracking-tight text-ink">Dearly</span>
+                        </Link>
+
                         {/* ── Headline ── */}
-                        <p className="font-serif text-lg text-ink leading-[1.5] mb-5 text-center">
+                        <p className="font-serif text-[24px] text-ink leading-[1.5] mb-6 text-center">
                             something from {fromName.toLowerCase()} is waiting.
                         </p>
 
-                        {/* ── Envelope SVG — static, no flap animation ── */}
+                        {/* ── Envelope Image ── */}
                         <motion.div
-                            className="w-full cursor-pointer select-none mt-8"
+                            className="w-full cursor-pointer select-none relative max-w-[640px] mx-auto"
                             onClick={handleTap}
                             onKeyDown={(e) => e.key === "Enter" && handleTap()}
                             tabIndex={0}
                             role="button"
                             aria-label="Open envelope"
                             data-testid="envelope"
-                            whileHover={prefersReducedMotion ? {} : { rotate: 1.5, scale: 1.02 }}
+                            whileHover={prefersReducedMotion ? {} : { rotate: 0.5, scale: 1.01 }}
                             transition={{ type: "spring", stiffness: 400, damping: 25 }}
                         >
-                            <svg
-                                viewBox="0 0 340 230"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="w-full h-auto"
-                                aria-hidden="true"
-                            >
-                                <rect x="0" y="40" width="340" height="190" fill="#EDE9E4" />
-                                <polygon points="0,40 0,230 140,140" fill="#DDD8D2" />
-                                <polygon points="340,40 340,230 200,140" fill="#DDD8D2" />
-                                <polygon points="0,230 340,230 170,130" fill="#E8E3DD" />
-                                <polygon points="0,40 340,40 170,155" fill="#E8E3DD" />
-                                <polygon
-                                    points="0,40 340,40 170,155"
-                                    fill="none"
-                                    stroke="#C7C0B8"
-                                    strokeWidth="0.5"
-                                />
-                                <rect
-                                    x="0.5"
-                                    y="40.5"
-                                    width="339"
-                                    height="189"
-                                    stroke="#C7C0B8"
-                                    strokeWidth="1"
-                                />
-                            </svg>
+                            <img
+                                src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776325323/close_letter_h3bwbd.png"
+                                alt="Sealed Envelope"
+                                className="w-full h-auto drop-shadow-sm"
+                            />
 
-                            {/* Tap hint — quiet, not instructional */}
-                            <p className="font-sans text-[13px] text-accent-muted tracking-[0.03em] opacity-75 mt-7 text-center">
+                            {/* Tap hint */}
+                            <p className="font-sans text-[13px] text-ink/60 tracking-normal mt-2 text-center">
                                 tap to open
                             </p>
                         </motion.div>
@@ -104,3 +97,4 @@ export default function EnvelopeAnimation({
         </div>
     );
 }
+

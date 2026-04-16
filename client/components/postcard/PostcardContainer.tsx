@@ -135,12 +135,12 @@ export default function PostcardContainer({ postcard }: PostcardContainerProps) 
                 )}
             </div>
 
-            {/* Flip hint */}
+                {/* Flip hint */}
             <p
-                className="text-center mt-3 font-sans text-[11px] text-ink-secondary opacity-60 tracking-[0.04em] select-none transition-opacity duration-200"
+                className="text-center mt-3 font-sans text-[12px] text-ink-secondary opacity-80 tracking-wide select-none transition-opacity duration-200"
                 aria-hidden="true"
             >
-                {flipped ? "tap to see the front" : "tap to turn it over"}
+                {flipped ? "Turn it over see front" : "Tap to flip over"}
             </p>
         </div>
     );
