@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import CloudinaryImage from "@/components/ui/CloudinaryImage";
+import Image from "next/image";
 
-const LOGO = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png";
+const LOGO = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776260207/Logo_kaarkv.png";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -32,7 +32,7 @@ export default function Navbar() {
         {/* Logo — absolutely positioned left */}
         <Link href="/" className="absolute left-[16px] md:left-[80px] flex items-center gap-[10px] group">
           <div className="relative h-[28px] w-[38px] opacity-90 shrink-0">
-            <CloudinaryImage
+            <Image
               src={LOGO}
               alt="Dearly logo"
               fill

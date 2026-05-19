@@ -1,22 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import Image from "@/components/ui/CloudinaryImage";
+import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 
 /* ─── Asset URLs (CSV + Cloudinary) ─────────────────────────── */
-const LOGO = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png";
-const HERO_BG = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260680/Hero_vmnesf.png";
-const SCENE_1 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Scene_Container_1_sxpd8a.png";
-const SCENE_2 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259784/Scene_Container_3_q6d0uu.png";
-const SCENE_3 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Scene_Container_2_gmhdfi.png";
-const POSTCARD_FRONT = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260409/Postcard_1_vggrdf.png";
-const POSTCARD_BACK = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259785/postcard_2_s1tila.png";
-const STAMP_1 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259784/Basic_stamp_ow9rf4.png";
-const STAMP_2 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Basic_stamp-1_foeywo.png";
-const STAMP_3 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259782/Basic_stamp-2_pzfxwl.png";
-const STAMP_4 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259782/Basic_stamp-3_pspbqu.png";
+const LOGO = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776260207/Logo_kaarkv.png";
+const HERO_BG = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776260680/Hero_vmnesf.png";
+const SCENE_1 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776259783/Scene_Container_1_sxpd8a.png";
+const SCENE_2 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776259784/Scene_Container_3_q6d0uu.png";
+const SCENE_3 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776259783/Scene_Container_2_gmhdfi.png";
+const POSTCARD_FRONT = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776260409/Postcard_1_vggrdf.png";
+const POSTCARD_BACK = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776259785/postcard_2_s1tila.png";
+const STAMP_1 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776259784/Basic_stamp_ow9rf4.png";
+const STAMP_2 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776259783/Basic_stamp-1_foeywo.png";
+const STAMP_3 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776259782/Basic_stamp-2_pzfxwl.png";
+const STAMP_4 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776259782/Basic_stamp-3_pspbqu.png";
 
 /* ─── Data ───────────────────────────────────────────────────── */
 const CARDS = [

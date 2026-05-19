@@ -53,7 +53,7 @@ export default function EnvelopeAnimation({
                         {/* ── Logo ── */}
                         <Link href="/" className="flex items-center gap-2 mb-16 hover:opacity-80 transition-opacity">
                             <Image 
-                                src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png" 
+                                src="https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776260207/Logo_kaarkv.png" 
                                 alt="Dearly Logo" 
                                 width={32} 
                                 height={24} 
@@ -81,7 +81,7 @@ export default function EnvelopeAnimation({
                             transition={{ type: "spring", stiffness: 400, damping: 25 }}
                         >
                             <img
-                                src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776325323/close_letter_h3bwbd.png"
+                                src="https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776325323/close_letter_h3bwbd.png"
                                 alt="Sealed Envelope"
                                 className="w-full h-auto drop-shadow-sm"
                             />

@@ -14,6 +14,15 @@ function isGif(url: string) {
     return /\.gif(\?|$)/i.test(url);
 }
 
+/** Surgically optimize Cloudinary media URLs at render time with zero client overhead */
+function getOptimizedUrl(url: string): string {
+    if (!url || !url.includes("res.cloudinary.com")) return url;
+    if (url.includes("f_auto") || url.includes("q_auto")) return url;
+    const uploadIndex = url.indexOf("/upload/");
+    if (uploadIndex === -1) return url;
+    return `${url.slice(0, uploadIndex + 8)}f_auto,q_auto/${url.slice(uploadIndex + 8)}`;
+}
+
 /**
  * FrontSide — the media face of the postcard.
  * Handles: static images (JPG/PNG/WebP), GIFs (auto-loop img), and MP4 video.
@@ -38,7 +47,7 @@ export default function FrontSide({ postcard }: FrontSideProps) {
 
                     {postcard.mediaType === "video" ? (
                         <video
-                            src={postcard.mediaUrl}
+                            src={getOptimizedUrl(postcard.mediaUrl)}
                             muted
                             playsInline
                             loop
@@ -52,7 +61,7 @@ export default function FrontSide({ postcard }: FrontSideProps) {
                     ) : isGif(postcard.mediaUrl) ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                            src={postcard.mediaUrl}
+                            src={getOptimizedUrl(postcard.mediaUrl)}
                             alt={postcard.title}
                             className={mediaClass}
                             draggable={false}
@@ -60,7 +69,7 @@ export default function FrontSide({ postcard }: FrontSideProps) {
                         />
                     ) : (
                         <Image
-                            src={postcard.mediaUrl}
+                            src={getOptimizedUrl(postcard.mediaUrl)}
                             alt={postcard.title}
                             fill
                             sizes="(max-width: 640px) 100vw, 640px"

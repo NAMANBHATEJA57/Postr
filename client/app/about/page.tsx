@@ -5,7 +5,7 @@ import PostcardContainer from "@/components/postcard/PostcardContainer";
 export default function AboutPage() {
   const namanPostcard = {
     id: "naman-about-postcard",
-    mediaUrl: "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260409/Postcard_1_vggrdf.png",
+    mediaUrl: "https://res.cloudinary.com/dqwd7hbl6/image/upload/f_auto,q_auto/v1776260409/Postcard_1_vggrdf.png",
     mediaType: "image" as const,
     title: "a small note",
     message: "Thank you for spending a moment here.\n\nDearly was created as an experiment in slower, softer communication on the internet.\n\nI hope it makes sharing feel a little more intentional.",
