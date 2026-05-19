@@ -1,3 +1,4 @@
+import "./env.js";
 import { SignJWT, jwtVerify } from "jose";
 
 const getSecret = () => {

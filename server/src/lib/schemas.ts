@@ -7,11 +7,16 @@ export const createPostcardSchema = z.object({
   message: z.string().max(500, "Message is too long").optional().or(z.literal("")),
   toName: z.string().optional(),
   fromName: z.string().optional(),
-  theme: z.string().default("minimal-light"),
+  theme: z.enum(["minimal", "framed", "full-bleed"]).default("framed"),
   expiryAt: z.string().optional(),
   password: z.string().optional(),
   stampId: z.string().optional(),
-  conversationId: z.string().optional(),
+  visibility: z.enum(["public", "private"]).default("public"),
+  spaceId: z.string().optional(),
+});
+
+export const joinPrivateSpaceSchema = z.object({
+  code: z.string().trim().min(6).max(8),
 });
 
 export const unlockPostcardSchema = z.object({
@@ -31,5 +36,6 @@ export const uploadMetaSchema = z.object({
 });
 
 export type CreatePostcardInput = z.infer<typeof createPostcardSchema>;
+export type JoinPrivateSpaceInput = z.infer<typeof joinPrivateSpaceSchema>;
 export type UnlockPostcardInput = z.infer<typeof unlockPostcardSchema>;
 export type UploadMetaInput = z.infer<typeof uploadMetaSchema>;

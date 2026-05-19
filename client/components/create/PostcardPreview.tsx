@@ -43,7 +43,8 @@ export default function PostcardPreview({
     theme: "framed",
     expiryAt: null,
     isPasswordProtected: false,
-    conversationId: null,
+    visibility: "public",
+    spaceId: null,
     createdAt: new Date().toISOString(),
   };
 

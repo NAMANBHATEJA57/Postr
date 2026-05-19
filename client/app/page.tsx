@@ -1,290 +1,395 @@
 "use client";
 
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
-// FAQs
-const faqs = [
-    {
-        q: "are my postcards private?",
-        a: "yes. your postcard is only accessible through a private link that you choose to share. if you add a password, only someone with it can open it."
-    },
-    {
-        q: "how do I send a postcard?",
-        a: "create your postcard, add your message and memory, and click send. you'll get a private link to share."
-    },
-    {
-        q: "can I collect postcards?",
-        a: "yes. you can save the postcards you send or upload your own to build a personal collection."
-    },
-    {
-        q: "can I edit after sending?",
-        a: "once a postcard is sent, it can't be edited. it keeps each message real and unchanged."
-    }
+/* ─── Asset URLs (CSV + Cloudinary) ─────────────────────────── */
+const LOGO = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png";
+const HERO_BG = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260680/Hero_vmnesf.png";
+const SCENE_1 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Scene_Container_1_sxpd8a.png";
+const SCENE_2 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259784/Scene_Container_3_q6d0uu.png";
+const SCENE_3 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Scene_Container_2_gmhdfi.png";
+const POSTCARD_FRONT = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260409/Postcard_1_vggrdf.png";
+const POSTCARD_BACK = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259785/postcard_2_s1tila.png";
+const STAMP_1 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259784/Basic_stamp_ow9rf4.png";
+const STAMP_2 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Basic_stamp-1_foeywo.png";
+const STAMP_3 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259782/Basic_stamp-2_pzfxwl.png";
+const STAMP_4 = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259782/Basic_stamp-3_pspbqu.png";
+
+/* ─── Data ───────────────────────────────────────────────────── */
+const CARDS = [
+  {
+    icon: "🌍",
+    title: "public postcards",
+    body: "share a moment with the world, write something, post it publicly, and let others discover it.",
+    img: SCENE_1,
+  },
+  {
+    icon: "🔒",
+    title: "private postcards",
+    body: "send something just between you two, create a private space and exchange postcards without the noise of chat.",
+    img: SCENE_2,
+  },
+  {
+    icon: "💌",
+    title: "simple & intentional",
+    body: "no accounts, no feeds, no pressure\njust create, share, and let the moment exist.",
+    img: SCENE_3,
+  },
 ];
 
+const FAQ = [
+  {
+    q: "Are my postcards private?",
+    a: "yes. your postcard is only accessible through a private link that you choose to share. if you add a password, only someone with the password can open it.",
+  },
+  {
+    q: "How do I send a postcard?",
+    a: "Write a postcard, add a memory, choose whether it belongs in public or private, and send the share link or channel code.",
+  },
+  {
+    q: "Can I collect postcards?",
+    a: "Yes. Public and private postcards both live as individual moments you can revisit through their links or channels.",
+  },
+  {
+    q: "Can I edit after sending?",
+    a: "No. Once a postcard is sent, it stays as it was written, which helps it feel more intentional and real.",
+  },
+];
+
+/* ─── Shared button components ───────────────────────────────── */
+function BtnPrimary({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="inline-flex h-[48px] w-[280px] items-center justify-center rounded-[8px] bg-[#1a1a1a] font-sans text-[15px] tracking-[0.3px] text-[#f8f4ef] shrink-0 transition-all duration-200 hover:bg-[#2a2a2a] hover:shadow-[0_6px_20px_rgba(0,0,0,0.18)] hover:-translate-y-[1px] active:translate-y-0 active:shadow-none"
+    >
+      {children}
+    </Link>
+  );
+}
+
+function BtnOutline({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="inline-flex h-[48px] w-[280px] items-center justify-center rounded-[8px] border border-[#1a1a1a] bg-[rgba(255,255,255,0.4)] font-sans text-[15px] tracking-[0.3px] text-[#1a1a1a] shrink-0 transition-all duration-200 hover:bg-[rgba(255,255,255,0.7)] hover:border-[rgba(26,26,26,0.7)] hover:-translate-y-[1px] active:translate-y-0"
+    >
+      {children}
+    </Link>
+  );
+}
+
+/* ─── Page ───────────────────────────────────────────────────── */
 export default function LandingPage() {
-    const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openIdx, setOpenIdx] = useState(0);
 
-    return (
-        <main className="relative flex-1 flex flex-col w-full min-h-dvh overflow-clip selection:bg-accent/20">
-            {/* Page Base Background */}
-            <div className="absolute inset-0 w-full h-full bg-[#F8F4EF] -z-20 pointer-events-none" />
+  return (
+    <main className="bg-[#f8f4ef] text-[#1a1a1a] overflow-x-hidden">
 
-            {/* SVG Background for Hero */}
-            <div className="absolute top-0 left-0 w-full h-[782px] pointer-events-none -z-10">
-                <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260680/Hero_vmnesf.png" alt="Landscape" fill priority className="object-cover object-top" />
-                <div className="absolute bottom-0 left-0 w-full h-[150px] bg-gradient-to-t from-[#F8F4EF] to-transparent" />
+      {/* ═══════════════ NAVBAR ═══════════════ */}
+      <header
+        className="fixed top-0 z-50 h-[72px] w-full transition-all duration-300"
+        style={{
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          backgroundColor: "rgba(248,244,239,0.45)",
+          borderBottom: "1px solid rgba(26,26,26,0.04)",
+        }}
+      >
+        <div className="relative mx-auto flex h-full w-full max-w-[1200px] items-center justify-center px-[16px] md:px-[80px]">
+
+          {/* Logo — absolutely positioned left */}
+          <Link href="/" className="absolute left-[16px] md:left-[80px] flex items-center gap-[10px]">
+            <div className="relative h-[28px] w-[38px] opacity-90 shrink-0">
+              <Image src={LOGO} alt="Dearly logo" fill className="object-contain" />
+            </div>
+            <span
+              className="font-serif text-[24px] font-semibold text-[#1a1a1a] leading-[28px]"
+              style={{ letterSpacing: "-0.45px" }}
+            >
+              Dearly
+            </span>
+          </Link>
+
+          {/* Desktop nav — centered */}
+          <nav className="hidden md:flex items-center gap-[2px]">
+            <Link
+              href="/public"
+              className="flex items-center justify-center gap-[8px] px-[16px] py-[8px] rounded-[6px] font-sans text-[14px] leading-[20px] text-[#555] transition-all duration-150 hover:bg-[rgba(26,26,26,0.04)] hover:opacity-100 opacity-75"
+            >
+              <span className="material-symbols-rounded text-[18px] leading-none">public</span>
+              Public Postcards
+            </Link>
+            <Link
+              href="/private"
+              className="flex items-center justify-center gap-[8px] px-[16px] py-[8px] rounded-[6px] font-sans text-[14px] leading-[20px] text-[#555] transition-all duration-150 hover:bg-[rgba(26,26,26,0.04)] hover:opacity-100 opacity-75"
+            >
+              <span className="material-symbols-rounded text-[18px] leading-none">mail_outline</span>
+              Private Postcards
+            </Link>
+            <a
+              href="#about"
+              className="flex items-center justify-center gap-[8px] px-[16px] py-[8px] rounded-[6px] font-sans text-[14px] leading-[20px] text-[#555] transition-all duration-150 hover:bg-[rgba(26,26,26,0.04)] hover:opacity-100 opacity-75"
+            >
+              <span className="material-symbols-rounded text-[18px] leading-none">eco</span>
+              About
+            </a>
+          </nav>
+
+          {/* Mobile hamburger */}
+          <button className="absolute right-[16px] md:hidden flex items-center justify-center w-[24px] h-[24px]">
+            <span className="material-symbols-rounded text-[24px] text-[#1a1a1a] opacity-70">menu</span>
+          </button>
+        </div>
+      </header>
+
+      {/* ═══════════════ HERO ═══════════════ */}
+      <section className="relative overflow-hidden">
+        {/* Background landscape */}
+        <div className="absolute inset-0 h-[800px] w-full pointer-events-none">
+          <Image src={HERO_BG} alt="" fill className="object-cover object-top" priority />
+          {/* Smooth atmospheric bottom fade */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-[300px]"
+            style={{
+              background: "linear-gradient(to bottom, transparent 0%, rgba(248,244,239,0.1) 20%, rgba(248,244,239,0.5) 50%, rgba(248,244,239,0.9) 80%, #f8f4ef 100%)",
+            }}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="relative mx-auto flex min-h-[782px] w-full max-w-[1200px] flex-col items-center justify-center px-[16px] pt-[72px] md:px-[80px]">
+          <div className="flex flex-col items-center gap-[32px] text-center">
+
+            {/* Header text */}
+            <div className="flex flex-col items-center gap-[8px]" style={{ letterSpacing: "-0.45px" }}>
+              <h1
+                className="font-serif font-semibold text-[#1a1a1a] text-[48px] md:text-[64px] leading-normal text-center max-w-[638px]"
+              >
+                send digital postcards for every moment
+              </h1>
+              <p className="font-sans font-medium text-[16px] md:text-[20px] leading-normal text-[#1a1a1a]">
+                A calm, minimal way to share something that matters.<br />
+                Create a digital postcard and send it as a simple link.
+              </p>
             </div>
 
-            {/* ── HEADER ── */}
-            <header className="sticky top-0 w-full h-[72px] flex items-center justify-between px-4 md:px-[80px] z-50 backdrop-blur-[11px] bg-[#f8f4ef]/70 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all">
-                <Link href="/" className="font-serif text-[#1a1a1a] tracking-tight text-[24px] font-semibold no-underline opacity-90 transition-opacity hover:opacity-100 flex items-center gap-[10px]">
-                    <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png" alt="Logo" width={38} height={28} className="object-cover" />
-                    Dearly
-                </Link>
-                <nav className="flex items-center gap-[8px]">
-                    <Link href="/login" className="font-sans text-[#1a1a1a]/80 text-[14px] hover:text-[#1a1a1a] transition-colors duration-200 flex items-center justify-center w-[44px] h-[20px]">Sign in</Link>
-                    <Link href="/register" className="font-sans text-[#1a1a1a]/80 text-[14px] border border-[#1a1a1a]/25 px-[14px] py-[12px] rounded-[8px] hover:border-[#1a1a1a]/50 bg-transparent transition-colors duration-200 flex items-center justify-center">
-                        Create account
-                    </Link>
-                </nav>
-            </header>
+            {/* Buttons */}
+            <div className="flex flex-col md:flex-row items-center gap-[8px]">
+              <BtnPrimary href="/public">Explore public postcards</BtnPrimary>
+              <BtnOutline href="/private">Make Private Space</BtnOutline>
+            </div>
 
-            {/* ── 1. HERO SECTION ── */}
-            <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="w-full px-4 md:px-6 min-h-[702px] flex flex-col items-center justify-center text-center"
+            {/* Info */}
+            <p
+              className="font-sans font-normal text-[13px] text-[#555] opacity-80 text-center"
+              style={{ letterSpacing: "0.13px", lineHeight: "17.88px" }}
             >
-                <div className="max-w-[700px] flex flex-col items-center mt-[-60px] w-full">
-                    <h1 className="font-serif text-[clamp(2.75rem,5.5vw,4.5rem)] md:text-[clamp(2.5rem,5.5vw,4.5rem)] leading-[1.05] md:leading-[0.95] text-[#1a1a1a] mb-[22px] tracking-[-0.03em]">
-                        send digital postcards<br className="md:hidden" /> for every moment
-                        <span className="hidden md:inline"><br />keep it forever.</span>
-                    </h1>
-                    <p className="font-sans text-[1rem] md:text-[1.25rem] text-[#1a1a1a]/80 leading-relaxed mb-8 md:mb-10 font-medium">
-                        create, send, and collect digital postcards that stay with you
-                    </p>
+              No accounts. No noise. Just a moment.
+            </p>
+          </div>
+        </div>
+      </section>
 
-                    {/* Mobile: full-width button; Desktop: fixed-width */}
-                    <div className="flex flex-col items-center gap-[8px] w-full md:w-auto">
-                        <Link href="/create" className="w-full md:w-auto inline-flex h-[52px] items-center justify-center bg-[#1a1a1a] px-[80px] py-[16px] rounded-[8px] hover:bg-[#1a1a1a]/90 transition-all shadow-sm">
-                            <span className="font-sans text-[#f8f4ef] text-[15px] tracking-[0.3px] font-normal">Send a postcard</span>
-                        </Link>
+      {/* No hard spacer needed — gradient handles the blend */}
+      <div className="h-[40px]" />
 
-                        <Link href="/explore" className="font-sans text-[#555]/80 text-[12px] tracking-[0.12px] underline mt-1 hover:text-[#1a1a1a] transition-colors">
-                            Explore postcards
-                        </Link>
-                    </div>
+      {/* ═══════════════ WHAT IS DEARLY ═══════════════ */}
+      <section id="about" className="mx-auto w-full max-w-[1200px] px-[16px] md:px-[80px]">
+        <div className="flex flex-col items-center gap-[88px]">
 
-                    <div className="mt-[20px] flex flex-col items-center gap-1 font-sans text-[#555]/80 text-[13px]">
-                        <p>No account needed. Or <Link href="/register" className="underline underline-offset-2 hover:text-[#1a1a1a]">create an account</Link> to keep conversations.</p>
-                        <p className="opacity-75 text-[12px]">your words stay private — every postcard is encrypted.</p>
-                    </div>
+          <div className="flex flex-col items-center gap-[10px] text-[#1a1a1a] w-full">
+            <p className="font-sans font-semibold text-[24px] leading-normal whitespace-nowrap">
+              what is dearly
+            </p>
+            <div className="font-serif font-normal text-[24px] md:text-[40px] text-center w-full">
+              <p className="leading-[2] mb-0">
+                dearly is a simple way to send digital postcards and keep them as memories.
+              </p>
+              <p className="leading-[2]">
+                create something personal, share it with someone, and build a collection of moments that matter.
+              </p>
+            </div>
+          </div>
+
+          {/* ═══════════════ FEATURE CARDS ═══════════════ */}
+          <div className="flex flex-col md:flex-row gap-[24px] items-stretch w-full">
+            {CARDS.map((card) => (
+              <article
+                key={card.title}
+                className="flex flex-col gap-[27px] items-center justify-center bg-white px-[16px] py-[24px] md:flex-1"
+                style={{ boxShadow: "5px 0px 15.5px rgba(0,0,0,0.07)" }}
+              >
+                {/* Scene image */}
+                <div className="relative w-full overflow-clip shrink-0"
+                  style={{ aspectRatio: "378/344" }}
+                >
+                  <Image src={card.img} alt={card.title} fill className="object-cover" />
                 </div>
-            </motion.section>
-
-            {/* ── 2. "WHAT IS DEARLY" SECTION ── */}
-            <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="w-full px-6 py-4 mb-[56px] md:mb-[80px] mt-[88px] md:mt-[112px] flex flex-col items-center text-center"
-            >
-                <div className="max-w-[800px] flex flex-col items-center gap-[10px] md:gap-[32px]">
-                    <h3 className="font-sans font-semibold text-[16px] md:text-[18px] tracking-tight text-[#1a1a1a]">what is dearly</h3>
-                    <div className="flex flex-col gap-0 md:gap-[40px] relative">
-                        <p className="font-serif text-[24px] md:text-[40px] text-[#1a1a1a] leading-[2] md:leading-[1.4] tracking-tight">
-                            dearly is a simple way to send digital postcards and keep them as memories.
-                        </p>
-                        <p className="font-serif text-[24px] md:text-[40px] text-[#1a1a1a] leading-[2] md:leading-[1.4] tracking-tight">
-                            create something personal, share it with someone, and build a collection of moments that matter.
-                        </p>
-                    </div>
-                </div>
-            </motion.section>
-
-            {/* ── 3. 3-STEP CARDS NARRATIVE ── */}
-            <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="w-full md:px-12 md:max-w-[1240px] md:mx-auto pb-20 md:pb-32"
-            >
-                <div className="flex flex-col md:grid md:grid-cols-3 gap-0 md:gap-[32px] px-0 md:px-0">
-
-                    {/* Card 1 */}
-                    <div className="bg-white flex flex-col items-start shadow-[5px_0px_31px_0px_rgba(0,0,0,0.07)] md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] md:border md:border-[#E1DCD7]/40 md:rounded-lg px-[16px] py-[24px] md:p-[16px] md:pb-[32px] transition-transform duration-300 md:hover:-translate-y-1">
-                        <div className="w-full h-[296px] md:h-[300px] relative mb-[27px] md:mb-[24px] overflow-hidden">
-                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Scene_Container_1_sxpd8a.png" alt="Scene 1" fill className="object-cover" />
-                        </div>
-                        <h3 className="font-serif text-[24px] text-[#1a1a1a] mb-[12px] px-0 md:px-2">create a postcard</h3>
-                        <p className="font-sans text-[14px] md:text-[14px] leading-[1.5] font-medium opacity-50 text-[#555] px-0 md:px-2 text-left">
-                            add a photo, write something simple, make it yours
-                        </p>
-                    </div>
-
-                    {/* Card 2 */}
-                    <div className="bg-white flex flex-col items-start shadow-[5px_0px_31px_0px_rgba(0,0,0,0.07)] md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] md:border md:border-[#E1DCD7]/40 md:rounded-lg px-[16px] py-[24px] md:p-[16px] md:pb-[32px] transition-transform duration-300 md:hover:-translate-y-1">
-                        <div className="w-full h-[296px] md:h-[300px] relative mb-[27px] md:mb-[24px] overflow-hidden">
-                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259784/Scene_Container_3_q6d0uu.png" alt="Scene 2" fill className="object-cover" />
-                        </div>
-                        <h3 className="font-serif text-[24px] text-[#1a1a1a] mb-[12px] px-0 md:px-2">make it personal</h3>
-                        <p className="font-sans text-[14px] leading-[1.5] font-medium opacity-50 text-[#555] px-0 md:px-2 text-left">
-                            say what you feel, not just what you want to send
-                        </p>
-                    </div>
-
-                    {/* Card 3 */}
-                    <div className="bg-white flex flex-col items-start shadow-[5px_0px_31px_0px_rgba(0,0,0,0.07)] md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] md:border md:border-[#E1DCD7]/40 md:rounded-lg px-[16px] py-[24px] md:p-[16px] md:pb-[32px] transition-transform duration-300 md:hover:-translate-y-1">
-                        <div className="w-full h-[296px] md:h-[300px] relative mb-[27px] md:mb-[24px] overflow-hidden">
-                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Scene_Container_2_gmhdfi.png" alt="Scene 3" fill className="object-cover" />
-                        </div>
-                        <h3 className="font-serif text-[24px] text-[#1a1a1a] mb-[12px] px-0 md:px-2">send &amp; collect</h3>
-                        <p className="font-sans text-[14px] leading-[1.5] font-medium opacity-50 text-[#555] px-0 md:px-2 text-left">
-                            share it or keep it as part of your collection
-                        </p>
-                    </div>
-
-                </div>
-            </motion.section>
-
-            {/* ── 4. COLLECTION SECTION ── */}
-            <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="w-full px-0 md:px-6 py-6 mb-16 md:mb-24 flex flex-col items-center text-center"
-            >
-                <div className="w-full max-w-[800px] flex flex-col items-center mb-8 md:mb-16 gap-[10px] md:gap-[8px] px-4 md:px-0">
-                    <h2 className="font-serif font-bold text-[2.2rem] md:text-[2.25rem] text-[#1a1a1a] tracking-tight leading-normal w-full">
-                        build your own collection
-                    </h2>
-                    <p className="font-sans text-[1rem] md:text-[1.5rem] font-normal text-[#1a1a1a]/80 leading-[1.5] max-w-[600px] tracking-tight">
-                        save the postcards you send or upload your own.<br />keep everything in one place.
-                    </p>
-                </div>
-
-                {/* Mobile: stacked images; Desktop: tactile overlapping postcards */}
-                <div className="md:hidden w-full flex flex-col gap-[24px]">
-                    <div className="w-full h-[254px] relative overflow-hidden">
-                        <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259787/Postcard_1_vggrdf.png" alt="Beach Scene Postcard" fill className="object-cover" />
-                    </div>
-                    <div className="w-full aspect-[3600/2560] relative overflow-hidden">
-                        <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259785/postcard_2_s1tila.png" alt="Postcard Back" fill className="object-cover" />
-                    </div>
-                </div>
-
-                {/* Desktop: tactile postcards layout */}
-                <div className="hidden md:flex relative w-full max-w-[800px] h-[450px] items-center justify-center group cursor-pointer">
-                    {/* Lined Back (Postcard 2) */}
-                    <div className="absolute right-[10%] top-[60px] w-[440px] aspect-[1.45] bg-white transform rotate-[6deg] transition-all duration-500 group-hover:rotate-[2deg] group-hover:scale-105 group-hover:z-30 group-hover:-translate-x-4 overflow-hidden rounded-[8px] shadow-[0_12px_40px_rgba(0,0,0,0.06)] border border-[#E1DCD7]/40 z-0">
-                        <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259785/postcard_2_s1tila.png" alt="Postcard Back" fill className="object-cover" />
-                    </div>
-
-                    {/* Beach Scene (Postcard 1) */}
-                    <div className="absolute left-[5%] top-[20px] w-[440px] aspect-[1.45] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-[#E1DCD7]/40 transform rotate-[-4deg] z-10 transition-all duration-500 group-hover:rotate-[-6deg] group-hover:scale-[0.98] group-hover:opacity-90 rounded-[8px] overflow-hidden">
-                        <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259787/Postcard_1_vggrdf.png" alt="Beach Scene" fill className="object-cover" />
-                    </div>
-                </div>
-            </motion.section>
-
-            {/* ── 5. FINAL CTA SECTION (STAMP BANNER) ── */}
-            <motion.section
-                initial={{ opacity: 0, scale: 0.98 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="w-full px-0 md:px-6 mb-16 md:mb-32 mt-0 md:mt-12 md:max-w-[1240px] md:mx-auto"
-            >
-                <div className="w-full bg-white md:rounded-[4px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border-y md:border border-[#1a1a1a]/5 overflow-hidden relative flex items-center justify-center min-h-[340px] md:min-h-[420px] py-14 md:py-12">
-
-                    {/* Scattered Stamps — hidden on mobile */}
-                    <div className="absolute inset-0 pointer-events-none hidden md:block">
-                        {/* Top Left */}
-                        <div className="absolute left-[30px] top-[20px] w-[90px] h-[120px] rotate-[-8deg] opacity-90 transition-transform duration-500 hover:rotate-0">
-                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259784/Basic_stamp_ow9rf4.png" alt="Stamp" fill className="object-contain" />
-                        </div>
-                        {/* Bottom Left */}
-                        <div className="absolute left-[50px] bottom-[30px] w-[90px] h-[120px] rotate-[12deg] opacity-90 transition-transform duration-500 hover:rotate-0">
-                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259783/Basic_stamp-1_foeywo.png" alt="Stamp" fill className="object-contain" />
-                        </div>
-                        {/* Top Right */}
-                        <div className="absolute right-[40px] top-[40px] w-[90px] h-[120px] rotate-[6deg] opacity-90 transition-transform duration-500 hover:rotate-0">
-                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259782/Basic_stamp-2_pzfxwl.png" alt="Stamp" fill className="object-contain" />
-                        </div>
-                        {/* Bottom Right */}
-                        <div className="absolute right-[20px] bottom-[20px] w-[90px] h-[120px] rotate-[-5deg] opacity-90 transition-transform duration-500 hover:rotate-0">
-                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776259782/Basic_stamp-3_pspbqu.png" alt="Stamp" fill className="object-contain" />
-                        </div>
-                    </div>
-
-                    {/* Center Content */}
-                    <div className="flex flex-col items-center text-center px-6 z-10 gap-[8px]">
-                        <h2 className="font-serif font-semibold text-[40px] md:text-[64px] leading-[1.1] text-[#1a1a1a] tracking-[-0.02em]">
-                            start your first<br /> postcard
-                        </h2>
-                        <p className="font-sans text-[14px] md:text-[16px] text-[#1a1a1a]/60 tracking-tight font-medium">
-                            it takes less than a minute
-                        </p>
-                        <div className="mt-6">
-                            <Link href="/create" className="inline-flex h-[52px] items-center justify-center bg-[#1a1a1a] px-[80px] py-[16px] rounded-[8px] hover:bg-[#1a1a1a]/90 transition-all shadow-sm">
-                                <span className="font-sans text-[#f8f4ef] text-[15px] tracking-[0.3px] font-normal">Send a postcard</span>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </motion.section>
-
-            {/* ── 6. FAQ SECTION ── */}
-            <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="w-full px-0 md:px-0 max-w-full md:max-w-[840px] md:mx-auto pb-24 md:pb-40 flex flex-col items-center"
-            >
-                <h3 className="font-serif font-bold text-[2.2rem] md:text-[2.25rem] text-[#1a1a1a] mb-8 md:mb-12 tracking-tight text-center px-4 md:px-0">frequently asked questions</h3>
-                <div className="w-full flex flex-col gap-0 md:gap-4">
-                    {faqs.map((faq, i) => (
-                        <div key={i} className="w-full bg-white md:rounded-[2px] shadow-none md:shadow-[0_2px_12px_rgba(0,0,0,0.02)] border-b md:border border-[#1a1a1a]/5 overflow-hidden transition-all duration-300">
-                            <button
-                                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                                className="w-full px-10 md:px-8 py-6 md:py-7 flex justify-between items-center text-left bg-transparent border-none cursor-pointer group outline-none"
-                            >
-                                <span className={`font-sans font-medium text-[18px] md:text-[18px] transition-colors ${openFaq === i ? "text-[#1a1a1a]" : "text-[#1a1a1a]/80"}`}>
-                                    {faq.q.charAt(0).toUpperCase() + faq.q.slice(1)}
-                                </span>
-                                <span className={`text-[#1a1a1a]/40 text-2xl font-light transition-all duration-300 shrink-0 ml-4 ${openFaq === i ? "rotate-45 text-[#1a1a1a]" : ""}`}>
-                                    +
-                                </span>
-                            </button>
-                            <AnimatePresence>
-                                {openFaq === i && (
-                                    <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: "auto", opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        className="overflow-hidden"
-                                    >
-                                        <p className="font-sans text-[15px] md:text-[16px] leading-[1.94] text-[#1a1a1a]/60 px-10 md:px-8 pb-8 pr-16 tracking-[-0.02em]">
-                                            {faq.a}
-                                        </p>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
+                {/* Text */}
+                <div className="flex flex-col gap-[12px] w-full">
+                  <p className="font-serif font-normal text-[24px] leading-normal text-[#1a1a1a]">
+                    {card.icon} {card.title}
+                  </p>
+                  <div className="font-sans font-medium text-[17px] text-[#555] opacity-50 w-full">
+                    {card.body.split("\n").map((line, i) => (
+                      <p key={i} className="leading-normal">{line}</p>
                     ))}
+                  </div>
                 </div>
-            </motion.section>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        </main>
-    );
+      {/* ═══════════════ A DIFFERENT WAY TO SHARE ═══════════════ */}
+      <section className="mx-auto mt-[88px] w-full max-w-[1200px] px-[16px] md:px-[80px]">
+        <div className="flex flex-col gap-[32px] items-center justify-center w-full">
+
+          {/* Text */}
+          <div className="flex flex-col gap-[10px] items-center text-[#1a1a1a] text-center w-full">
+            <h2
+              className="font-serif font-bold text-[40px] leading-normal lowercase min-w-full text-center"
+            >
+              a different way to share
+            </h2>
+            <div className="font-sans font-normal text-[16px] md:text-[24px] text-[#1a1a1a]">
+              <p className="leading-[1.5] mb-0">most communication today is fast, constant, and easy to ignore.</p>
+              <p className="leading-[1.5]">messages pile up, conversations blur, and moments get lost.</p>
+            </div>
+          </div>
+
+          {/* Postcard artwork — desktop overlapping layout */}
+          <div className="hidden md:flex w-full justify-center group mt-[80px]" style={{ perspective: "1000px" }}>
+            <div className="relative w-[832px] h-[544px]">
+              
+              {/* Postcard back (White) — initially right, +13deg, behind */}
+              <div
+                className="absolute overflow-hidden rounded-[23px] border border-[#eadfd5] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] origin-center left-[287px] top-[29px] rotate-[13deg] z-10 group-hover:left-[0px] group-hover:top-[0px] group-hover:-rotate-[16deg] group-hover:z-30"
+                style={{
+                  width: "545px",
+                  height: "387px",
+                  boxShadow: "0 16px 38px rgba(86,63,47,0.08)",
+                }}
+              >
+                <Image src={POSTCARD_BACK} alt="Postcard back" fill className="object-cover" />
+              </div>
+
+              {/* Postcard front (Landscape) — initially left, -16deg, in front */}
+              <div
+                className="absolute overflow-hidden rounded-[23px] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] origin-center left-[0px] top-[0px] -rotate-[16deg] z-20 group-hover:left-[287px] group-hover:top-[29px] group-hover:rotate-[13deg] group-hover:z-10"
+                style={{
+                  width: "562px",
+                  height: "399px",
+                  boxShadow: "0 16px 38px rgba(86,63,47,0.16)",
+                }}
+              >
+                <Image src={POSTCARD_FRONT} alt="Postcard front" fill className="object-cover" />
+              </div>
+              
+            </div>
+          </div>
+
+          {/* Postcard artwork — mobile stacked */}
+          <div className="flex flex-col gap-[16px] w-full md:hidden">
+            <div className="relative w-full aspect-[545/387] overflow-hidden rounded-[16px]"
+              style={{ boxShadow: "0 16px 38px rgba(86,63,47,0.16)" }}>
+              <Image src={POSTCARD_FRONT} alt="Postcard front" fill className="object-cover" />
+            </div>
+            <div className="relative w-full aspect-[545/387] overflow-hidden rounded-[16px]"
+              style={{ boxShadow: "0 16px 38px rgba(86,63,47,0.08)" }}>
+              <Image src={POSTCARD_BACK} alt="Postcard back" fill className="object-cover" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ CTA BANNER ═══════════════ */}
+      <section className="mt-[88px] w-full px-[16px] md:px-[80px]">
+        <div className="relative mx-auto flex h-[400px] w-full max-w-[1200px] items-center overflow-hidden bg-white">
+          {/* Stamps — desktop only */}
+          <div className="hidden md:block">
+            {/* Yellow (Japan) — top left */}
+            <div className="absolute left-0 top-0 h-[200px] w-[158px]">
+              <Image src={STAMP_2} alt="Japan Stamp" fill className="object-contain" />
+            </div>
+            {/* Blue (UAE) — bottom left */}
+            <div className="absolute left-0 bottom-0 h-[200px] w-[158px]">
+              <Image src={STAMP_3} alt="UAE Stamp" fill className="object-contain" />
+            </div>
+            {/* Green (Rome) — top right */}
+            <div className="absolute right-0 top-0 h-[200px] w-[158px]">
+              <Image src={STAMP_4} alt="Rome Stamp" fill className="object-contain" />
+            </div>
+            {/* Orange (India) — bottom right */}
+            <div className="absolute right-0 bottom-0 h-[200px] w-[158px]">
+              <Image src={STAMP_1} alt="India Stamp" fill className="object-contain" />
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="relative mx-auto flex w-full flex-col items-center justify-center gap-[32px] px-[16px]">
+            <div className="flex flex-col gap-[8px] items-center text-center" style={{ letterSpacing: "-0.45px" }}>
+              <h2
+                className="font-serif font-semibold text-[48px] md:text-[64px] leading-normal text-[#1a1a1a] max-w-[638px]"
+              >
+                start your first postcard
+              </h2>
+              <p className="font-sans font-medium text-[16px] md:text-[20px] leading-normal text-[#1a1a1a]">
+                it takes less than a minute
+              </p>
+            </div>
+            <div className="flex flex-col md:flex-row items-center gap-[8px]">
+              <BtnPrimary href="/public">Explore public postcards</BtnPrimary>
+              <BtnOutline href="/private">Make Private Space</BtnOutline>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ FAQ ═══════════════ */}
+      <section className="mx-auto mt-[88px] w-full max-w-[1200px] px-[16px] pb-[56px] md:px-[80px]">
+        <div className="flex flex-col gap-[40px] items-center w-full">
+
+          <h2 className="font-serif font-bold text-[32px] md:text-[40px] text-[#1a1a1a] text-center leading-normal w-full">
+            frequently asked questions
+          </h2>
+
+          <div className="flex flex-col gap-[16px] w-full max-w-[900px]">
+            {FAQ.map((item, i) => {
+              const isOpen = openIdx === i;
+              return (
+                <div key={item.q} className="bg-white w-full rounded-[4px]">
+                  <button
+                    type="button"
+                    onClick={() => setOpenIdx(isOpen ? -1 : i)}
+                    className="flex w-full items-center justify-between px-[24px] md:px-[32px] py-[24px] gap-[16px] text-left"
+                  >
+                    <span
+                      className="font-sans font-medium text-[16px] md:text-[18px] text-[#1a1a1a]"
+                    >
+                      {item.q}
+                    </span>
+                    <span className="material-symbols-rounded text-[#1a1a1a] text-[24px]">
+                      {isOpen ? "close" : "add"}
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="px-[24px] md:px-[32px] pb-[24px]">
+                      <p className="font-sans font-normal text-[14px] md:text-[15px] text-[#333333] leading-[1.6]">
+                        {item.a}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }

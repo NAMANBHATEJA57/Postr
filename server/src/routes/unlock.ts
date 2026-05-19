@@ -29,9 +29,12 @@ router.post("/:id/unlock", async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Password is required" });
   }
 
-  let postcard: Awaited<ReturnType<typeof prisma.postcard.findUnique>>;
+  let postcard: any;
   try {
-    postcard = await prisma.postcard.findUnique({ where: { id } });
+    postcard = await prisma.publicPost.findUnique({ where: { id } });
+    if (!postcard) {
+      postcard = await prisma.privatePost.findUnique({ where: { id } });
+    }
   } catch {
     return res.status(500).json({ error: "Database error" });
   }

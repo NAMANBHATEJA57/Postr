@@ -1,9 +1,4 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { config } from "dotenv";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-config({ path: path.join(__dirname, "../.env") });
+import "./lib/env.js";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -12,7 +7,7 @@ import postcardsRouter from "./routes/postcards.js";
 import postcardByIdRouter from "./routes/postcardById.js";
 import unlockRouter from "./routes/unlock.js";
 import authRouter from "./routes/auth.js";
-import conversationsRouter from "./routes/conversations.js";
+import privateSpacesRouter from "./routes/privateSpaces.js";
 import { requestLogger } from "./middleware/logger.js";
 
 const app = express();
@@ -65,10 +60,10 @@ app.use("/api", (_req, res, next) => {
 
 app.use("/api/upload", uploadRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/conversations", conversationsRouter);
+app.use("/api/private-spaces", privateSpacesRouter);
 app.use("/api/postcards", unlockRouter);
-app.use("/api/postcards", postcardByIdRouter);
 app.use("/api/postcards", postcardsRouter);
+app.use("/api/postcards", postcardByIdRouter);
 
 app.get("/health", (_req, res) => {
   res.json({ ok: true });

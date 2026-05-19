@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display, Caveat } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import Footer from "@/components/layout/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,18 +25,15 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "Dearly — write something that matters",
-  description: "A slower, more intentional way to send a private postcard.",
-  keywords: ["postcard", "digital postcard", "private correspondence", "minimal", "intentional"],
+  title: "Dearly | Digital postcards for thoughtful moments",
+  description: "Share standalone digital postcards in a public feed or a private channel.",
+  keywords: ["postcard", "digital postcard", "public postcards", "private channel", "intentional"],
   openGraph: {
-    title: "Dearly — write something that matters",
-    description: "A slower, more intentional way to send a private postcard.",
+    title: "Dearly | Digital postcards for thoughtful moments",
+    description: "Share standalone digital postcards in a public feed or a private channel.",
     type: "website",
   },
 };
-
-import { AuthProvider } from "@/components/auth/AuthProvider";
-import Footer from "@/components/layout/Footer";
 
 export default function RootLayout({
   children,
@@ -52,9 +51,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-linen text-ink font-sans antialiased page-enter">
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <AuthProvider>{children}</AuthProvider>
         <Footer />
       </body>
     </html>

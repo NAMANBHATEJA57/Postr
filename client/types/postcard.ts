@@ -1,6 +1,6 @@
 export type MediaType = "image" | "video";
-
-export type ThemeLayout = "framed";
+export type PostcardVisibility = "public" | "private";
+export type ThemeLayout = "minimal" | "framed" | "full-bleed";
 
 export interface ThemeColors {
   background: string;
@@ -35,6 +35,7 @@ export interface PostcardTheme {
 }
 
 export type ExpiryOption = "never" | "24h" | "7d" | "30d" | "custom";
+export type ThemeChoice = "minimal" | "framed" | "full-bleed";
 
 export interface ApiPostcardResponse {
   id: string;
@@ -49,5 +50,6 @@ export interface ApiPostcardResponse {
   isPasswordProtected: boolean;
   stampId: string | null;
   createdAt: string;
-  conversationId: string | null;
+  visibility: PostcardVisibility;
+  spaceId: string | null;
 }

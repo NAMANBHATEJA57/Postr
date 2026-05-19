@@ -13,9 +13,16 @@ async function getPostcardHandler(req: Request, res: Response) {
     return res.status(400).json({ error: "Invalid postcard ID" });
   }
 
-  let postcard: Awaited<ReturnType<typeof prisma.postcard.findUnique>>;
+  let isPublic = false;
+  let postcard: any;
+
   try {
-    postcard = await prisma.postcard.findUnique({ where: { id } });
+    postcard = await prisma.publicPost.findUnique({ where: { id } });
+    if (postcard) {
+      isPublic = true;
+    } else {
+      postcard = await prisma.privatePost.findUnique({ where: { id } });
+    }
   } catch (err) {
     console.error("DB error:", err);
     return res.status(500).json({ error: "Database error" });
@@ -26,10 +33,12 @@ async function getPostcardHandler(req: Request, res: Response) {
   }
 
   if (postcard.expiryAt && postcard.expiryAt < new Date()) {
-    // Lazy cleanup: actively delete the postcard from the DB asynchronously
-    prisma.postcard.delete({ where: { id } }).catch(err => {
-      console.error("Failed to lazy-delete expired postcard:", err);
-    });
+    // Lazy cleanup
+    if (isPublic) {
+      prisma.publicPost.delete({ where: { id } }).catch(console.error);
+    } else {
+      prisma.privatePost.delete({ where: { id } }).catch(console.error);
+    }
     return res.status(410).json({ error: "this postcard has expired." });
   }
 
@@ -61,14 +70,15 @@ async function getPostcardHandler(req: Request, res: Response) {
     mediaType: postcard.mediaType,
     title: postcard.title,
     message: decryptMessage(postcard.message),
-    toName: postcard.toName,
-    fromName: postcard.fromName,
+    toName: isPublic ? "" : postcard.recipientName,
+    fromName: postcard.senderName,
     theme: postcard.theme,
     expiryAt: postcard.expiryAt?.toISOString() ?? null,
     isPasswordProtected: Boolean(postcard.passwordHash),
     stampId: postcard.stampId ?? null,
     createdAt: postcard.createdAt.toISOString(),
-    conversationId: postcard.conversationId ?? null,
+    visibility: isPublic ? "public" : "private",
+    spaceId: isPublic ? null : postcard.spaceId,
   };
 
   return res.json(response);

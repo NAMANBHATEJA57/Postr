@@ -12,12 +12,6 @@ interface BackSideProps {
  * Right 40%: Divider, stamp placeholder, recipient block
  */
 export default function BackSide({ postcard }: BackSideProps) {
-    if (!postcard.stampId) {
-        console.debug("BackSide: stampId is undefined or null");
-    } else {
-        console.debug("BackSide: rendering stampId:", postcard.stampId);
-    }
-
     return (
         <div
             className="w-full h-full flex relative rounded-[2px] overflow-hidden shadow-sm"
@@ -44,7 +38,7 @@ export default function BackSide({ postcard }: BackSideProps) {
 
                     {/* Greeting */}
                     <p className="font-handwritten text-[clamp(1rem,2.5vw,1.35rem)] text-[#4a4a4a] leading-[1.6] tracking-normal mb-3">
-                        Dear {postcard.toName},
+                        {postcard.toName ? `Dear ${postcard.toName},` : ""}
                     </p>
 
                     {/* Message body */}

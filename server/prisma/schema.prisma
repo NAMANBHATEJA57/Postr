@@ -7,46 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id           String         @id
-  name         String
-  email        String         @unique
-  passwordHash String         @map("password_hash")
-  createdAt    DateTime       @default(now()) @map("created_at")
-
-  conversationsAsOne Conversation[] @relation("ConversationUserOne")
-  conversationsAsTwo Conversation[] @relation("ConversationUserTwo")
-  postcardsSent      Postcard[]     @relation("PostcardSender")
-
-  @@map("users")
-}
-
-model Conversation {
-  id          String     @id
-  userOneId   String     @map("user_one_id")
-  userTwoId   String     @map("user_two_id")
-  createdAt   DateTime   @default(now()) @map("created_at")
-
-  userOne     User       @relation("ConversationUserOne", fields: [userOneId], references: [id])
-  userTwo     User       @relation("ConversationUserTwo", fields: [userTwoId], references: [id])
-  postcards   Postcard[]
-
-  @@unique([userOneId, userTwoId])
-  @@map("conversations")
-}
-
-model Postcard {
+model PublicPost {
   id             String        @id
-  userId         String?       @map("user_id") // legacy
-  conversationId String?       @map("conversation_id")
-  senderId       String?       @map("sender_id")
-  
   mediaUrl       String        @map("media_url")
   mediaType      String        @map("media_type")
   title          String
   message        String
-  toName         String        @map("to_name")
-  fromName       String        @map("from_name")
+  senderName     String        @map("sender_name")
   theme          String        @default("minimal-light")
   expiryAt       DateTime?     @map("expiry_at")
   passwordHash   String?       @map("password_hash")
@@ -54,8 +21,36 @@ model Postcard {
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
 
-  conversation   Conversation? @relation(fields: [conversationId], references: [id])
-  sender         User?         @relation("PostcardSender", fields: [senderId], references: [id])
+  @@index([createdAt])
+  @@map("public_posts")
+}
 
-  @@map("postcards")
+model PrivateSpace {
+  id          String         @id
+  createdAt   DateTime       @default(now()) @map("created_at")
+  postcards   PrivatePost[]
+
+  @@map("private_spaces")
+}
+
+model PrivatePost {
+  id             String        @id
+  spaceId        String        @map("space_id")
+  mediaUrl       String        @map("media_url")
+  mediaType      String        @map("media_type")
+  title          String
+  message        String
+  recipientName  String        @map("recipient_name")
+  senderName     String        @map("sender_name")
+  theme          String        @default("minimal-light")
+  expiryAt       DateTime?     @map("expiry_at")
+  passwordHash   String?       @map("password_hash")
+  stampId        String?       @map("stamp_id")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  space          PrivateSpace  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@index([spaceId, createdAt])
+  @@map("private_posts")
 }

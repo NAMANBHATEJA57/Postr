@@ -1,3 +1,4 @@
+import "../lib/env.js";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { Request, Response, NextFunction } from "express";
