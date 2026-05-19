@@ -28,7 +28,7 @@ export default function Footer() {
                             Made with care by{" "}
                             <Link href="https://github.com/NAMANBHATEJA57" className="underline hover:text-[#1a1a1a] transition-colors underline-offset-[3px] decoration-[1px]">NB</Link>
                             {" & "}
-                            <Link href="#" className="underline hover:text-[#1a1a1a] transition-colors underline-offset-[3px] decoration-[1px]">DG</Link>
+                            <Link href="https://dev-portfolio-ten-azure.vercel.app/" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#1a1a1a] transition-colors underline-offset-[3px] decoration-[1px]">DG</Link>
                         </p>
                         <p className="italic text-[#888888]">© {new Date().getFullYear()} dearly. all rights reserved.</p>
                     </div>

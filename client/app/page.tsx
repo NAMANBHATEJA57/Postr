@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import Image from "@/components/ui/CloudinaryImage";
 import Link from "next/link";
+import Navbar from "@/components/layout/Navbar";
 
 /* ─── Asset URLs (CSV + Cloudinary) ─────────────────────────── */
 const LOGO = "https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png";
@@ -89,61 +90,7 @@ export default function LandingPage() {
     <main className="bg-[#f8f4ef] text-[#1a1a1a] overflow-x-hidden">
 
       {/* ═══════════════ NAVBAR ═══════════════ */}
-      <header
-        className="fixed top-0 z-50 h-[72px] w-full transition-all duration-300"
-        style={{
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
-          backgroundColor: "rgba(248,244,239,0.45)",
-          borderBottom: "1px solid rgba(26,26,26,0.04)",
-        }}
-      >
-        <div className="relative mx-auto flex h-full w-full max-w-[1200px] items-center justify-center px-[16px] md:px-[80px]">
-
-          {/* Logo — absolutely positioned left */}
-          <Link href="/" className="absolute left-[16px] md:left-[80px] flex items-center gap-[10px]">
-            <div className="relative h-[28px] w-[38px] opacity-90 shrink-0">
-              <Image src={LOGO} alt="Dearly logo" fill className="object-contain" />
-            </div>
-            <span
-              className="font-serif text-[24px] font-semibold text-[#1a1a1a] leading-[28px]"
-              style={{ letterSpacing: "-0.45px" }}
-            >
-              Dearly
-            </span>
-          </Link>
-
-          {/* Desktop nav — centered */}
-          <nav className="hidden md:flex items-center gap-[2px]">
-            <Link
-              href="/public"
-              className="flex items-center justify-center gap-[8px] px-[16px] py-[8px] rounded-[6px] font-sans text-[14px] leading-[20px] text-[#555] transition-all duration-150 hover:bg-[rgba(26,26,26,0.04)] hover:opacity-100 opacity-75"
-            >
-              <span className="material-symbols-rounded text-[18px] leading-none">public</span>
-              Public Postcards
-            </Link>
-            <Link
-              href="/private"
-              className="flex items-center justify-center gap-[8px] px-[16px] py-[8px] rounded-[6px] font-sans text-[14px] leading-[20px] text-[#555] transition-all duration-150 hover:bg-[rgba(26,26,26,0.04)] hover:opacity-100 opacity-75"
-            >
-              <span className="material-symbols-rounded text-[18px] leading-none">mail_outline</span>
-              Private Postcards
-            </Link>
-            <a
-              href="#about"
-              className="flex items-center justify-center gap-[8px] px-[16px] py-[8px] rounded-[6px] font-sans text-[14px] leading-[20px] text-[#555] transition-all duration-150 hover:bg-[rgba(26,26,26,0.04)] hover:opacity-100 opacity-75"
-            >
-              <span className="material-symbols-rounded text-[18px] leading-none">eco</span>
-              About
-            </a>
-          </nav>
-
-          {/* Mobile hamburger */}
-          <button className="absolute right-[16px] md:hidden flex items-center justify-center w-[24px] h-[24px]">
-            <span className="material-symbols-rounded text-[24px] text-[#1a1a1a] opacity-70">menu</span>
-          </button>
-        </div>
-      </header>
+      <Navbar />
 
       {/* ═══════════════ HERO ═══════════════ */}
       <section className="relative overflow-hidden">
@@ -366,6 +313,7 @@ export default function LandingPage() {
                   <button
                     type="button"
                     onClick={() => setOpenIdx(isOpen ? -1 : i)}
+                    aria-expanded={isOpen}
                     className="flex w-full items-center justify-between px-[24px] md:px-[32px] py-[24px] gap-[16px] text-left"
                   >
                     <span

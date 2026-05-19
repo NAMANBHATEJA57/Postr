@@ -14,6 +14,11 @@ const router = Router();
 
 router.get("/public", fetchPostcardLimiter, async (_req: Request, res: Response) => {
   try {
+    // Overwrite the global anti-caching middleware specifically for public postcards
+    res.setHeader("Cache-Control", "public, max-age=10, stale-while-revalidate=59");
+    res.removeHeader("Pragma");
+    res.removeHeader("Expires");
+
     const postcards = await prisma.publicPost.findMany({
       where: {
         OR: [{ expiryAt: null }, { expiryAt: { gt: new Date() } }],

@@ -12,6 +12,12 @@ interface BackSideProps {
  * Right 40%: Divider, stamp placeholder, recipient block
  */
 export default function BackSide({ postcard }: BackSideProps) {
+    // Safety truncation guardrail to make it impossible for any long text to overflow the physical card boundary.
+    const MAX_CHAR_LIMIT = 240;
+    const displayMessage = postcard.message.length > MAX_CHAR_LIMIT 
+        ? postcard.message.slice(0, MAX_CHAR_LIMIT) + "..." 
+        : postcard.message;
+
     return (
         <div
             className="w-full h-full flex relative rounded-[2px] overflow-hidden shadow-sm"
@@ -29,21 +35,23 @@ export default function BackSide({ postcard }: BackSideProps) {
             </div>
 
             {/* ── Left: Message column (50%) ── */}
-            <div className="flex flex-col w-1/2 h-full justify-between p-[clamp(1.5rem,4vw,2.5rem)] pr-[clamp(1rem,2vw,1.5rem)]">
-                <div>
+            <div className="flex flex-col w-1/2 h-full justify-between p-[clamp(1rem,3vw,2rem)] pr-[clamp(0.75rem,2vw,1.25rem)] overflow-hidden">
+                <div className="flex flex-col justify-start h-full">
                     {/* Title */}
-                    <p className="font-serif text-[clamp(12px,2vw,15px)] text-ink/80 tracking-[0.1em] capitalize mb-[clamp(1.5rem,4vw,2rem)] mt-[clamp(0.5rem,2vw,1rem)] font-medium">
+                    <p className="font-serif text-[clamp(11px,1.8vw,14px)] text-ink/80 tracking-[0.1em] capitalize mb-[clamp(0.75rem,2vw,1.5rem)] mt-[clamp(0.25rem,1.5vw,0.75rem)] font-medium shrink-0">
                         {postcard.title}
                     </p>
 
                     {/* Greeting */}
-                    <p className="font-handwritten text-[clamp(1rem,2.5vw,1.35rem)] text-[#4a4a4a] leading-[1.6] tracking-normal mb-3">
-                        {postcard.toName ? `Dear ${postcard.toName},` : ""}
-                    </p>
+                    {postcard.toName && (
+                        <p className="font-handwritten text-[clamp(0.85rem,1.8vw,1.15rem)] text-[#4a4a4a] leading-[1.3] tracking-normal mb-1.5 shrink-0">
+                            Dear {postcard.toName},
+                        </p>
+                    )}
 
-                    {/* Message body */}
-                    <p className="font-handwritten text-[clamp(1rem,2.5vw,1.35rem)] text-[#4a4a4a] leading-[1.7] whitespace-pre-wrap break-words tracking-normal">
-                        {postcard.message}
+                    {/* Message body — tight line-height and compact sizing to fit cleanly */}
+                    <p className="font-handwritten text-[clamp(0.8rem,1.7vw,1.05rem)] text-[#4a4a4a] leading-[1.4] whitespace-pre-wrap break-words tracking-normal overflow-hidden flex-1">
+                        {displayMessage}
                     </p>
                 </div>
             </div>
@@ -51,8 +59,8 @@ export default function BackSide({ postcard }: BackSideProps) {
             {/* ── Vertical divider ── */}
             <div className="w-px self-stretch border-l border-ink/40 z-10" style={{ margin: '8% 0' }} aria-hidden="true" />
 
-            {/* ── Right: Postcard meta column (50%) ── */}
-            <div className="flex flex-col w-1/2 h-full p-[clamp(1.5rem,4vw,2.5rem)] pl-[clamp(1rem,2vw,1.5rem)] relative">
+            {/* ── Right: Postcard Address & stamp column (50%) ── */}
+            <div className="flex flex-col w-1/2 h-full p-[clamp(1rem,3vw,2rem)] pl-[clamp(0.75rem,2vw,1.25rem)] relative justify-between">
                 
                 {/* Subtle Postal Postmark */}
                 <div className="absolute right-[clamp(3.5rem,7vw,5.5rem)] top-[clamp(1.5rem,3vw,2.5rem)] w-[76px] h-[76px] rounded-full border-[1.5px] border-ink/40 flex flex-col items-center justify-center -rotate-[12deg] pointer-events-none select-none z-30 mix-blend-multiply opacity-50" aria-hidden="true">
@@ -69,18 +77,18 @@ export default function BackSide({ postcard }: BackSideProps) {
 
                 {/* 4 Empty Address lines & Sender Signature */}
                 <div className="mt-auto mb-[8%] w-[85%] self-end">
-                    <div className="flex flex-col gap-[clamp(1.25rem,3.5vw,1.75rem)] mb-[clamp(1rem,3vw,2rem)]">
+                    <div className="flex flex-col gap-[clamp(1rem,2.5vw,1.4rem)] mb-[clamp(0.75rem,2.5vw,1.5rem)]">
                         <div className="w-full h-px bg-ink/30" />
                         <div className="w-full h-px bg-ink/30" />
                         <div className="w-full h-px bg-ink/30" />
                         <div className="w-full h-px bg-ink/30" />
                     </div>
                     {/* Signature — right-aligned underneath address lines */}
-                    <div className="text-right">
-                        <p className="font-handwritten text-[clamp(1rem,2.5vw,1.35rem)] text-[#4a4a4a] leading-[1.4] tracking-normal">
+                    <div className="text-right shrink-0">
+                        <p className="font-handwritten text-[clamp(0.85rem,1.8vw,1.15rem)] text-[#4a4a4a] leading-[1.3] tracking-normal">
                             Sincerely,
                         </p>
-                        <p className="font-handwritten text-[clamp(1rem,2.5vw,1.35rem)] text-[#4a4a4a] leading-[1.4] tracking-normal">
+                        <p className="font-handwritten text-[clamp(0.85rem,1.8vw,1.15rem)] text-[#4a4a4a] leading-[1.3] tracking-normal font-semibold">
                             {postcard.fromName}
                         </p>
                     </div>

@@ -1,10 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ViewPublicClient from "./ViewPublicClient";
+import dynamic from "next/dynamic";
 import { apiUrl } from "@/lib/api";
 import { ApiPostcardResponse } from "@/types/postcard";
 import { ViewPostcardSkeleton } from "@/components/postcards/PostcardSkeleton";
+
+const ViewPublicClient = dynamic(() => import("./ViewPublicClient"), {
+  loading: () => <ViewPostcardSkeleton />,
+  ssr: false,
+});
 
 export default function ViewPageClient({ id }: { id: string }) {
     const [data, setData] = useState<ApiPostcardResponse | null>(null);

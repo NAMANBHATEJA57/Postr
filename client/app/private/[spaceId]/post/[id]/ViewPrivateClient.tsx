@@ -2,15 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import PasswordGate from "@/components/postcard/PasswordGate";
-import PostcardRenderer from "@/components/postcard/PostcardRenderer";
-import FrontSide from "@/components/postcard/FrontSide";
-import BackSide from "@/components/postcard/BackSide";
 import { apiUrl } from "@/lib/api";
 import type { ApiPostcardResponse } from "@/types/postcard";
+import Image from "@/components/ui/CloudinaryImage";
+import FrontSide from "@/components/postcard/FrontSide";
+import BackSide from "@/components/postcard/BackSide";
+
+const PasswordGate = dynamic(() => import("@/components/postcard/PasswordGate"), { ssr: false });
+const PostcardRenderer = dynamic(() => import("@/components/postcard/PostcardRenderer"), { ssr: false });
 
 interface ViewPrivateClientProps {
   postcardId: string;
