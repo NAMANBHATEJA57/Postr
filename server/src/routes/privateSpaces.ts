@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { generateSpaceCode } from "../lib/nanoid.js";
 import { joinPrivateSpaceSchema } from "../lib/schemas.js";
+import { authLimiter } from "../middleware/rateLimiter.js";
 
 const router = Router();
 
@@ -17,7 +18,7 @@ async function createUniqueCode() {
   throw new Error("Could not generate a unique private space code");
 }
 
-router.post("/", async (_req: Request, res: Response) => {
+router.post("/", authLimiter, async (_req: Request, res: Response) => {
   try {
     const code = await createUniqueCode();
     const space = await prisma.privateSpace.create({
@@ -38,7 +39,7 @@ router.post("/", async (_req: Request, res: Response) => {
   }
 });
 
-router.post("/join", async (req: Request, res: Response) => {
+router.post("/join", authLimiter, async (req: Request, res: Response) => {
   const parsed = joinPrivateSpaceSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: "Enter a valid private space code" });

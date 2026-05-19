@@ -8,6 +8,7 @@ import postcardByIdRouter from "./routes/postcardById.js";
 import unlockRouter from "./routes/unlock.js";
 import authRouter from "./routes/auth.js";
 import privateSpacesRouter from "./routes/privateSpaces.js";
+import moderationRouter from "./routes/moderation.js";
 import { requestLogger } from "./middleware/logger.js";
 
 const app = express();
@@ -64,6 +65,7 @@ app.use("/api/private-spaces", privateSpacesRouter);
 app.use("/api/postcards", unlockRouter);
 app.use("/api/postcards", postcardsRouter);
 app.use("/api/postcards", postcardByIdRouter);
+app.use("/api/postcards", moderationRouter);
 
 app.get("/health", (_req, res) => {
   res.json({ ok: true });

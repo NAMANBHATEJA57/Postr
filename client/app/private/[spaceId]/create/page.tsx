@@ -7,6 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import MediaUpload from "@/components/create/MediaUpload";
 import { STAMPS, type StampId } from "@/components/stamps/StampRegistry";
 import { apiUrl } from "@/lib/api";
+import { ApiPostcardResponse } from "@/types/postcard";
 
 const MESSAGE_MAX = 120;
 
@@ -72,7 +73,7 @@ function CreatePrivatePageInner() {
           if (parsed && typeof parsed === "object") {
             spaceData = parsed;
           }
-        } catch {}
+        } catch { }
       }
       spaceData.postcards = [optimisticPostcard, ...(spaceData.postcards || [])];
       localStorage.setItem(`dearly_cache_space_${spaceId}`, JSON.stringify(spaceData));
@@ -95,7 +96,7 @@ function CreatePrivatePageInner() {
 
         if (!metaRes.ok) throw new Error((await metaRes.json()).error ?? "Upload failed");
 
-        const { signature, timestamp, apiKey, cloudName, publicUrl, publicId } = await metaRes.json();
+        const { signature, timestamp, apiKey, cloudName, publicUrl, publicId, allowedFormats } = await metaRes.json();
 
         setUploading(true);
         const formData = new FormData();
@@ -104,6 +105,9 @@ function CreatePrivatePageInner() {
         formData.append("timestamp", timestamp.toString());
         formData.append("signature", signature);
         formData.append("public_id", publicId);
+        if (allowedFormats) {
+          formData.append("allowed_formats", allowedFormats);
+        }
 
         const isVideo = mediaFile.type.startsWith("video/");
         const uploadRes = await fetch(
@@ -142,7 +146,7 @@ function CreatePrivatePageInner() {
       }
 
       const { id } = await createRes.json();
-      
+
       // Replace optimistic card with real one in cache
       if (typeof window !== "undefined") {
         const cached = localStorage.getItem(`dearly_cache_space_${spaceId}`);
@@ -163,7 +167,7 @@ function CreatePrivatePageInner() {
               });
               localStorage.setItem(`dearly_cache_space_${spaceId}`, JSON.stringify(spaceData));
             }
-          } catch {}
+          } catch { }
         }
 
         // Also pre-cache the real detail page so that opening it from the grid is instant!
@@ -217,13 +221,13 @@ function CreatePrivatePageInner() {
 
         {/* Center Navbar Items */}
         <div className="hidden md:flex items-center gap-[32px] text-[#4a4a4a] text-[14px] font-sans font-medium">
-          <button 
+          <button
             onClick={() => copyToClipboard(spaceId.toUpperCase())}
             className="flex items-center gap-[8px] hover:text-[#1a1a1a] transition-colors"
           >
             {spaceId.toUpperCase()} <span className="material-symbols-rounded text-[18px]">content_copy</span>
           </button>
-          <button 
+          <button
             onClick={() => copyToClipboard(typeof window !== 'undefined' ? `${window.location.origin}/private/${spaceId}` : '')}
             className="flex items-center gap-[8px] hover:text-[#1a1a1a] transition-colors"
           >

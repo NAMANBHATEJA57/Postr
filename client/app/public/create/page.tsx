@@ -86,7 +86,7 @@ function CreatePublicPageInner() {
 
         if (!metaRes.ok) throw new Error((await metaRes.json()).error ?? "Upload failed");
 
-        const { signature, timestamp, apiKey, cloudName, publicUrl, publicId } = await metaRes.json();
+        const { signature, timestamp, apiKey, cloudName, publicUrl, publicId, allowedFormats } = await metaRes.json();
 
         setUploading(true);
         const formData = new FormData();
@@ -95,6 +95,9 @@ function CreatePublicPageInner() {
         formData.append("timestamp", timestamp.toString());
         formData.append("signature", signature);
         formData.append("public_id", publicId);
+        if (allowedFormats) {
+          formData.append("allowed_formats", allowedFormats);
+        }
 
         const isVideo = mediaFile.type.startsWith("video/");
         const uploadRes = await fetch(

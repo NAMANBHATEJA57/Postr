@@ -30,10 +30,12 @@ function ensureConfig() {
 
 const ALLOWED_TYPES_REVERSE: Record<string, string> = {
     "image/jpeg": "jpg",
+    "image/jpg": "jpg",
     "image/png": "png",
     "image/webp": "webp",
     "image/gif": "gif",
     "video/mp4": "mp4",
+    "video/quicktime": "mov",
 };
 
 export function validateFileSize(
@@ -63,16 +65,20 @@ export async function generateUploadSignature(publicId: string, fileType: string
     cloudName: string;
     publicUrl: string;
     publicId: string;
+    allowedFormats: string;
 }> {
     ensureConfig();
 
     const timestamp = Math.round(new Date().getTime() / 1000);
     const isVideo = fileType.startsWith("video/");
+    const allowedFormatsList = isVideo ? ["mp4", "mov"] : ["jpg", "jpeg", "png", "webp", "gif"];
+    const allowedFormats = allowedFormatsList.join(",");
 
     const signature = cloudinary.utils.api_sign_request(
         {
             timestamp,
             public_id: publicId,
+            allowed_formats: allowedFormats,
         },
         process.env.CLOUDINARY_API_SECRET!
     );
@@ -92,5 +98,6 @@ export async function generateUploadSignature(publicId: string, fileType: string
         cloudName,
         publicUrl,
         publicId,
+        allowedFormats,
     };
 }

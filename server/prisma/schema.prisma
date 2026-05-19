@@ -18,6 +18,7 @@ model PublicPost {
   expiryAt       DateTime?     @map("expiry_at")
   passwordHash   String?       @map("password_hash")
   stampId        String?       @map("stamp_id")
+  reportsCount   Int           @default(0) @map("reports_count")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
 
@@ -46,6 +47,7 @@ model PrivatePost {
   expiryAt       DateTime?     @map("expiry_at")
   passwordHash   String?       @map("password_hash")
   stampId        String?       @map("stamp_id")
+  reportsCount   Int           @default(0) @map("reports_count")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
 
