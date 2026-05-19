@@ -34,20 +34,33 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* CTA & Watermark — centered on mobile */}
-                {pathname === "/" && (
-                    <div className="relative flex flex-col items-center md:items-end gap-4 md:mt-2">
-                        {/* Decorative Logo Watermark */}
-                        <div className="absolute right-0 top-[-20px] w-[200px] md:w-[309px] aspect-square opacity-[0.06] md:opacity-[0.04] pointer-events-none transform translate-x-6 translate-y-[-10%]">
-                            <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png" alt="Watermark" fill className="object-contain" />
-                        </div>
+                {/* CTA & Links — centered on mobile */}
+                <div className="relative flex flex-col items-center md:items-end gap-6 md:mt-2">
+                    {/* Decorative Logo Watermark */}
+                    <div className="absolute right-0 top-[-20px] w-[200px] md:w-[309px] aspect-square opacity-[0.06] md:opacity-[0.04] pointer-events-none transform translate-x-6 translate-y-[-10%]">
+                        <Image src="https://res.cloudinary.com/dqwd7hbl6/image/upload/v1776260207/Logo_kaarkv.png" alt="Watermark" fill className="object-contain" />
+                    </div>
 
-                        {/* CTA Button */}
+                    {/* CTA Button only on landing page */}
+                    {pathname === "/" && (
                         <Link href="/create?visibility=public" className="relative z-10 inline-flex h-[52px] items-center justify-center bg-[#1a1a1a] px-[80px] py-[16px] rounded-[8px] hover:bg-[#1a1a1a]/90 transition-all shadow-sm">
                             <span className="font-sans text-[#f8f4ef] text-[15px] tracking-[0.3px] font-normal">Write postcard</span>
                         </Link>
+                    )}
+
+                    {/* Footer Links Row */}
+                    <div className="relative z-10 flex flex-wrap items-center justify-center md:justify-end gap-x-[20px] gap-y-[8px] font-sans text-[13px] text-[#888888] font-medium tracking-tight mt-[8px]">
+                        <Link href="/about" className="hover:text-[#1a1a1a] transition-colors">About</Link>
+                        <span className="text-[#e1dcd7] hidden xs:inline">•</span>
+                        <Link href="/privacy" className="hover:text-[#1a1a1a] transition-colors">Privacy</Link>
+                        <span className="text-[#e1dcd7] hidden xs:inline">•</span>
+                        <Link href="/terms" className="hover:text-[#1a1a1a] transition-colors">Terms</Link>
+                        <span className="text-[#e1dcd7] hidden xs:inline">•</span>
+                        <Link href="/guidelines" className="hover:text-[#1a1a1a] transition-colors">Guidelines</Link>
+                        <span className="text-[#e1dcd7] hidden xs:inline">•</span>
+                        <Link href="mailto:hello@dearly.app" className="hover:text-[#1a1a1a] transition-colors">Contact</Link>
                     </div>
-                )}
+                </div>
             </div>
         </footer>
     );
